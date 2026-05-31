@@ -2,6 +2,32 @@ import type { Metadata, Viewport } from "next";
 import SiteShell from "./components/SiteShell";
 import "./globals.css";
 
+const businessSchema = {
+  "@context": "https://schema.org",
+  "@type": "FoodEstablishment",
+  name: "Plate The Umpqua",
+  url: "https://platetheumpqua.com",
+  description:
+    "Chef-led private dining, estate dinners, realtor concierge hospitality, and wine country experiences rooted in Roseburg and the Umpqua Valley.",
+  areaServed: [
+    "Roseburg, Oregon",
+    "Umpqua Valley",
+    "Southern Oregon",
+  ],
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Roseburg",
+    addressRegion: "OR",
+    addressCountry: "US",
+  },
+  servesCuisine: [
+    "Private Dining",
+    "Seasonal Hospitality",
+    "Wine Country Dining",
+  ],
+  priceRange: "$$$",
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://platetheumpqua.com"),
 
@@ -94,6 +120,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen bg-[#14120e] text-[#efe6d4] antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(businessSchema),
+          }}
+        />
+
         <SiteShell>{children}</SiteShell>
       </body>
     </html>
