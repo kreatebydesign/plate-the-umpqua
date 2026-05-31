@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { Cormorant_Garamond, Work_Sans } from "next/font/google";
 
 const work = Work_Sans({
@@ -17,12 +17,12 @@ const cormorant = Cormorant_Garamond({
   weight: ["300", "400", "500", "600", "700"],
 });
 
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 28 },
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.9, ease: "easeOut" },
+    transition: { duration: 0.9 },
   },
 };
 
@@ -31,7 +31,7 @@ export default function HomePage() {
     <main
       className={`${work.variable} ${cormorant.variable} min-h-screen overflow-hidden bg-[#14120e] text-[#efe6d4]`}
     >
-      <section className="relative flex min-h-[92vh] items-center justify-center overflow-hidden px-5 pt-28 pb-20 text-center md:min-h-screen md:px-6 md:pt-24">
+      <section className="relative flex min-h-[92vh] items-center justify-center overflow-hidden px-5 pb-20 pt-28 text-center md:min-h-screen md:px-6 md:pt-24">
         <video
           className="absolute inset-0 h-full w-full object-cover opacity-46 saturate-[0.92]"
           src="/content/videos/hero-fire-2.mp4"
