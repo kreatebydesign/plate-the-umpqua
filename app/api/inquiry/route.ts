@@ -60,10 +60,10 @@ function getSubject(type: string, pkg?: string) {
 function row(label: string, value?: string) {
   return `
     <tr>
-      <td style="padding:12px 0;color:#c4a465;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;width:35%;">
+      <td style="padding:12px 0;color:#c4a465;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;width:35%;border-bottom:1px solid rgba(196,164,101,0.14);">
         ${label}
       </td>
-      <td style="padding:12px 0;color:#efe6d4;font-size:14px;">
+      <td style="padding:12px 0;color:#efe6d4;font-size:14px;border-bottom:1px solid rgba(196,164,101,0.14);">
         ${clean(value) || "—"}
       </td>
     </tr>
@@ -76,6 +76,7 @@ export async function POST(req: Request) {
 
     if (!apiKey) {
       console.error("RESEND_API_KEY is missing.");
+
       return NextResponse.json(
         { success: false, message: "Email service is not configured." },
         { status: 500 }
@@ -111,6 +112,10 @@ export async function POST(req: Request) {
           </h1>
 
           <p style="color:#b9ac97;">
+            A new private hospitality inquiry was submitted through platetheumpqua.com.
+          </p>
+
+          <p style="color:#b9ac97;">
             Lead Type: <strong>${leadType}</strong>
           </p>
 
@@ -127,15 +132,19 @@ export async function POST(req: Request) {
           </table>
 
           <div style="margin-top:24px;color:#efe6d4;">
-            <p style="color:#c4a465;font-size:12px;text-transform:uppercase;letter-spacing:0.14em;">Details</p>
-            <p style="color:#efe6d4;line-height:1.7;">${clean(body.details) || "—"}</p>
+            <p style="color:#c4a465;font-size:12px;text-transform:uppercase;letter-spacing:0.14em;">
+              Details
+            </p>
+            <p style="color:#efe6d4;line-height:1.7;">
+              ${clean(body.details) || "—"}
+            </p>
           </div>
         </div>
       </div>
     `;
 
     const result = await resend.emails.send({
-      from: "Plate The Umpqua <hello@platetheumpqua.com>",
+      from: "Plate The Umpqua <inquiries@platetheumpqua.com>",
       to: ["hello@platetheumpqua.com"],
       replyTo: email,
       subject,
@@ -144,6 +153,7 @@ export async function POST(req: Request) {
 
     if (result.error) {
       console.error("Resend email error:", result.error);
+
       return NextResponse.json(
         { success: false, message: result.error.message || "Email failed." },
         { status: 500 }
