@@ -29,13 +29,19 @@ const fadeUp = {
 export default function InquiryPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    setLoading(true);
+    if (loading || success) return;
 
-    const formData = new FormData(e.currentTarget);
+    setLoading(true);
+    setError("");
+    setSuccess(false);
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
 
     const payload = {
       name: formData.get("name"),
@@ -59,15 +65,22 @@ export default function InquiryPage() {
         body: JSON.stringify(payload),
       });
 
-      if (res.ok) {
-        setSuccess(true);
-        e.currentTarget.reset();
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.message || "Submission failed.");
       }
+
+      setSuccess(true);
+      form.reset();
     } catch (err) {
       console.error(err);
+      setError(
+        "Something did not go through. Please wait a moment and try again, or email hello@platetheumpqua.com directly."
+      );
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   return (
@@ -85,7 +98,6 @@ export default function InquiryPage() {
         />
 
         <div className="absolute inset-0 bg-[#14120e]/72" />
-
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(196,164,101,0.12),transparent_48%)]" />
 
         <div className="relative z-10 mx-auto max-w-6xl">
@@ -118,46 +130,19 @@ export default function InquiryPage() {
             transition={{ delay: 0.12 }}
             className="mx-auto mt-14 max-w-4xl border border-[#c4a465]/14 bg-[#0f0e0c]/88 p-5 backdrop-blur-xl sm:p-7 md:mt-20 md:p-10"
           >
-            <form
-              onSubmit={handleSubmit}
-              className="grid gap-5 md:gap-6"
-            >
+            <form onSubmit={handleSubmit} className="grid gap-5 md:gap-6">
               <div className="grid gap-5 md:grid-cols-2 md:gap-6">
-                <input
-                  name="name"
-                  required
-                  placeholder="Full Name"
-                  className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition placeholder:text-[#8d8477] focus:border-[#c4a465]/55"
-                />
-
-                <input
-                  name="email"
-                  required
-                  type="email"
-                  placeholder="Email Address"
-                  className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition placeholder:text-[#8d8477] focus:border-[#c4a465]/55"
-                />
+                <input name="name" required placeholder="Full Name" className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition placeholder:text-[#8d8477] focus:border-[#c4a465]/55" />
+                <input name="email" required type="email" placeholder="Email Address" className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition placeholder:text-[#8d8477] focus:border-[#c4a465]/55" />
               </div>
 
               <div className="grid gap-5 md:grid-cols-2 md:gap-6">
-                <input
-                  name="phone"
-                  placeholder="Phone Number"
-                  className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition placeholder:text-[#8d8477] focus:border-[#c4a465]/55"
-                />
-
-                <input
-                  name="location"
-                  placeholder="Event Location"
-                  className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition placeholder:text-[#8d8477] focus:border-[#c4a465]/55"
-                />
+                <input name="phone" placeholder="Phone Number" className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition placeholder:text-[#8d8477] focus:border-[#c4a465]/55" />
+                <input name="location" placeholder="Event Location" className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition placeholder:text-[#8d8477] focus:border-[#c4a465]/55" />
               </div>
 
               <div className="grid gap-5 md:grid-cols-2 md:gap-6">
-                <select
-                  name="guests"
-                  className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition focus:border-[#c4a465]/55"
-                >
+                <select name="guests" className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition focus:border-[#c4a465]/55">
                   <option value="">Guest Count</option>
                   <option>2-4 Guests</option>
                   <option>5-10 Guests</option>
@@ -165,10 +150,7 @@ export default function InquiryPage() {
                   <option>20+ Guests</option>
                 </select>
 
-                <select
-                  name="budget"
-                  className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition focus:border-[#c4a465]/55"
-                >
+                <select name="budget" className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition focus:border-[#c4a465]/55">
                   <option value="">Estimated Budget</option>
                   <option value="425-750">$425-$750</option>
                   <option value="750-1500">$750-$1,500</option>
@@ -177,20 +159,14 @@ export default function InquiryPage() {
               </div>
 
               <div className="grid gap-5 md:grid-cols-2 md:gap-6">
-                <select
-                  name="packageInterest"
-                  className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition focus:border-[#c4a465]/55"
-                >
+                <select name="packageInterest" className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition focus:border-[#c4a465]/55">
                   <option value="">Experience Type</option>
                   <option value="Private Table">Private Table</option>
                   <option value="Estate">Estate / Winery</option>
                   <option value="Concierge">Concierge Partner</option>
                 </select>
 
-                <select
-                  name="urgency"
-                  className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition focus:border-[#c4a465]/55"
-                >
+                <select name="urgency" className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition focus:border-[#c4a465]/55">
                   <option value="">Timeline</option>
                   <option value="this-week">This Week</option>
                   <option value="this-month">This Month</option>
@@ -198,31 +174,32 @@ export default function InquiryPage() {
                 </select>
               </div>
 
-              <input
-                name="occasion"
-                placeholder="Occasion"
-                className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition placeholder:text-[#8d8477] focus:border-[#c4a465]/55"
-              />
+              <input name="occasion" placeholder="Occasion" className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition placeholder:text-[#8d8477] focus:border-[#c4a465]/55" />
 
-              <textarea
-                name="details"
-                rows={7}
-                placeholder="Tell us about the experience..."
-                className="min-h-[180px] border border-[#c4a465]/18 bg-[#14120e] px-5 py-5 text-sm leading-7 outline-none transition placeholder:text-[#8d8477] focus:border-[#c4a465]/55"
-              />
+              <textarea name="details" rows={7} placeholder="Tell us about the experience..." className="min-h-[180px] border border-[#c4a465]/18 bg-[#14120e] px-5 py-5 text-sm leading-7 outline-none transition placeholder:text-[#8d8477] focus:border-[#c4a465]/55" />
 
               <div className="pt-3">
                 <button
                   type="submit"
-                  disabled={loading}
-                  className="w-full border border-[#c4a465] px-8 py-5 text-center text-[11px] uppercase tracking-[0.24em] transition duration-300 hover:bg-[#c4a465] hover:text-[#14120e] md:w-auto md:min-w-[280px]"
+                  disabled={loading || success}
+                  className="w-full border border-[#c4a465] px-8 py-5 text-center text-[11px] uppercase tracking-[0.24em] transition duration-300 hover:bg-[#c4a465] hover:text-[#14120e] disabled:cursor-not-allowed disabled:opacity-55 md:w-auto md:min-w-[280px]"
                 >
-                  {loading ? "Submitting..." : "Request Availability"}
+                  {loading
+                    ? "Submitting Inquiry..."
+                    : success
+                      ? "Inquiry Received"
+                      : "Request Availability"}
                 </button>
 
                 {success && (
-                  <p className="pt-5 text-sm text-[#c4a465]">
-                    Inquiry submitted successfully.
+                  <p className="pt-5 text-sm leading-7 text-[#c4a465]">
+                    Inquiry received. We will review the details and follow up directly.
+                  </p>
+                )}
+
+                {error && (
+                  <p className="pt-5 text-sm leading-7 text-[#d9b58c]">
+                    {error}
                   </p>
                 )}
               </div>
