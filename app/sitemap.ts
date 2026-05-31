@@ -15,14 +15,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}/experiences`,
       lastModified: new Date(),
       changeFrequency: "weekly",
-      priority: 0.9,
+      priority: 0.95,
     },
 
     {
-      url: `${baseUrl}/preferred-access`,
+      url: `${baseUrl}/packages`,
       lastModified: new Date(),
       changeFrequency: "weekly",
-      priority: 0.9,
+      priority: 0.92,
     },
 
     {
@@ -35,7 +35,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       url: `${baseUrl}/the-valley`,
       lastModified: new Date(),
-      changeFrequency: "weekly",
+      changeFrequency: "monthly",
       priority: 0.85,
     },
 
