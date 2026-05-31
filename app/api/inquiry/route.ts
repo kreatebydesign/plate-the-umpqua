@@ -17,29 +17,25 @@ type Inquiry = {
   details?: string;
 };
 
-function clean(v?: string) {
-  return v?.trim() || "";
+function clean(value?: string) {
+  return value?.trim() || "";
 }
 
-/* =========================
-   LEAD CLASSIFICATION ENGINE
-========================= */
-
 function getLeadType(data: Inquiry) {
-  const budget = data.budget || "";
-  const pkg = data.packageInterest || "";
-  const urgency = data.urgency || "";
+  const budget = clean(data.budget);
+  const pkg = clean(data.packageInterest);
+  const urgency = clean(data.urgency);
 
   if (pkg === "Concierge" || budget === "2000+") {
-    return "REALTOR / PARTNER LEAD 🏡";
+    return "REALTOR / PARTNER LEAD";
   }
 
   if (budget === "750-1500" || pkg === "Estate") {
-    return "HIGH VALUE LEAD 🔥";
+    return "HIGH VALUE LEAD";
   }
 
   if (urgency === "this-week") {
-    return "HOT LEAD ⚡";
+    return "HOT LEAD";
   }
 
   return "STANDARD LEAD";
@@ -47,23 +43,19 @@ function getLeadType(data: Inquiry) {
 
 function getSubject(type: string, pkg?: string) {
   if (type.includes("HIGH VALUE")) {
-    return `🔥 ${type} — ${pkg || "Inquiry"}`;
+    return `High Value Lead — ${pkg || "Inquiry"}`;
   }
 
   if (type.includes("REALTOR")) {
-    return `🏡 ${type} — Concierge Program`;
+    return "Realtor / Partner Lead — Concierge Program";
   }
 
   if (type.includes("HOT")) {
-    return `⚡ ${type} — Urgent Booking`;
+    return "Hot Lead — Urgent Booking";
   }
 
   return `New Inquiry — ${pkg || "Private Dining"}`;
 }
-
-/* =========================
-   EMAIL ROW
-========================= */
 
 function row(label: string, value?: string) {
   return `
@@ -72,18 +64,24 @@ function row(label: string, value?: string) {
         ${label}
       </td>
       <td style="padding:12px 0;color:#efe6d4;font-size:14px;">
-        ${clean(value)}
+        ${clean(value) || "—"}
       </td>
     </tr>
   `;
 }
 
-/* =========================
-   MAIN ROUTE
-========================= */
-
 export async function POST(req: Request) {
   try {
+    const apiKey = process.env.RESEND_API_KEY;
+
+    if (!apiKey) {
+      console.error("RESEND_API_KEY is missing.");
+      return NextResponse.json(
+        { success: false, message: "Email service is not configured." },
+        { status: 500 }
+      );
+    }
+
     const body = (await req.json()) as Inquiry;
 
     const name = clean(body.name);
@@ -91,33 +89,32 @@ export async function POST(req: Request) {
 
     if (!name || !email) {
       return NextResponse.json(
-        { success: false, message: "Missing required fields" },
+        { success: false, message: "Missing required fields." },
         { status: 400 }
       );
     }
 
-    const resend = new Resend(process.env.RESEND_API_KEY);
+    const resend = new Resend(apiKey);
 
     const leadType = getLeadType(body);
     const subject = getSubject(leadType, body.packageInterest);
 
     const html = `
-      <div style="background:#14120e;padding:40px;font-family:Georgia;">
+      <div style="background:#14120e;padding:40px;font-family:Georgia,serif;">
         <div style="max-width:700px;margin:auto;border:1px solid #c4a46533;padding:30px;background:#0f0e0c;">
-
-          <h1 style="color:#c4a465;font-weight:400;">
+          <p style="color:#c4a465;font-size:12px;text-transform:uppercase;letter-spacing:0.2em;">
             Plate The Umpqua
-          </h1>
+          </p>
 
-          <h2 style="color:#efe6d4;margin-top:10px;">
+          <h1 style="color:#efe6d4;font-weight:400;margin:12px 0 8px;">
             ${subject}
-          </h2>
+          </h1>
 
           <p style="color:#b9ac97;">
             Lead Type: <strong>${leadType}</strong>
           </p>
 
-          <table width="100%">
+          <table width="100%" style="border-collapse:collapse;margin-top:20px;">
             ${row("Name", body.name)}
             ${row("Email", body.email)}
             ${row("Phone", body.phone)}
@@ -125,20 +122,19 @@ export async function POST(req: Request) {
             ${row("Guests", body.guests)}
             ${row("Budget", body.budget)}
             ${row("Package", body.packageInterest)}
-            ${row("Urgency", body.urgency)}
+            ${row("Timeline", body.urgency)}
             ${row("Occasion", body.occasion)}
           </table>
 
-          <div style="margin-top:20px;color:#efe6d4;">
-            <p style="color:#c4a465;font-size:12px;">Details</p>
-            <p>${clean(body.details)}</p>
+          <div style="margin-top:24px;color:#efe6d4;">
+            <p style="color:#c4a465;font-size:12px;text-transform:uppercase;letter-spacing:0.14em;">Details</p>
+            <p style="color:#efe6d4;line-height:1.7;">${clean(body.details) || "—"}</p>
           </div>
-
         </div>
       </div>
     `;
 
-    await resend.emails.send({
+    const result = await resend.emails.send({
       from: "Plate The Umpqua <hello@platetheumpqua.com>",
       to: ["hello@platetheumpqua.com"],
       replyTo: email,
@@ -146,11 +142,24 @@ export async function POST(req: Request) {
       html,
     });
 
-    return NextResponse.json({ success: true, leadType });
+    if (result.error) {
+      console.error("Resend email error:", result.error);
+      return NextResponse.json(
+        { success: false, message: result.error.message || "Email failed." },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      leadType,
+      id: result.data?.id,
+    });
   } catch (err) {
-    console.error(err);
+    console.error("Inquiry route error:", err);
+
     return NextResponse.json(
-      { success: false },
+      { success: false, message: "Inquiry submission failed." },
       { status: 500 }
     );
   }
