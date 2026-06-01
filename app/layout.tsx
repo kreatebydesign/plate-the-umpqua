@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import GoogleAnalytics from "./components/GoogleAnalytics";
 import SiteShell from "./components/SiteShell";
 import "./globals.css";
 
@@ -9,11 +10,7 @@ const businessSchema = {
   url: "https://platetheumpqua.com",
   description:
     "Chef-led private dining, estate dinners, realtor concierge hospitality, and wine country experiences rooted in Roseburg and the Umpqua Valley.",
-  areaServed: [
-    "Roseburg, Oregon",
-    "Umpqua Valley",
-    "Southern Oregon",
-  ],
+  areaServed: ["Roseburg, Oregon", "Umpqua Valley", "Southern Oregon"],
   address: {
     "@type": "PostalAddress",
     addressLocality: "Roseburg",
@@ -60,6 +57,10 @@ export const metadata: Metadata = {
   authors: [{ name: "Plate The Umpqua" }],
   creator: "Plate The Umpqua",
   publisher: "Plate The Umpqua",
+
+  verification: {
+    google: "PAvYzjqSDb7uh9SushEgxm9FgFwhwq2r",
+  },
 
   openGraph: {
     title: "Plate The Umpqua | Private Hospitality in Roseburg, Oregon",
@@ -120,6 +121,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen bg-[#14120e] text-[#efe6d4] antialiased">
+        <GoogleAnalytics />
+
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
