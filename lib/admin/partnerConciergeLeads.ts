@@ -1,6 +1,5 @@
-import config from '@/payload.config'
 import type { Client, Inquiry } from '@/payload-types'
-import { getPayload } from 'payload'
+import type { Payload } from 'payload'
 
 export type PartnerLeadRow = {
   id: string
@@ -28,6 +27,13 @@ export type PartnerLeadStats = {
   newLeads: number
   highValue: number
   vipPriority: number
+}
+
+const EMPTY_STATS: PartnerLeadStats = {
+  total: 0,
+  newLeads: 0,
+  highValue: 0,
+  vipPriority: 0,
 }
 
 const STATUS_LABELS: Record<NonNullable<Inquiry['status']>, string> = {
@@ -185,28 +191,35 @@ function buildStats(leads: PartnerLeadRow[]): PartnerLeadStats {
   }
 }
 
-export async function getPartnerConciergeLeadBoard() {
-  const payload = await getPayload({ config })
+export async function getPartnerConciergeLeadBoard(payload: Payload) {
+  try {
+    const result = await payload.find({
+      collection: 'inquiries',
+      depth: 1,
+      limit: 100,
+      sort: '-createdAt',
 
-  const result = await payload.find({
-    collection: 'inquiries',
-    depth: 1,
-    limit: 100,
-    sort: '-createdAt',
-
-    where: {
-      leadSource: {
-        equals: 'partner-concierge',
+      where: {
+        leadSource: {
+          equals: 'partner-concierge',
+        },
       },
-    },
-  })
+    })
 
-  const leads = result.docs.map((doc) =>
-    mapInquiryToRow(doc as Inquiry),
-  )
+    const leads = result.docs.map((doc) =>
+      mapInquiryToRow(doc as Inquiry),
+    )
 
-  return {
-    leads,
-    stats: buildStats(leads),
+    return {
+      leads,
+      stats: buildStats(leads),
+    }
+  } catch (error) {
+    console.error('Partner Concierge lead board error:', error)
+
+    return {
+      leads: [],
+      stats: EMPTY_STATS,
+    }
   }
 }

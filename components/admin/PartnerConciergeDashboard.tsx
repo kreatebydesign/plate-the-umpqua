@@ -2,6 +2,11 @@ import {
   getPartnerConciergeLeadBoard,
   type PartnerLeadRow,
 } from '@/lib/admin/partnerConciergeLeads'
+import type { Payload } from 'payload'
+
+type DashboardProps = {
+  payload: Payload
+}
 
 function StatCard({
   label,
@@ -154,8 +159,10 @@ function LeadTable({ leads }: { leads: PartnerLeadRow[] }) {
   )
 }
 
-export default async function PartnerConciergeDashboard() {
-  const { leads, stats } = await getPartnerConciergeLeadBoard()
+export default async function PartnerConciergeDashboard({
+  payload,
+}: DashboardProps) {
+  const { leads, stats } = await getPartnerConciergeLeadBoard(payload)
 
   return (
     <div className="kxd-partner-dashboard">

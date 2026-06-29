@@ -1,25 +1,107 @@
 import { getPartnerConciergeLeadBoard } from '@/lib/admin/partnerConciergeLeads'
+import type { Payload } from 'payload'
 
-export default async function KXDHospitalityDashboard() {
-  const { stats, leads } = await getPartnerConciergeLeadBoard()
+const coreWorkflow = [
+  {
+    eyebrow: '01 / Partner CRM',
+    title: 'Partner Concierge',
+    body:
+      'Review partner-program leads, follow up with professionals, and open inquiry records in one executive view.',
+    href: '/admin/partners',
+  },
+  {
+    eyebrow: '02 / Pipeline',
+    title: 'Private Dining Inquiries',
+    body:
+      'Review new leads, qualify the experience, and move serious requests into proposal flow.',
+    href: '/admin/collections/inquiries',
+  },
+  {
+    eyebrow: '03 / Experiences',
+    title: 'Curated Hospitality',
+    body:
+      'Shape chef-led dinners, estate gatherings, wine country moments, and private event structure.',
+    href: '/admin/collections/experiences',
+  },
+  {
+    eyebrow: '04 / Events',
+    title: 'Execution Calendar',
+    body:
+      'Track confirmed experiences, service timing, prep notes, and operational details.',
+    href: '/admin/collections/events',
+  },
+]
+
+const operationsModules = [
+  {
+    label: 'Clients',
+    value:
+      'VIP status, preferred experience style, and relationship notes for every guest and partner.',
+    href: '/admin/collections/clients',
+  },
+  {
+    label: 'Experience Briefs',
+    value:
+      'Turn qualified inquiries into design-ready briefs before package and proposal work.',
+    href: '/admin/collections/experience-briefs',
+  },
+  {
+    label: 'Menu Concepts',
+    value:
+      'Culinary direction, seasonal menus, pairings, and service notes.',
+    href: '/admin/collections/menu-concepts',
+  },
+  {
+    label: 'Venues',
+    value:
+      'Estate locations, private homes, winery settings, and preferred service environments.',
+    href: '/admin/collections/venues',
+  },
+  {
+    label: 'Vendor Partners',
+    value:
+      'Trusted florals, rentals, wine partners, service staff, and hospitality support.',
+    href: '/admin/collections/vendor-partners',
+  },
+  {
+    label: 'Proposals',
+    value:
+      'Client-facing experience offers, approvals, scope, and premium presentation flow.',
+    href: '/admin/collections/proposals',
+  },
+  {
+    label: 'Brands',
+    value:
+      'Configure white-label hospitality instances for future KXD Hospitality OS clients.',
+    href: '/admin/collections/brands',
+  },
+]
+
+type DashboardProps = {
+  payload: Payload
+}
+
+export default async function KXDHospitalityDashboard({
+  payload,
+}: DashboardProps) {
+  const { stats, leads } = await getPartnerConciergeLeadBoard(payload)
   const recentLead = leads[0]
 
   return (
-    <div className="kxd-hospitality-dashboard">
-      <section className="kxd-hospitality-hero">
-        <div>
-          <p className="kxd-hospitality-kicker">
+    <section className="kxd-hospitality-dashboard">
+      <div className="kxd-hospitality-hero">
+        <div className="kxd-hospitality-hero__content">
+          <div className="kxd-hospitality-kicker">
             KXD Hospitality OS
-          </p>
+          </div>
 
-          <h1>
-            Private hospitality command center.
-          </h1>
+          <h1>Plate The Umpqua</h1>
 
           <p>
-            Track partner leads, inquiry flow, and experience development
-            for Plate The Umpqua — built to scale across future
-            white-label hospitality brands.
+            A private operating layer for Martin&apos;s culinary experiences,
+            partner concierge leads, estate hospitality, client inquiries,
+            vendor relationships, and premium event execution across the
+            Umpqua Valley.
           </p>
 
           <div className="kxd-hospitality-actions">
@@ -27,34 +109,44 @@ export default async function KXDHospitalityDashboard() {
               Open Partner Concierge CRM
             </a>
 
-            <a href="/admin/collections/inquiries">
-              View All Inquiries
+            <a href="/admin/collections/inquiries/create">
+              New Inquiry
+            </a>
+
+            <a href="/admin/collections/events/create">
+              New Event
+            </a>
+
+            <a href="/admin/collections/proposals/create">
+              New Proposal
             </a>
           </div>
         </div>
 
         <aside className="kxd-hospitality-hero__signal">
-          <div>
-            <span>Partner Concierge</span>
+          <span>Partner Concierge</span>
 
-            <strong>{stats.total}</strong>
+          <strong>{stats.total}</strong>
 
-            <p>
-              {stats.newLeads > 0
-                ? `${stats.newLeads} new partner lead${stats.newLeads === 1 ? '' : 's'} waiting for follow-up.`
-                : 'No new partner leads right now. Drive traffic to /partner-concierge to fill the pipeline.'}
-            </p>
-          </div>
+          <p>
+            {stats.newLeads > 0
+              ? `${stats.newLeads} new partner lead${stats.newLeads === 1 ? '' : 's'} waiting for follow-up.`
+              : 'No new partner leads right now. Drive traffic to /partner-concierge to fill the pipeline.'}
+          </p>
 
-          {recentLead && (
+          {recentLead ? (
             <a href={recentLead.inquiryUrl}>
               Review latest lead
             </a>
+          ) : (
+            <a href="/partner-concierge">
+              Open public partner page
+            </a>
           )}
         </aside>
-      </section>
+      </div>
 
-      <section className="kxd-hospitality-metrics">
+      <div className="kxd-hospitality-metrics">
         <div>
           <span>Partner Leads</span>
           <strong>{stats.total}</strong>
@@ -69,111 +161,80 @@ export default async function KXDHospitalityDashboard() {
           <span>High Value</span>
           <strong>{stats.highValue}</strong>
         </div>
-      </section>
 
-      <section>
+        <div>
+          <span>Primary Flow</span>
+          <strong>Inquiry → Proposal → Event</strong>
+        </div>
+      </div>
+
+      <div className="kxd-hospitality-section">
         <div className="kxd-hospitality-section__header">
-          <span>Experience OS</span>
-          <h2>Move from inquiry to booked hospitality.</h2>
+          <span>Core Workflow</span>
+          <h2>
+            Run the experience from first request to final service.
+          </h2>
         </div>
 
         <div className="kxd-hospitality-primary-grid">
-          <a
-            className="kxd-hospitality-primary-card"
-            href="/admin/partners"
-          >
-            <span>01 / Partner CRM</span>
-            <strong>Partner Concierge</strong>
-            <p>
-              Review partner-program leads, follow up with professionals,
-              and open inquiry records in one executive view.
-            </p>
-          </a>
-
-          <a
-            className="kxd-hospitality-primary-card"
-            href="/admin/collections/inquiries"
-          >
-            <span>02 / Pipeline</span>
-            <strong>Inquiries</strong>
-            <p>
-              Manage discovery, briefs, packages, and proposal stages
-              across every hospitality channel.
-            </p>
-          </a>
-
-          <a
-            className="kxd-hospitality-primary-card"
-            href="/admin/collections/clients"
-          >
-            <span>03 / Relationships</span>
-            <strong>Clients</strong>
-            <p>
-              Track VIP status, preferred experience style, and
-              relationship notes for every guest and partner.
-            </p>
-          </a>
+          {coreWorkflow.map((module) => (
+            <a
+              className="kxd-hospitality-primary-card"
+              href={module.href}
+              key={module.title}
+            >
+              <span>{module.eyebrow}</span>
+              <strong>{module.title}</strong>
+              <p>{module.body}</p>
+            </a>
+          ))}
         </div>
-      </section>
+      </div>
 
-      <section className="kxd-hospitality-lower-grid">
+      <div className="kxd-hospitality-lower-grid">
         <div className="kxd-hospitality-panel">
           <div className="kxd-hospitality-panel__header">
-            <span>Modules</span>
-            <h2>Operating layers</h2>
+            <span>Operations</span>
+            <h2>Hospitality modules</h2>
           </div>
 
           <div className="kxd-hospitality-module-list">
-            <a href="/admin/collections/experience-briefs">
-              <strong>Experience Briefs</strong>
-              <span>
-                Turn qualified inquiries into design-ready briefs.
-              </span>
-            </a>
-
-            <a href="/admin/collections/experiences">
-              <strong>Experiences</strong>
-              <span>
-                Manage production, margin guardrails, and event flow.
-              </span>
-            </a>
-
-            <a href="/admin/collections/proposals">
-              <strong>Proposals</strong>
-              <span>
-                Send polished hospitality proposals with confidence.
-              </span>
-            </a>
-
-            <a href="/admin/collections/brands">
-              <strong>Brands</strong>
-              <span>
-                Configure white-label hospitality instances for future clients.
-              </span>
-            </a>
+            {operationsModules.map((module) => (
+              <a href={module.href} key={module.label}>
+                <strong>{module.label}</strong>
+                <span>{module.value}</span>
+              </a>
+            ))}
           </div>
         </div>
 
         <aside className="kxd-hospitality-panel kxd-hospitality-panel--dark">
-          <span>Partner Growth</span>
+          <span>Owner View</span>
 
           <h2>
-            {stats.total > 0
-              ? `${stats.highValue} high-value partner opportunities`
-              : 'Build the partner pipeline'}
+            Built for Martin to move clean, fast, and premium.
           </h2>
 
           <p>
-            Share the public Partner Concierge page with realtors,
-            advisors, medical practices, and executive teams who need
-            premium client appreciation experiences.
+            This admin is designed to keep the business organized without
+            making the work feel technical. Every module supports hospitality
+            clarity: what came in, what needs attention, what is booked, and
+            what needs to be prepared next.
           </p>
 
-          <a href="/partner-concierge">
-            Open public partner page
+          {stats.total > 0 && (
+            <p>
+              {stats.highValue} high-value partner{' '}
+              {stats.highValue === 1 ? 'opportunity is' : 'opportunities are'}{' '}
+              ready for concierge follow-up.
+            </p>
+          )}
+
+          <a href="/admin/collections/tasks">
+            View Tasks
           </a>
         </aside>
-      </section>
-    </div>
+      </div>
+    </section>
   )
 }
