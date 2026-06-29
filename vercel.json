@@ -1,0 +1,4 @@
+{
+  "installCommand": "npm install --include=optional",
+  "buildCommand": "next build --webpack"
+}
