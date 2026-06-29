@@ -1,0 +1,3 @@
+npm run generate:types
+npm run generate:importmap
+npm run dev

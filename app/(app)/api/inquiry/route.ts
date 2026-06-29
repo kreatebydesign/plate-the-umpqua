@@ -1,60 +1,102 @@
-import { NextResponse } from "next/server";
-import { Resend } from "resend";
+import { NextResponse } from 'next/server'
+import { Resend } from 'resend'
+import config from '../../../../payload.config'
+import { getPayload } from 'payload'
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+const LEAD_SOURCE_LABELS = {
+  website: 'Website',
+  concierge: 'Concierge',
+  packages: 'Packages',
+  'partner-concierge': 'Partner Concierge Program',
+  realtor: 'Realtor',
+  'wine-country': 'Wine Country',
+  referral: 'Referral',
+} as const
+
+type LeadSource = keyof typeof LEAD_SOURCE_LABELS
 
 type Inquiry = {
-  name?: string;
-  email?: string;
-  phone?: string;
-  location?: string;
-  guests?: string;
-  budget?: string;
-  packageInterest?: string;
-  urgency?: string;
-  occasion?: string;
-  details?: string;
-};
+  name?: string
+  email?: string
+  phone?: string
+  location?: string
+  guests?: string
+  budget?: string
+  packageInterest?: string
+  urgency?: string
+  occasion?: string
+  details?: string
+  source?: string
+}
 
 function clean(value?: string) {
-  return value?.trim() || "";
+  return value?.trim() || ''
 }
 
-function getLeadType(data: Inquiry) {
-  const budget = clean(data.budget);
-  const pkg = clean(data.packageInterest);
-  const urgency = clean(data.urgency);
+function normalizeLeadSource(value?: string): LeadSource {
+  const source = clean(value)
 
-  if (pkg === "Concierge" || budget === "2000+") {
-    return "REALTOR / PARTNER LEAD";
+  if (source && source in LEAD_SOURCE_LABELS) {
+    return source as LeadSource
   }
 
-  if (budget === "750-1500" || pkg === "Estate") {
-    return "HIGH VALUE LEAD";
-  }
-
-  if (urgency === "this-week") {
-    return "HOT LEAD";
-  }
-
-  return "STANDARD LEAD";
+  return 'website'
 }
 
-function getSubject(type: string, pkg?: string) {
-  if (type.includes("HIGH VALUE")) {
-    return `High Value Lead — ${pkg || "Inquiry"}`;
+function getLeadSourceLabel(source: LeadSource) {
+  return LEAD_SOURCE_LABELS[source]
+}
+
+function getLeadType(data: Inquiry, leadSource: LeadSource) {
+  const budget = clean(data.budget)
+  const pkg = clean(data.packageInterest)
+  const urgency = clean(data.urgency)
+
+  if (
+    leadSource === 'partner-concierge' ||
+    leadSource === 'realtor' ||
+    pkg === 'Concierge' ||
+    budget === '2000+'
+  ) {
+    return 'REALTOR / PARTNER LEAD'
   }
 
-  if (type.includes("REALTOR")) {
-    return "Realtor / Partner Lead — Concierge Program";
+  if (budget === '750-1500' || pkg === 'Estate') {
+    return 'HIGH VALUE LEAD'
   }
 
-  if (type.includes("HOT")) {
-    return "Hot Lead — Urgent Booking";
+  if (urgency === 'this-week') {
+    return 'HOT LEAD'
   }
 
-  return `New Inquiry — ${pkg || "Private Dining"}`;
+  return 'STANDARD LEAD'
+}
+
+function getSubject(
+  type: string,
+  leadSource: LeadSource,
+  pkg?: string,
+) {
+  if (leadSource === 'partner-concierge') {
+    return 'Partner Concierge Lead — Concierge Program'
+  }
+
+  if (type.includes('HIGH VALUE')) {
+    return `High Value Lead — ${pkg || 'Inquiry'}`
+  }
+
+  if (type.includes('REALTOR')) {
+    return 'Realtor / Partner Lead — Concierge Program'
+  }
+
+  if (type.includes('HOT')) {
+    return 'Hot Lead — Urgent Booking'
+  }
+
+  return `New Inquiry — ${pkg || 'Private Dining'}`
 }
 
 function row(label: string, value?: string) {
@@ -63,42 +105,227 @@ function row(label: string, value?: string) {
       <td style="padding:12px 0;color:#c4a465;font-size:11px;text-transform:uppercase;letter-spacing:0.12em;width:35%;border-bottom:1px solid rgba(196,164,101,0.14);">
         ${label}
       </td>
+
       <td style="padding:12px 0;color:#efe6d4;font-size:14px;border-bottom:1px solid rgba(196,164,101,0.14);">
-        ${clean(value) || "—"}
+        ${clean(value) || '—'}
       </td>
     </tr>
-  `;
+  `
+}
+
+function mapOccasion(value?: string) {
+  switch (value) {
+    case 'Birthday':
+      return 'birthday'
+
+    case 'Anniversary':
+      return 'anniversary'
+
+    case 'Proposal':
+      return 'proposalEngagement'
+
+    case 'Corporate':
+      return 'corporateExecutive'
+
+    case 'Wine Experience':
+      return 'wineCountryExperience'
+
+    default:
+      return 'privateDinner'
+  }
+}
+
+function mapExperienceStyle(pkg?: string, leadSource?: LeadSource) {
+  if (leadSource === 'partner-concierge' || leadSource === 'realtor') {
+    return ['realtorConcierge']
+  }
+
+  switch (pkg) {
+    case 'Estate':
+      return ['estateDinner']
+
+    case 'Concierge':
+      return ['realtorConcierge']
+
+    case 'Wine':
+      return ['wineCountry']
+
+    default:
+      return ['privateDinner']
+  }
+}
+
+function isPartnerLead(leadSource: LeadSource, pkg?: string) {
+  return (
+    leadSource === 'partner-concierge' ||
+    leadSource === 'realtor' ||
+    pkg === 'Concierge'
+  )
 }
 
 export async function POST(req: Request) {
   try {
-    const apiKey = process.env.RESEND_API_KEY;
+    const apiKey = process.env.RESEND_API_KEY
 
     if (!apiKey) {
-      console.error("RESEND_API_KEY is missing.");
-
       return NextResponse.json(
-        { success: false, message: "Email service is not configured." },
-        { status: 500 }
-      );
+        {
+          success: false,
+          message: 'Email service is not configured.',
+        },
+        {
+          status: 500,
+        },
+      )
     }
 
-    const body = (await req.json()) as Inquiry;
+    const body = (await req.json()) as Inquiry
 
-    const name = clean(body.name);
-    const email = clean(body.email);
+    const name = clean(body.name)
+    const email = clean(body.email)
+    const leadSource = normalizeLeadSource(body.source)
+    const leadSourceLabel = getLeadSourceLabel(leadSource)
 
     if (!name || !email) {
       return NextResponse.json(
-        { success: false, message: "Missing required fields." },
-        { status: 400 }
-      );
+        {
+          success: false,
+          message: 'Missing required fields.',
+        },
+        {
+          status: 400,
+        },
+      )
     }
 
-    const resend = new Resend(apiKey);
+    const payload = await getPayload({
+      config,
+    })
 
-    const leadType = getLeadType(body);
-    const subject = getSubject(leadType, body.packageInterest);
+    const resend = new Resend(apiKey)
+
+    const existingClients = await payload.find({
+      collection: 'clients' as any,
+      limit: 1,
+
+      where: {
+        email: {
+          equals: email,
+        },
+      },
+    })
+
+    let clientID: string
+
+    if (existingClients.docs.length > 0) {
+      clientID = String(existingClients.docs[0].id)
+    } else {
+      const createdClient = await payload.create({
+        collection: 'clients' as any,
+
+        data: {
+          fullName: name,
+          email,
+          phone: clean(body.phone),
+
+          clientType: isPartnerLead(
+            leadSource,
+            body.packageInterest,
+          )
+            ? 'realtor'
+            : 'private',
+
+          vipStatus:
+            body.budget === '2000+' ||
+            leadSource === 'partner-concierge'
+              ? 'vip'
+              : 'standard',
+
+          preferredExperienceStyle: mapExperienceStyle(
+            body.packageInterest,
+            leadSource,
+          ),
+
+          averageSpendRange: clean(body.budget),
+
+          relationshipNotes: `
+Lead Source: ${leadSourceLabel}
+
+Location:
+${clean(body.location)}
+
+Occasion:
+${clean(body.occasion)}
+
+Timeline:
+${clean(body.urgency)}
+          `,
+        },
+      })
+
+      clientID = String(createdClient.id)
+    }
+
+    const inquiry = await payload.create({
+      collection: 'inquiries' as any,
+
+      data: {
+        leadSource,
+
+        eventTitle:
+          clean(body.occasion) ||
+          (leadSource === 'partner-concierge'
+            ? 'Partner Concierge Program Inquiry'
+            : 'Private Hospitality Inquiry'),
+
+        client: clientID,
+
+        guestCount:
+          Number(body.guests) || undefined,
+
+        preferredRegion:
+          clean(body.location) || 'Umpqua Valley',
+
+        experienceVision:
+          clean(body.details) ||
+          `Client submitted a new hospitality inquiry through ${leadSourceLabel}.`,
+
+        occasion:
+          leadSource === 'partner-concierge'
+            ? 'realtorHospitality'
+            : mapOccasion(body.occasion),
+
+        status: 'newLead',
+
+        priorityLevel:
+          body.budget === '2000+' ||
+          leadSource === 'partner-concierge'
+            ? 'vip'
+            : 'standard',
+      },
+    })
+
+    const leadType = getLeadType(body, leadSource)
+
+    const subject = getSubject(
+      leadType,
+      leadSource,
+      body.packageInterest,
+    )
+
+    const leadSourceBanner =
+      leadSource === 'partner-concierge'
+        ? `
+          <div style="margin:20px 0 8px;padding:16px 18px;border:1px solid rgba(196,164,101,0.35);background:rgba(196,164,101,0.08);">
+            <p style="margin:0;color:#c4a465;font-size:11px;text-transform:uppercase;letter-spacing:0.18em;">
+              Lead Source
+            </p>
+            <p style="margin:8px 0 0;color:#efe6d4;font-size:18px;line-height:1.4;">
+              Partner Concierge Program
+            </p>
+          </div>
+        `
+        : ''
 
     const html = `
       <div style="background:#14120e;padding:40px;font-family:Georgia,serif;">
@@ -115,62 +342,76 @@ export async function POST(req: Request) {
             A new private hospitality inquiry was submitted through platetheumpqua.com.
           </p>
 
+          ${leadSourceBanner}
+
           <p style="color:#b9ac97;">
             Lead Type: <strong>${leadType}</strong>
           </p>
 
           <table width="100%" style="border-collapse:collapse;margin-top:20px;">
-            ${row("Name", body.name)}
-            ${row("Email", body.email)}
-            ${row("Phone", body.phone)}
-            ${row("Location", body.location)}
-            ${row("Guests", body.guests)}
-            ${row("Budget", body.budget)}
-            ${row("Package", body.packageInterest)}
-            ${row("Timeline", body.urgency)}
-            ${row("Occasion", body.occasion)}
+            ${row('Lead Source', leadSourceLabel)}
+            ${row('Name', body.name)}
+            ${row('Email', body.email)}
+            ${row('Phone', body.phone)}
+            ${row('Location', body.location)}
+            ${row('Guests', body.guests)}
+            ${row('Budget', body.budget)}
+            ${row('Package', body.packageInterest)}
+            ${row('Timeline', body.urgency)}
+            ${row('Occasion', body.occasion)}
           </table>
 
           <div style="margin-top:24px;color:#efe6d4;">
             <p style="color:#c4a465;font-size:12px;text-transform:uppercase;letter-spacing:0.14em;">
               Details
             </p>
+
             <p style="color:#efe6d4;line-height:1.7;">
-              ${clean(body.details) || "—"}
+              ${clean(body.details) || '—'}
             </p>
           </div>
         </div>
       </div>
-    `;
+    `
 
     const result = await resend.emails.send({
-      from: "Plate The Umpqua <inquiries@platetheumpqua.com>",
-      to: ["hello@platetheumpqua.com"],
+      from:
+        'Plate The Umpqua <info@platetheumpqua.com>',
+
+      to: ['platetheumpqua@gmail.com'],
+
       replyTo: email,
+
       subject,
+
       html,
-    });
+    })
 
     if (result.error) {
-      console.error("Resend email error:", result.error);
-
-      return NextResponse.json(
-        { success: false, message: result.error.message || "Email failed." },
-        { status: 500 }
-      );
+      console.error(
+        'Resend email error:',
+        result.error,
+      )
     }
 
     return NextResponse.json({
       success: true,
+      inquiryID: inquiry.id,
       leadType,
-      id: result.data?.id,
-    });
+      leadSource,
+      emailID: result.data?.id,
+    })
   } catch (err) {
-    console.error("Inquiry route error:", err);
+    console.error('Inquiry route error:', err)
 
     return NextResponse.json(
-      { success: false, message: "Inquiry submission failed." },
-      { status: 500 }
-    );
+      {
+        success: false,
+        message: 'Inquiry submission failed.',
+      },
+      {
+        status: 500,
+      },
+    )
   }
 }
