@@ -11,6 +11,7 @@ const LEAD_SOURCE_LABELS = {
   concierge: 'Concierge',
   packages: 'Packages',
   'partner-concierge': 'Partner Concierge Program',
+  'community-partnership': 'Private Community Partnership',
   realtor: 'Realtor',
   'wine-country': 'Wine Country',
   referral: 'Referral',
@@ -50,13 +51,20 @@ function getLeadSourceLabel(source: LeadSource) {
   return LEAD_SOURCE_LABELS[source]
 }
 
+function isConciergeChannelLead(leadSource: LeadSource) {
+  return (
+    leadSource === 'partner-concierge' ||
+    leadSource === 'community-partnership'
+  )
+}
+
 function getLeadType(data: Inquiry, leadSource: LeadSource) {
   const budget = clean(data.budget)
   const pkg = clean(data.packageInterest)
   const urgency = clean(data.urgency)
 
   if (
-    leadSource === 'partner-concierge' ||
+    isConciergeChannelLead(leadSource) ||
     leadSource === 'realtor' ||
     pkg === 'Concierge' ||
     budget === '2000+'
@@ -80,6 +88,10 @@ function getSubject(
   leadSource: LeadSource,
   pkg?: string,
 ) {
+  if (leadSource === 'community-partnership') {
+    return 'Community Partnership Lead — Private Community Partnership'
+  }
+
   if (leadSource === 'partner-concierge') {
     return 'Partner Concierge Lead — Concierge Program'
   }
@@ -113,7 +125,15 @@ function row(label: string, value?: string) {
   `
 }
 
-function mapOccasion(value?: string) {
+function mapOccasion(value?: string, leadSource?: LeadSource) {
+  if (leadSource === 'community-partnership') {
+    return 'whiteLabelHospitality'
+  }
+
+  if (leadSource === 'partner-concierge') {
+    return 'realtorHospitality'
+  }
+
   switch (value) {
     case 'Birthday':
       return 'birthday'
@@ -136,7 +156,11 @@ function mapOccasion(value?: string) {
 }
 
 function mapExperienceStyle(pkg?: string, leadSource?: LeadSource) {
-  if (leadSource === 'partner-concierge' || leadSource === 'realtor') {
+  if (
+    leadSource === 'partner-concierge' ||
+    leadSource === 'community-partnership' ||
+    leadSource === 'realtor'
+  ) {
     return ['realtorConcierge']
   }
 
@@ -157,10 +181,52 @@ function mapExperienceStyle(pkg?: string, leadSource?: LeadSource) {
 
 function isPartnerLead(leadSource: LeadSource, pkg?: string) {
   return (
-    leadSource === 'partner-concierge' ||
+    isConciergeChannelLead(leadSource) ||
     leadSource === 'realtor' ||
     pkg === 'Concierge'
   )
+}
+
+function getLeadSourceBanner(leadSource: LeadSource) {
+  if (leadSource === 'community-partnership') {
+    return `
+      <div style="margin:20px 0 8px;padding:16px 18px;border:1px solid rgba(196,164,101,0.35);background:rgba(196,164,101,0.08);">
+        <p style="margin:0;color:#c4a465;font-size:11px;text-transform:uppercase;letter-spacing:0.18em;">
+          Lead Source
+        </p>
+        <p style="margin:8px 0 0;color:#efe6d4;font-size:18px;line-height:1.4;">
+          Private Community Partnership
+        </p>
+      </div>
+    `
+  }
+
+  if (leadSource === 'partner-concierge') {
+    return `
+      <div style="margin:20px 0 8px;padding:16px 18px;border:1px solid rgba(196,164,101,0.35);background:rgba(196,164,101,0.08);">
+        <p style="margin:0;color:#c4a465;font-size:11px;text-transform:uppercase;letter-spacing:0.18em;">
+          Lead Source
+        </p>
+        <p style="margin:8px 0 0;color:#efe6d4;font-size:18px;line-height:1.4;">
+          Partner Concierge Program
+        </p>
+      </div>
+    `
+  }
+
+  return ''
+}
+
+function getDefaultEventTitle(leadSource: LeadSource) {
+  if (leadSource === 'community-partnership') {
+    return 'Private Community Partnership Inquiry'
+  }
+
+  if (leadSource === 'partner-concierge') {
+    return 'Partner Concierge Program Inquiry'
+  }
+
+  return 'Private Hospitality Inquiry'
 }
 
 export async function POST(req: Request) {
@@ -237,7 +303,7 @@ export async function POST(req: Request) {
 
           vipStatus:
             body.budget === '2000+' ||
-            leadSource === 'partner-concierge'
+            isConciergeChannelLead(leadSource)
               ? 'vip'
               : 'standard',
 
@@ -273,10 +339,7 @@ ${clean(body.urgency)}
         leadSource,
 
         eventTitle:
-          clean(body.occasion) ||
-          (leadSource === 'partner-concierge'
-            ? 'Partner Concierge Program Inquiry'
-            : 'Private Hospitality Inquiry'),
+          clean(body.occasion) || getDefaultEventTitle(leadSource),
 
         client: clientID,
 
@@ -290,16 +353,13 @@ ${clean(body.urgency)}
           clean(body.details) ||
           `Client submitted a new hospitality inquiry through ${leadSourceLabel}.`,
 
-        occasion:
-          leadSource === 'partner-concierge'
-            ? 'realtorHospitality'
-            : mapOccasion(body.occasion),
+        occasion: mapOccasion(body.occasion, leadSource),
 
         status: 'newLead',
 
         priorityLevel:
           body.budget === '2000+' ||
-          leadSource === 'partner-concierge'
+          isConciergeChannelLead(leadSource)
             ? 'vip'
             : 'standard',
       },
@@ -313,19 +373,7 @@ ${clean(body.urgency)}
       body.packageInterest,
     )
 
-    const leadSourceBanner =
-      leadSource === 'partner-concierge'
-        ? `
-          <div style="margin:20px 0 8px;padding:16px 18px;border:1px solid rgba(196,164,101,0.35);background:rgba(196,164,101,0.08);">
-            <p style="margin:0;color:#c4a465;font-size:11px;text-transform:uppercase;letter-spacing:0.18em;">
-              Lead Source
-            </p>
-            <p style="margin:8px 0 0;color:#efe6d4;font-size:18px;line-height:1.4;">
-              Partner Concierge Program
-            </p>
-          </div>
-        `
-        : ''
+    const leadSourceBanner = getLeadSourceBanner(leadSource)
 
     const html = `
       <div style="background:#14120e;padding:40px;font-family:Georgia,serif;">

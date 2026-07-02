@@ -82,6 +82,11 @@ export const Inquiries: CollectionConfig = {
         },
 
         {
+          label: 'Private Community Partnership',
+          value: 'community-partnership',
+        },
+
+        {
           label: 'Realtor',
           value: 'realtor',
         },

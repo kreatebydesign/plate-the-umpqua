@@ -32,6 +32,7 @@ const VALID_SOURCES = new Set([
   "concierge",
   "packages",
   "partner-concierge",
+  "community-partnership",
   "realtor",
   "wine-country",
   "referral",
@@ -42,6 +43,7 @@ const SOURCE_LABELS: Record<string, string> = {
   concierge: "Concierge",
   packages: "Packages",
   "partner-concierge": "Partner Concierge Program",
+  "community-partnership": "Private Community Partnership",
   realtor: "Realtor",
   "wine-country": "Wine Country",
   referral: "Referral",
@@ -63,6 +65,9 @@ function InquiryForm() {
   );
 
   const isPartnerConcierge = source === "partner-concierge";
+  const isCommunityPartnership = source === "community-partnership";
+  const isConciergePrefill = isPartnerConcierge || isCommunityPartnership;
+  const showSourceBanner = isConciergePrefill;
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -121,6 +126,36 @@ function InquiryForm() {
     }
   }
 
+  const eyebrow = isCommunityPartnership
+    ? "Community Partnership Inquiry"
+    : isPartnerConcierge
+      ? "Partner Concierge Inquiry"
+      : "Inquiry";
+
+  const headline = isCommunityPartnership
+    ? "Community Partnership Inquiry"
+    : isPartnerConcierge
+      ? "Request Partner Concierge access."
+      : "Request a private hospitality experience.";
+
+  const supportingCopy = isCommunityPartnership
+    ? "Tell us about your community, resident profile, and the hospitality amenity you want to bring on-property. We will follow up directly to design a partnership."
+    : isPartnerConcierge
+      ? "Share the occasion, your client relationship, and the tone you want the evening to carry. We will follow up directly to shape the experience."
+      : "Private dining, estate gatherings, concierge hospitality, and elevated evenings across Roseburg and the Umpqua Valley.";
+
+  const detailsPlaceholder = isCommunityPartnership
+    ? "Tell us about your community, HOA structure, clubhouse amenities, and the resident experiences you want to offer..."
+    : isPartnerConcierge
+      ? "Tell us about the client relationship, occasion, and the experience you want to gift..."
+      : "Tell us about the experience...";
+
+  const submitLabel = isCommunityPartnership
+    ? "Request Community Partnership"
+    : isPartnerConcierge
+      ? "Request Partner Access"
+      : "Request Availability";
+
   return (
     <>
       <motion.div
@@ -130,22 +165,18 @@ function InquiryForm() {
         className="mx-auto max-w-3xl text-center"
       >
         <p className="text-[9px] uppercase tracking-[0.34em] text-[#c4a465] sm:text-[10px] sm:tracking-[0.42em]">
-          {isPartnerConcierge ? "Partner Concierge Inquiry" : "Inquiry"}
+          {eyebrow}
         </p>
 
         <h1
           className="mx-auto mt-6 max-w-5xl text-[clamp(3rem,15vw,6.5rem)] leading-[0.9] tracking-[-0.05em]"
           style={{ fontFamily: "var(--font-cormorant)" }}
         >
-          {isPartnerConcierge
-            ? "Request Partner Concierge access."
-            : "Request a private hospitality experience."}
+          {headline}
         </h1>
 
         <p className="mx-auto mt-7 max-w-2xl text-sm leading-7 text-[#e9decb]/84 sm:text-base md:text-lg md:leading-8">
-          {isPartnerConcierge
-            ? "Share the occasion, your client relationship, and the tone you want the evening to carry. We will follow up directly to shape the experience."
-            : "Private dining, estate gatherings, concierge hospitality, and elevated evenings across Roseburg and the Umpqua Valley."}
+          {supportingCopy}
         </p>
       </motion.div>
 
@@ -156,7 +187,7 @@ function InquiryForm() {
         transition={{ delay: 0.12 }}
         className="mx-auto mt-14 max-w-4xl border border-[#c4a465]/14 bg-[#0f0e0c]/88 p-5 backdrop-blur-xl sm:p-7 md:mt-20 md:p-10"
       >
-        {isPartnerConcierge && (
+        {showSourceBanner && (
           <p className="mb-6 border border-[#c4a465]/22 bg-[#14120e]/60 px-4 py-3 text-center text-[11px] uppercase tracking-[0.22em] text-[#c4a465]">
             {SOURCE_LABELS[source]}
           </p>
@@ -189,7 +220,11 @@ function InquiryForm() {
             />
             <input
               name="location"
-              placeholder="Event Location"
+              placeholder={
+                isCommunityPartnership
+                  ? "Community / Property Name"
+                  : "Event Location"
+              }
               className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition placeholder:text-[#8d8477] focus:border-[#c4a465]/55"
             />
           </div>
@@ -208,7 +243,7 @@ function InquiryForm() {
 
             <select
               name="budget"
-              defaultValue={isPartnerConcierge ? "2000+" : ""}
+              defaultValue={isConciergePrefill ? "2000+" : ""}
               className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition focus:border-[#c4a465]/55"
             >
               <option value="">Estimated Budget</option>
@@ -221,7 +256,7 @@ function InquiryForm() {
           <div className="grid gap-5 md:grid-cols-2 md:gap-6">
             <select
               name="packageInterest"
-              defaultValue={isPartnerConcierge ? "Concierge" : ""}
+              defaultValue={isConciergePrefill ? "Concierge" : ""}
               className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition focus:border-[#c4a465]/55"
             >
               <option value="">Experience Type</option>
@@ -243,18 +278,14 @@ function InquiryForm() {
 
           <input
             name="occasion"
-            placeholder="Occasion"
+            placeholder={isCommunityPartnership ? "Partnership Focus" : "Occasion"}
             className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition placeholder:text-[#8d8477] focus:border-[#c4a465]/55"
           />
 
           <textarea
             name="details"
             rows={7}
-            placeholder={
-              isPartnerConcierge
-                ? "Tell us about the client relationship, occasion, and the experience you want to gift..."
-                : "Tell us about the experience..."
-            }
+            placeholder={detailsPlaceholder}
             className="min-h-[180px] border border-[#c4a465]/18 bg-[#14120e] px-5 py-5 text-sm leading-7 outline-none transition placeholder:text-[#8d8477] focus:border-[#c4a465]/55"
           />
 
@@ -268,9 +299,7 @@ function InquiryForm() {
                 ? "Submitting Inquiry..."
                 : success
                   ? "Inquiry Received"
-                  : isPartnerConcierge
-                    ? "Request Partner Access"
-                    : "Request Availability"}
+                  : submitLabel}
             </button>
 
             {success && (

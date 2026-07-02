@@ -63,6 +63,76 @@ const useCases = [
   },
 ];
 
+const communityOfferings = [
+  {
+    title: "Resident Private Dining",
+    desc: "In-home coursed dining for residents — pre-approved, seamlessly booked, and executed with estate-level care.",
+  },
+  {
+    title: "Clubhouse Culinary Events",
+    desc: "Chef-led gatherings in community clubhouses, designed to feel refined rather than catered.",
+  },
+  {
+    title: "Wine & Chef Evenings",
+    desc: "Regional wine, seasonal menus, and an atmosphere that elevates the community social calendar.",
+  },
+  {
+    title: "Seasonal Community Gatherings",
+    desc: "Spring, harvest, and holiday programming that gives residents a reason to gather with intention.",
+  },
+  {
+    title: "Welcome Home Experiences",
+    desc: "A considered culinary welcome for new homeowners — personal, memorable, and on-brand for the community.",
+  },
+  {
+    title: "Executive & Client Entertaining",
+    desc: "Resident-hosted business entertainment handled with discretion, polish, and white-glove service.",
+  },
+  {
+    title: "Holiday Hospitality",
+    desc: "Thanksgiving, Christmas, and New Year's experiences that feel like a private residence, not a banquet hall.",
+  },
+  {
+    title: "HOA Appreciation Events",
+    desc: "Board and management appreciation evenings that recognize the people who steward the community.",
+  },
+];
+
+const communityPillars = [
+  {
+    title: "Pre-approved hospitality provider",
+    desc: "One vetted partner approved by community leadership — simplifying vendor review for every resident occasion.",
+  },
+  {
+    title: "Fully insured professional chef",
+    desc: "Licensed, insured, and accountable — meeting the standards HOA boards and property managers require.",
+  },
+  {
+    title: "Trusted by community management",
+    desc: "A relationship built with boards and managers first, so resident bookings inherit that trust.",
+  },
+  {
+    title: "Simple resident booking process",
+    desc: "Residents request through a clear, concierge-style path — no vendor hunting, no uncertainty.",
+  },
+  {
+    title: "Elevated lifestyle amenity",
+    desc: "Hospitality that functions as a genuine community differentiator, not an afterthought.",
+  },
+  {
+    title: "Clubhouse-ready experiences",
+    desc: "Programming designed for amenity spaces — paced, polished, and ready for shared settings.",
+  },
+  {
+    title: "White-glove execution",
+    desc: "From menu to service flow, every detail is managed so the evening feels effortless.",
+  },
+  {
+    title: "Local Umpqua expertise",
+    desc: "Seasonal sourcing, regional wine, and a chef rooted in the valley — not flown in for the occasion.",
+  },
+];
+
 const tiers = [
   {
     title: "Signature Dinner",
@@ -134,6 +204,7 @@ const steps = [
 ];
 
 const PARTNER_INQUIRY_HREF = "/inquiry?source=partner-concierge";
+const COMMUNITY_INQUIRY_HREF = "/inquiry?source=community-partnership";
 
 const reasons = [
   {
@@ -301,8 +372,161 @@ export default function PartnerConciergePage() {
         </motion.div>
       </section>
 
+      {/* Private Community Partnerships */}
+      <section className="relative border-y border-[#c4a465]/12 bg-[#0f0d0a] px-5 py-20 md:px-6 md:py-28">
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="mx-auto max-w-6xl"
+        >
+          <div className="grid gap-12 md:grid-cols-[0.95fr_1.05fr] md:gap-16">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.34em] text-[#c4a465] md:tracking-[0.38em]">
+                Private Community Partnerships
+              </p>
+
+              <h2
+                className="mt-5 text-[clamp(2.6rem,11vw,4rem)] leading-[0.96] tracking-[-0.04em] md:text-5xl md:leading-tight"
+                style={{ fontFamily: "var(--font-cormorant)" }}
+              >
+                Luxury hospitality, already approved for your community.
+              </h2>
+            </div>
+
+            <p className="text-sm leading-7 text-[#e9decb]/82 md:text-base md:leading-8">
+              Plate The Umpqua partners with luxury gated communities, private neighborhoods, country clubs, and estate communities to provide residents with a trusted, pre-approved culinary experience. Once approved by the HOA or community management, residents gain access to refined private dining, wine experiences, seasonal gatherings, executive entertaining, and clubhouse hospitality—all delivered by a vetted local hospitality partner.
+            </p>
+          </div>
+
+          <div className="mt-14 grid gap-5 md:mt-16 md:grid-cols-2 md:gap-6 lg:grid-cols-4">
+            {communityOfferings.map((item, index) => (
+              <motion.article
+                key={item.title}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ delay: index * 0.04 }}
+                className="border border-[#c4a465]/16 bg-[#14120e]/45 p-6 backdrop-blur-sm md:p-7"
+              >
+                <p className="text-[10px] uppercase tracking-[0.28em] text-[#c4a465]/75">
+                  Community Offering
+                </p>
+
+                <h3
+                  className="mt-4 text-[1.55rem] leading-[1.04] tracking-[-0.03em] text-[#efe6d4] md:text-[1.65rem]"
+                  style={{ fontFamily: "var(--font-cormorant)" }}
+                >
+                  {item.title}
+                </h3>
+
+                <p className="mt-4 text-sm leading-7 text-[#e9decb]/76">
+                  {item.desc}
+                </p>
+              </motion.article>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Why Communities Choose */}
+      <section className="relative px-5 py-20 md:px-6 md:py-28">
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="mx-auto max-w-6xl"
+        >
+          <div className="grid gap-10 md:grid-cols-[0.85fr_1.15fr] md:gap-16">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.34em] text-[#c4a465] md:tracking-[0.38em]">
+                Why Communities Choose Plate The Umpqua
+              </p>
+
+              <h2
+                className="mt-5 text-[clamp(2.6rem,11vw,4rem)] leading-[0.96] tracking-[-0.04em] md:text-5xl md:leading-tight"
+                style={{ fontFamily: "var(--font-cormorant)" }}
+              >
+                An amenity that feels like Four Seasons, not a vendor list.
+              </h2>
+
+              <p className="mt-7 max-w-xl text-sm leading-7 text-[#e9decb]/80 md:text-base md:leading-8">
+                Martin partners directly with HOA boards and community management — becoming the community&apos;s trusted, pre-approved private chef and hospitality provider rather than selling dinners one homeowner at a time.
+              </p>
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2">
+              {communityPillars.map((pillar) => (
+                <article
+                  key={pillar.title}
+                  className="border border-[#c4a465]/14 bg-[#100e0b]/55 p-5 md:p-6"
+                >
+                  <h3
+                    className="text-[1.35rem] leading-[1.06] tracking-[-0.02em] md:text-xl"
+                    style={{ fontFamily: "var(--font-cormorant)" }}
+                  >
+                    {pillar.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-7 text-[#e9decb]/76">
+                    {pillar.desc}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Community Partnership CTA */}
+      <section className="relative overflow-hidden border-y border-[#c4a465]/12 bg-[#100e0b] px-5 py-20 md:px-6 md:py-28">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(196,164,101,0.1),transparent_55%)]" />
+
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="relative z-10 mx-auto max-w-4xl text-center"
+        >
+          <p className="text-[10px] uppercase tracking-[0.34em] text-[#c4a465] md:tracking-[0.38em]">
+            Community Partnership
+          </p>
+
+          <h2
+            className="mx-auto mt-5 max-w-3xl text-[clamp(2.6rem,12vw,4rem)] leading-[0.96] tracking-[-0.04em] md:text-5xl md:leading-tight"
+            style={{ fontFamily: "var(--font-cormorant)" }}
+          >
+            Bring luxury hospitality to your community.
+          </h2>
+
+          <p className="mx-auto mt-7 max-w-2xl text-sm leading-7 text-[#e9decb]/84 md:text-base md:leading-8">
+            Whether you&apos;re an HOA board, community manager, developer, private club, or luxury residential neighborhood, Plate The Umpqua can create a tailored hospitality partnership that elevates the resident experience while simplifying event planning.
+          </p>
+
+          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <Link
+              href={COMMUNITY_INQUIRY_HREF}
+              className="w-full max-w-xs border border-[#c4a465] px-7 py-4 text-center text-[11px] uppercase tracking-[0.23em] transition duration-300 hover:bg-[#c4a465] hover:text-[#14120e] sm:w-auto sm:max-w-none sm:px-8 sm:text-xs"
+            >
+              Request Community Partnership
+            </Link>
+
+            <Link
+              href={COMMUNITY_INQUIRY_HREF}
+              className="w-full max-w-xs px-7 py-4 text-center text-[11px] uppercase tracking-[0.23em] text-[#efe6d4]/82 transition hover:text-[#c4a465] sm:w-auto sm:max-w-none sm:px-8 sm:text-xs"
+            >
+              Schedule a Discovery Call
+            </Link>
+          </div>
+        </motion.div>
+      </section>
+
       {/* Editorial Split */}
-      <section className="grid items-center border-y border-[#c4a465]/10 md:min-h-[85vh] md:grid-cols-2">
+      <section className="grid items-center border-b border-[#c4a465]/10 md:min-h-[85vh] md:grid-cols-2">
         <div className="relative h-[58vh] min-h-[400px] overflow-hidden md:h-full md:min-h-[85vh]">
           <Image
             src="/content/images/umpqua-private-dining22.jpg"
