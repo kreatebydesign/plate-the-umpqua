@@ -174,7 +174,7 @@ export async function getTodayAtPlate(user: User): Promise<TodayAtPlateData> {
       sourceLabel: LEAD_SOURCE_LABELS[doc.leadSource || ''] || doc.leadSource || '—',
       receivedLabel: formatShortDate(doc.createdAt),
       clientName: relName(doc.client, 'fullName'),
-      adminHref: `/admin/collections/inquiries/${doc.id}`,
+      adminHref: `/os/inquiries/${doc.id}`,
     }))
   } catch (err) {
     console.error('[os/today] inquiries', err)

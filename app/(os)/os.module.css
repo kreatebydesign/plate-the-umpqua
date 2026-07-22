@@ -643,3 +643,245 @@
     font-size: 1.85rem;
   }
 }
+
+/* Inquiry workspace */
+
+.filterBar {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem 1rem;
+  align-items: end;
+}
+
+.filterActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  grid-column: 1 / -1;
+}
+
+.fieldLabel {
+  display: grid;
+  gap: 0.4rem;
+  color: rgba(239, 230, 212, 0.62);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.fieldControl {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 0.85rem;
+  border: 1px solid var(--os-line-strong);
+  border-radius: var(--os-radius);
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--os-ivory);
+  font: inherit;
+  font-size: 0.9rem;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.fieldControl:focus-visible {
+  outline: 2px solid var(--os-gold);
+  outline-offset: 2px;
+}
+
+.fieldHint {
+  margin: 0.35rem 0 0;
+  color: rgba(239, 230, 212, 0.48);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.inquiryList {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.inquiryItem {
+  margin: 0;
+}
+
+.inquiryLink {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--os-line);
+  border-radius: var(--os-radius);
+  color: inherit;
+  text-decoration: none;
+}
+
+.inquiryLink:hover {
+  border-color: var(--os-line-strong);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.inquiryLink:focus-visible {
+  outline: 2px solid var(--os-gold);
+  outline-offset: 2px;
+}
+
+.inquiryTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.85rem;
+}
+
+.statusChip {
+  flex-shrink: 0;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--os-line-strong);
+  border-radius: var(--os-radius);
+  color: rgba(239, 230, 212, 0.78);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.statusChipAlert {
+  border-color: rgba(196, 164, 101, 0.55);
+  color: var(--os-gold);
+}
+
+.followHint {
+  margin: 0;
+  color: rgba(196, 164, 101, 0.9);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.paginationStatus {
+  margin: 0;
+  color: rgba(239, 230, 212, 0.55);
+  font-size: 0.85rem;
+}
+
+.paginationDisabled {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 1.1rem;
+  color: rgba(239, 230, 212, 0.28);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.detailLayout {
+  display: grid;
+  gap: 1rem;
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.detailList {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0.85rem 0 0;
+}
+
+.detailList div {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.detailList dt {
+  color: rgba(239, 230, 212, 0.48);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.detailList dd {
+  margin: 0;
+  color: var(--os-ivory-soft);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.detailList a {
+  color: var(--os-gold);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.visionCopy {
+  margin: 0.75rem 0 0;
+  color: rgba(239, 230, 212, 0.78);
+  font-size: 0.98rem;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.panelSensitive {
+  padding: 1.15rem 1.2rem;
+  border: 1px solid rgba(196, 164, 101, 0.35);
+  border-radius: var(--os-radius);
+  background: rgba(196, 164, 101, 0.05);
+}
+
+.opsForm {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 0.85rem;
+}
+
+.opsFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.formSuccess {
+  margin: 0;
+  color: rgba(196, 164, 101, 0.95);
+  font-size: 0.88rem;
+}
+
+@media (max-width: 860px) {
+  .filterBar {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .detailGrid,
+  .opsFields {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .filterBar {
+    grid-template-columns: 1fr;
+  }
+
+  .inquiryTop {
+    flex-direction: column;
+  }
+}

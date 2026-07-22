@@ -43,6 +43,9 @@ export default function OsShell({
   const titleId = useId()
 
   const page = useMemo(() => {
+    if (pathname.startsWith('/os/inquiries/') && pathname !== '/os/inquiries') {
+      return { title: 'Inquiry detail', eyebrow: 'Pipeline record' }
+    }
     return (
       PAGE_META[pathname] || {
         title: 'Plate Business OS',

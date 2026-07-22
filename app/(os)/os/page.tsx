@@ -65,7 +65,7 @@ export default async function TodayAtPlatePage() {
       ) : null}
 
       <section className={styles.metrics} aria-label="Operational summary">
-        <Link href="/os/inquiries" className={styles.metricCard}>
+        <Link href="/os/inquiries?pipeline=new" className={styles.metricCard}>
           <p className={styles.metricLabel}>New inquiries</p>
           <p className={styles.metricValue}>{data.counts.newInquiries}</p>
           <p className={styles.metricHint}>
