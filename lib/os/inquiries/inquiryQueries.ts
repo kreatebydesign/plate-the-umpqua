@@ -102,6 +102,8 @@ export type InquiryDetail = {
     email: string | null
     phone: string | null
   }
+  /** OS client detail when an authorized client relationship is present. */
+  clientOsHref: string | null
   dietaryNotes: string | null
   canEditOperational: boolean
   canViewDietary: boolean
@@ -423,6 +425,7 @@ export async function getInquiryDetail(
       experienceVision: doc.experienceVision?.trim() || null,
       addOns,
       client,
+      clientOsHref: client.id ? `/os/clients/${client.id}` : null,
       dietaryNotes: dietary,
       canEditOperational: canEdit,
       canViewDietary: Boolean(dietary),

@@ -50,6 +50,7 @@ export type TodayEventRow = {
   guestCount: number | null
   venueName: string | null
   clientName: string | null
+  clientHref: string | null
   adminHref: string
 }
 
@@ -60,6 +61,7 @@ export type TodayInquiryRow = {
   sourceLabel: string
   receivedLabel: string
   clientName: string | null
+  clientHref: string | null
   adminHref: string
 }
 
@@ -102,6 +104,15 @@ function asId(value: unknown): string {
     return String((value as { id: string | number }).id)
   }
   return ''
+}
+
+function relId(value: unknown): string | null {
+  if (!value) return null
+  if (typeof value === 'string' || typeof value === 'number') return String(value)
+  if (typeof value === 'object' && 'id' in value) {
+    return String((value as { id: string | number }).id)
+  }
+  return null
 }
 
 /**
@@ -167,15 +178,19 @@ export async function getTodayAtPlate(user: User): Promise<TodayAtPlateData> {
 
     newInquiriesCount = newResult.totalDocs
     openInquiriesCount = openResult.totalDocs
-    recentInquiries = recentResult.docs.map((doc) => ({
-      id: asId(doc.id),
-      title: doc.eventTitle || 'Hospitality inquiry',
-      statusLabel: INQUIRY_STATUS_LABELS[doc.status || ''] || doc.status || '—',
-      sourceLabel: LEAD_SOURCE_LABELS[doc.leadSource || ''] || doc.leadSource || '—',
-      receivedLabel: formatShortDate(doc.createdAt),
-      clientName: relName(doc.client, 'fullName'),
-      adminHref: `/os/inquiries/${doc.id}`,
-    }))
+    recentInquiries = recentResult.docs.map((doc) => {
+      const clientId = relId(doc.client)
+      return {
+        id: asId(doc.id),
+        title: doc.eventTitle || 'Hospitality inquiry',
+        statusLabel: INQUIRY_STATUS_LABELS[doc.status || ''] || doc.status || '—',
+        sourceLabel: LEAD_SOURCE_LABELS[doc.leadSource || ''] || doc.leadSource || '—',
+        receivedLabel: formatShortDate(doc.createdAt),
+        clientName: relName(doc.client, 'fullName'),
+        clientHref: clientId ? `/os/clients/${clientId}` : null,
+        adminHref: `/os/inquiries/${doc.id}`,
+      }
+    })
   } catch (err) {
     console.error('[os/today] inquiries', err)
     sectionErrors.push({
@@ -220,16 +235,20 @@ export async function getTodayAtPlate(user: User): Promise<TodayAtPlateData> {
     ])
 
     upcomingEventsCount = upcomingCountResult.totalDocs
-    upcomingEvents = upcomingResult.docs.map((doc) => ({
-      id: asId(doc.id),
-      name: doc.eventName || 'Untitled event',
-      dateLabel: formatShortDate(doc.eventDate),
-      statusLabel: EVENT_STATUS_LABELS[doc.eventStatus || ''] || doc.eventStatus || '—',
-      guestCount: typeof doc.guestCount === 'number' ? doc.guestCount : null,
-      venueName: relName(doc.venue, 'venueName'),
-      clientName: relName(doc.client, 'fullName'),
-      adminHref: `/os/events/${doc.id}`,
-    }))
+    upcomingEvents = upcomingResult.docs.map((doc) => {
+      const clientId = relId(doc.client)
+      return {
+        id: asId(doc.id),
+        name: doc.eventName || 'Untitled event',
+        dateLabel: formatShortDate(doc.eventDate),
+        statusLabel: EVENT_STATUS_LABELS[doc.eventStatus || ''] || doc.eventStatus || '—',
+        guestCount: typeof doc.guestCount === 'number' ? doc.guestCount : null,
+        venueName: relName(doc.venue, 'venueName'),
+        clientName: relName(doc.client, 'fullName'),
+        clientHref: clientId ? `/os/clients/${clientId}` : null,
+        adminHref: `/os/events/${doc.id}`,
+      }
+    })
 
     nearPlanningEvents = upcomingEvents.filter((event) => {
       const raw = upcomingResult.docs.find((d) => asId(d.id) === event.id)

@@ -59,7 +59,13 @@ export default async function InquiryDetailPage({ params }: { params: Params }) 
           <dl className={styles.detailList}>
             <div>
               <dt>Name</dt>
-              <dd>{inquiry.client.name || '—'}</dd>
+              <dd>
+                {inquiry.clientOsHref && inquiry.client.name ? (
+                  <Link href={inquiry.clientOsHref}>{inquiry.client.name}</Link>
+                ) : (
+                  inquiry.client.name || '—'
+                )}
+              </dd>
             </div>
             <div>
               <dt>Email</dt>
@@ -84,6 +90,16 @@ export default async function InquiryDetailPage({ params }: { params: Params }) 
               </dd>
             </div>
           </dl>
+          {inquiry.clientOsHref ? (
+            <div className={styles.actions} style={{ marginTop: '0.85rem' }}>
+              <Link
+                href={inquiry.clientOsHref}
+                className={`${styles.button} ${styles.buttonQuiet}`}
+              >
+                Open client record
+              </Link>
+            </div>
+          ) : null}
         </section>
 
         <section className={styles.panel} aria-labelledby="request-title">

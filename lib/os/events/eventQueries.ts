@@ -97,6 +97,8 @@ export type EventDetail = {
   attentionReason: string | null
   canEditOperational: boolean
   adminHref: string
+  /** OS client detail when an authorized client relationship is present. */
+  clientOsHref: string | null
   clientAdminHref: string | null
 }
 
@@ -532,6 +534,7 @@ export async function getEventDetail(
       attentionReason: reason,
       canEditOperational: canEdit,
       adminHref: `/admin/collections/events/${doc.id}`,
+      clientOsHref: client.id ? `/os/clients/${client.id}` : null,
       clientAdminHref: client.id
         ? `/admin/collections/clients/${client.id}`
         : null,

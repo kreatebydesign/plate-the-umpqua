@@ -92,7 +92,13 @@ export default async function EventDetailPage({ params }: { params: Params }) {
           <dl className={styles.detailList}>
             <div>
               <dt>Name</dt>
-              <dd>{event.client.name || '—'}</dd>
+              <dd>
+                {event.clientOsHref && event.client.name ? (
+                  <Link href={event.clientOsHref}>{event.client.name}</Link>
+                ) : (
+                  event.client.name || '—'
+                )}
+              </dd>
             </div>
             <div>
               <dt>Email</dt>
@@ -117,16 +123,27 @@ export default async function EventDetailPage({ params }: { params: Params }) {
               </dd>
             </div>
           </dl>
-          {event.canEditOperational && event.clientAdminHref ? (
+          {(event.clientOsHref ||
+            (event.canEditOperational && event.clientAdminHref)) && (
             <div className={styles.actions} style={{ marginTop: '0.85rem' }}>
-              <Link
-                href={event.clientAdminHref}
-                className={`${styles.button} ${styles.buttonQuiet}`}
-              >
-                Open client in Admin
-              </Link>
+              {event.clientOsHref ? (
+                <Link
+                  href={event.clientOsHref}
+                  className={`${styles.button} ${styles.buttonQuiet}`}
+                >
+                  Open client record
+                </Link>
+              ) : null}
+              {event.canEditOperational && event.clientAdminHref ? (
+                <Link
+                  href={event.clientAdminHref}
+                  className={`${styles.button} ${styles.buttonQuiet}`}
+                >
+                  Open client in Admin
+                </Link>
+              ) : null}
             </div>
-          ) : null}
+          )}
         </section>
       </div>
 

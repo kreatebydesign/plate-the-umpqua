@@ -179,6 +179,15 @@ export default async function TodayAtPlatePage() {
                         .join(' · ')}
                     </p>
                   </a>
+                  {event.clientHref ? (
+                    <Link
+                      href={event.clientHref}
+                      className={styles.panelAction}
+                      style={{ display: 'inline-flex', marginTop: '0.35rem' }}
+                    >
+                      View client
+                    </Link>
+                  ) : null}
                 </li>
               ))}
             </ul>
@@ -216,6 +225,15 @@ export default async function TodayAtPlatePage() {
                         .join(' · ')}
                     </p>
                   </a>
+                  {inquiry.clientHref ? (
+                    <Link
+                      href={inquiry.clientHref}
+                      className={styles.panelAction}
+                      style={{ display: 'inline-flex', marginTop: '0.35rem' }}
+                    >
+                      View client
+                    </Link>
+                  ) : null}
                 </li>
               ))}
             </ul>
