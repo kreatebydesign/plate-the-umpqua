@@ -21,29 +21,50 @@ export async function getPlateSessionUser(): Promise<User | null> {
 }
 
 /**
+ * Only allow same-origin relative return paths under `/os`.
+ * Blocks open redirects (`//`, protocols, escapes).
+ */
+export function safeOsReturnPath(path: string | null | undefined): string {
+  if (!path) return '/os'
+  if (!path.startsWith('/os')) return '/os'
+  if (path.startsWith('//')) return '/os'
+  if (path.includes('://') || path.includes('\\') || path.includes('\n')) {
+    return '/os'
+  }
+  return path
+}
+
+function loginRedirect(returnTo?: string) {
+  const safe = safeOsReturnPath(returnTo)
+  return `/admin/login?redirect=${encodeURIComponent(safe)}`
+}
+
+/**
  * Require an authenticated internal staff user (admin panel eligible).
  * Redirects to Payload login when unauthenticated or external-role.
  */
 export async function requirePlateStaff(options?: {
   redirectTo?: string
+  returnTo?: string
 }): Promise<User> {
   const user = await getPlateSessionUser()
   if (!user || !canAccessAdminPanel(asPlateUser(user))) {
-    redirect(options?.redirectTo ?? '/admin/login')
+    redirect(options?.redirectTo ?? loginRedirect(options?.returnTo))
   }
   return user
 }
 
 /**
  * Require a Plate Business OS operator (admin, hospitalityDirector, experienceCurator).
- * Use this for future `/os/*` route protection — Phase 1+.
+ * Use this for `/os/*` route protection.
  */
 export async function requirePlateOperator(options?: {
   redirectTo?: string
+  returnTo?: string
 }): Promise<User> {
   const user = await getPlateSessionUser()
   if (!user || !canAccessPlateOS(asPlateUser(user))) {
-    redirect(options?.redirectTo ?? '/admin/login')
+    redirect(options?.redirectTo ?? loginRedirect(options?.returnTo ?? '/os'))
   }
   return user
 }
