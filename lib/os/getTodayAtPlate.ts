@@ -228,7 +228,7 @@ export async function getTodayAtPlate(user: User): Promise<TodayAtPlateData> {
       guestCount: typeof doc.guestCount === 'number' ? doc.guestCount : null,
       venueName: relName(doc.venue, 'venueName'),
       clientName: relName(doc.client, 'fullName'),
-      adminHref: `/admin/collections/events/${doc.id}`,
+      adminHref: `/os/events/${doc.id}`,
     }))
 
     nearPlanningEvents = upcomingEvents.filter((event) => {

@@ -46,6 +46,9 @@ export default function OsShell({
     if (pathname.startsWith('/os/inquiries/') && pathname !== '/os/inquiries') {
       return { title: 'Inquiry detail', eyebrow: 'Pipeline record' }
     }
+    if (pathname.startsWith('/os/events/') && pathname !== '/os/events') {
+      return { title: 'Event detail', eyebrow: 'Hospitality date' }
+    }
     return (
       PAGE_META[pathname] || {
         title: 'Plate Business OS',

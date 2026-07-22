@@ -72,7 +72,7 @@ export default async function TodayAtPlatePage() {
             {data.counts.openInquiries} open in pipeline
           </p>
         </Link>
-        <Link href="/os/events" className={styles.metricCard}>
+        <Link href="/os/events?pipeline=upcoming" className={styles.metricCard}>
           <p className={styles.metricLabel}>Upcoming events</p>
           <p className={styles.metricValue}>{data.counts.upcomingEvents}</p>
           <p className={styles.metricHint}>Active dates ahead</p>
