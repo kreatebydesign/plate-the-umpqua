@@ -1,6 +1,10 @@
 import type { CollectionConfig } from 'payload'
+import { operationalCollectionAccess } from '@/lib/access'
 
 export const Experiences: CollectionConfig = {
+
+  access: operationalCollectionAccess,
+
   slug: 'experiences',
 
   admin: {

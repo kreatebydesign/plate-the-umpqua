@@ -1,8 +1,12 @@
 // collections/Proposals.ts
 
 import type { CollectionConfig } from 'payload'
+import { operationalCollectionAccess } from '@/lib/access'
 
 export const Proposals: CollectionConfig = {
+
+  access: operationalCollectionAccess,
+
   slug: 'proposals',
 
   admin: {

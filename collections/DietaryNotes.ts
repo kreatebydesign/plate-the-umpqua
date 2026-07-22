@@ -1,6 +1,10 @@
 import type { CollectionConfig } from 'payload'
+import { dietaryNotesAccess } from '@/lib/access'
 
 export const DietaryNotes: CollectionConfig = {
+
+  access: dietaryNotesAccess,
+
   slug: 'dietary-notes',
 
   admin: {

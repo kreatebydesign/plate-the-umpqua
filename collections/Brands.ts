@@ -1,6 +1,10 @@
 import type { CollectionConfig } from 'payload'
+import { brandsCollectionAccess } from '@/lib/access'
 
 export const Brands: CollectionConfig = {
+
+  access: brandsCollectionAccess,
+
   slug: 'brands',
   admin: {
     useAsTitle: 'brandName',

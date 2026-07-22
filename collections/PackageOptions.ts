@@ -1,6 +1,10 @@
 import type { CollectionConfig } from 'payload'
+import { operationalCollectionAccess } from '@/lib/access'
 
 export const PackageOptions: CollectionConfig = {
+
+  access: operationalCollectionAccess,
+
   slug: 'package-options',
 
   admin: {

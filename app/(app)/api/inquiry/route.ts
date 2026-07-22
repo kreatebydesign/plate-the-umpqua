@@ -2,11 +2,18 @@ import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import config from '../../../../payload.config'
 import { getPayload } from 'payload'
+import {
+  getInquiryClientKey,
+  isPlausibleInquiryOrigin,
+  validatePublicInquiry,
+  type LeadSource,
+  type PublicInquiryInput,
+} from '@/lib/inquiry/validatePublicInquiry'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const LEAD_SOURCE_LABELS = {
+const LEAD_SOURCE_LABELS: Record<LeadSource, string> = {
   website: 'Website',
   concierge: 'Concierge',
   packages: 'Packages',
@@ -15,37 +22,9 @@ const LEAD_SOURCE_LABELS = {
   realtor: 'Realtor',
   'wine-country': 'Wine Country',
   referral: 'Referral',
-} as const
-
-type LeadSource = keyof typeof LEAD_SOURCE_LABELS
-
-type Inquiry = {
-  name?: string
-  email?: string
-  phone?: string
-  location?: string
-  guests?: string
-  budget?: string
-  packageInterest?: string
-  urgency?: string
-  occasion?: string
-  details?: string
-  source?: string
 }
 
-function clean(value?: string) {
-  return value?.trim() || ''
-}
-
-function normalizeLeadSource(value?: string): LeadSource {
-  const source = clean(value)
-
-  if (source && source in LEAD_SOURCE_LABELS) {
-    return source as LeadSource
-  }
-
-  return 'website'
-}
+const MAX_BODY_BYTES = 32_000
 
 function getLeadSourceLabel(source: LeadSource) {
   return LEAD_SOURCE_LABELS[source]
@@ -58,10 +37,10 @@ function isConciergeChannelLead(leadSource: LeadSource) {
   )
 }
 
-function getLeadType(data: Inquiry, leadSource: LeadSource) {
-  const budget = clean(data.budget)
-  const pkg = clean(data.packageInterest)
-  const urgency = clean(data.urgency)
+function getLeadType(data: PublicInquiryInput, leadSource: LeadSource) {
+  const budget = data.budget
+  const pkg = data.packageInterest
+  const urgency = data.urgency
 
   if (
     isConciergeChannelLead(leadSource) ||
@@ -83,11 +62,7 @@ function getLeadType(data: Inquiry, leadSource: LeadSource) {
   return 'STANDARD LEAD'
 }
 
-function getSubject(
-  type: string,
-  leadSource: LeadSource,
-  pkg?: string,
-) {
+function getSubject(type: string, leadSource: LeadSource, pkg?: string) {
   if (leadSource === 'community-partnership') {
     return 'Community Partnership Lead — Private Community Partnership'
   }
@@ -119,13 +94,13 @@ function row(label: string, value?: string) {
       </td>
 
       <td style="padding:12px 0;color:#efe6d4;font-size:14px;border-bottom:1px solid rgba(196,164,101,0.14);">
-        ${clean(value) || '—'}
+        ${value?.trim() || '—'}
       </td>
     </tr>
   `
 }
 
-function mapOccasion(value?: string, leadSource?: LeadSource) {
+function mapOccasion(value: string, leadSource: LeadSource) {
   if (leadSource === 'community-partnership') {
     return 'whiteLabelHospitality'
   }
@@ -137,25 +112,25 @@ function mapOccasion(value?: string, leadSource?: LeadSource) {
   switch (value) {
     case 'Birthday':
       return 'birthday'
-
     case 'Anniversary':
       return 'anniversary'
-
     case 'Proposal':
       return 'proposalEngagement'
-
     case 'Corporate':
       return 'corporateExecutive'
-
     case 'Wine Experience':
       return 'wineCountryExperience'
-
     default:
       return 'privateDinner'
   }
 }
 
-function mapExperienceStyle(pkg?: string, leadSource?: LeadSource) {
+function mapExperienceStyle(
+  pkg: string,
+  leadSource: LeadSource,
+): Array<
+  'privateDinner' | 'estateDinner' | 'wineCountry' | 'realtorConcierge'
+> {
   if (
     leadSource === 'partner-concierge' ||
     leadSource === 'community-partnership' ||
@@ -167,19 +142,16 @@ function mapExperienceStyle(pkg?: string, leadSource?: LeadSource) {
   switch (pkg) {
     case 'Estate':
       return ['estateDinner']
-
     case 'Concierge':
       return ['realtorConcierge']
-
     case 'Wine':
       return ['wineCountry']
-
     default:
       return ['privateDinner']
   }
 }
 
-function isPartnerLead(leadSource: LeadSource, pkg?: string) {
+function isPartnerLead(leadSource: LeadSource, pkg: string) {
   return (
     isConciergeChannelLead(leadSource) ||
     leadSource === 'realtor' ||
@@ -229,54 +201,86 @@ function getDefaultEventTitle(leadSource: LeadSource) {
   return 'Private Hospitality Inquiry'
 }
 
+function parseGuestCount(guests: string): number | undefined {
+  if (!guests) return undefined
+  if (guests.startsWith('2-4')) return 4
+  if (guests.startsWith('5-10')) return 10
+  if (guests.startsWith('10-20')) return 20
+  if (guests.startsWith('20+')) return 20
+  const n = Number(guests)
+  return Number.isFinite(n) && n > 0 ? n : undefined
+}
+
 export async function POST(req: Request) {
   try {
-    const apiKey = process.env.RESEND_API_KEY
-
-    if (!apiKey) {
+    const contentLength = Number(req.headers.get('content-length') || 0)
+    if (contentLength > MAX_BODY_BYTES) {
       return NextResponse.json(
-        {
-          success: false,
-          message: 'Email service is not configured.',
-        },
-        {
-          status: 500,
-        },
+        { success: false, message: 'Request too large.' },
+        { status: 413 },
       )
     }
 
-    const body = (await req.json()) as Inquiry
+    if (!isPlausibleInquiryOrigin(req)) {
+      console.warn('[inquiry] rejected origin', {
+        origin: req.headers.get('origin'),
+        referer: req.headers.get('referer'),
+        client: getInquiryClientKey(req),
+      })
+      return NextResponse.json(
+        { success: false, message: 'Unable to submit inquiry.' },
+        { status: 403 },
+      )
+    }
 
-    const name = clean(body.name)
-    const email = clean(body.email)
-    const leadSource = normalizeLeadSource(body.source)
+    const apiKey = process.env.RESEND_API_KEY
+    if (!apiKey) {
+      console.error('[inquiry] RESEND_API_KEY missing')
+      return NextResponse.json(
+        { success: false, message: 'Inquiry service is temporarily unavailable.' },
+        { status: 503 },
+      )
+    }
+
+    let raw: unknown
+    try {
+      raw = await req.json()
+    } catch {
+      return NextResponse.json(
+        { success: false, message: 'Invalid request.' },
+        { status: 400 },
+      )
+    }
+
+    const validated = validatePublicInquiry(raw)
+    if (!validated.ok) {
+      if (validated.code === 'honeypot' || validated.code === 'timing_fast') {
+        console.warn('[inquiry] blocked', {
+          code: validated.code,
+          client: getInquiryClientKey(req),
+        })
+      }
+      return NextResponse.json(
+        { success: false, message: validated.message },
+        { status: validated.status },
+      )
+    }
+
+    const data = validated.data
+    const leadSource = data.source
     const leadSourceLabel = getLeadSourceLabel(leadSource)
 
-    if (!name || !email) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Missing required fields.',
-        },
-        {
-          status: 400,
-        },
-      )
-    }
-
-    const payload = await getPayload({
-      config,
-    })
-
+    const payload = await getPayload({ config })
     const resend = new Resend(apiKey)
 
+    // Local API overrides collection access so the controlled endpoint can write.
     const existingClients = await payload.find({
-      collection: 'clients' as any,
+      collection: 'clients',
       limit: 1,
-
+      overrideAccess: true,
       where: {
         email: {
-          equals: email,
+          equals: data.email,
         },
       },
     })
@@ -287,45 +291,36 @@ export async function POST(req: Request) {
       clientID = String(existingClients.docs[0].id)
     } else {
       const createdClient = await payload.create({
-        collection: 'clients' as any,
-
+        collection: 'clients',
+        overrideAccess: true,
         data: {
-          fullName: name,
-          email,
-          phone: clean(body.phone),
-
-          clientType: isPartnerLead(
-            leadSource,
-            body.packageInterest,
-          )
+          fullName: data.name,
+          email: data.email,
+          phone: data.phone || undefined,
+          clientType: isPartnerLead(leadSource, data.packageInterest)
             ? 'realtor'
             : 'private',
-
           vipStatus:
-            body.budget === '2000+' ||
-            isConciergeChannelLead(leadSource)
+            data.budget === '2000+' || isConciergeChannelLead(leadSource)
               ? 'vip'
               : 'standard',
-
           preferredExperienceStyle: mapExperienceStyle(
-            body.packageInterest,
+            data.packageInterest,
             leadSource,
           ),
-
-          averageSpendRange: clean(body.budget),
-
+          averageSpendRange: data.budget || undefined,
           relationshipNotes: `
 Lead Source: ${leadSourceLabel}
 
 Location:
-${clean(body.location)}
+${data.location}
 
 Occasion:
-${clean(body.occasion)}
+${data.occasion}
 
 Timeline:
-${clean(body.urgency)}
-          `,
+${data.urgency}
+          `.trim(),
         },
       })
 
@@ -333,46 +328,28 @@ ${clean(body.urgency)}
     }
 
     const inquiry = await payload.create({
-      collection: 'inquiries' as any,
-
+      collection: 'inquiries',
+      overrideAccess: true,
       data: {
         leadSource,
-
-        eventTitle:
-          clean(body.occasion) || getDefaultEventTitle(leadSource),
-
+        eventTitle: data.occasion || getDefaultEventTitle(leadSource),
         client: clientID,
-
-        guestCount:
-          Number(body.guests) || undefined,
-
-        preferredRegion:
-          clean(body.location) || 'Umpqua Valley',
-
+        guestCount: parseGuestCount(data.guests),
+        preferredRegion: data.location || 'Umpqua Valley',
         experienceVision:
-          clean(body.details) ||
+          data.details ||
           `Client submitted a new hospitality inquiry through ${leadSourceLabel}.`,
-
-        occasion: mapOccasion(body.occasion, leadSource),
-
+        occasion: mapOccasion(data.occasion, leadSource),
         status: 'newLead',
-
         priorityLevel:
-          body.budget === '2000+' ||
-          isConciergeChannelLead(leadSource)
+          data.budget === '2000+' || isConciergeChannelLead(leadSource)
             ? 'vip'
             : 'standard',
       },
     })
 
-    const leadType = getLeadType(body, leadSource)
-
-    const subject = getSubject(
-      leadType,
-      leadSource,
-      body.packageInterest,
-    )
-
+    const leadType = getLeadType(data, leadSource)
+    const subject = getSubject(leadType, leadSource, data.packageInterest)
     const leadSourceBanner = getLeadSourceBanner(leadSource)
 
     const html = `
@@ -398,15 +375,15 @@ ${clean(body.urgency)}
 
           <table width="100%" style="border-collapse:collapse;margin-top:20px;">
             ${row('Lead Source', leadSourceLabel)}
-            ${row('Name', body.name)}
-            ${row('Email', body.email)}
-            ${row('Phone', body.phone)}
-            ${row('Location', body.location)}
-            ${row('Guests', body.guests)}
-            ${row('Budget', body.budget)}
-            ${row('Package', body.packageInterest)}
-            ${row('Timeline', body.urgency)}
-            ${row('Occasion', body.occasion)}
+            ${row('Name', data.name)}
+            ${row('Email', data.email)}
+            ${row('Phone', data.phone)}
+            ${row('Location', data.location)}
+            ${row('Guests', data.guests)}
+            ${row('Budget', data.budget)}
+            ${row('Package', data.packageInterest)}
+            ${row('Timeline', data.urgency)}
+            ${row('Occasion', data.occasion)}
           </table>
 
           <div style="margin-top:24px;color:#efe6d4;">
@@ -415,7 +392,7 @@ ${clean(body.urgency)}
             </p>
 
             <p style="color:#efe6d4;line-height:1.7;">
-              ${clean(body.details) || '—'}
+              ${data.details || '—'}
             </p>
           </div>
         </div>
@@ -423,23 +400,15 @@ ${clean(body.urgency)}
     `
 
     const result = await resend.emails.send({
-      from:
-        'Plate The Umpqua <info@platetheumpqua.com>',
-
+      from: 'Plate The Umpqua <info@platetheumpqua.com>',
       to: ['platetheumpqua@gmail.com'],
-
-      replyTo: email,
-
+      replyTo: data.email,
       subject,
-
       html,
     })
 
     if (result.error) {
-      console.error(
-        'Resend email error:',
-        result.error,
-      )
+      console.error('[inquiry] Resend error:', result.error)
     }
 
     return NextResponse.json({
@@ -447,19 +416,20 @@ ${clean(body.urgency)}
       inquiryID: inquiry.id,
       leadType,
       leadSource,
-      emailID: result.data?.id,
     })
   } catch (err) {
-    console.error('Inquiry route error:', err)
-
+    console.error('[inquiry] route error:', err)
     return NextResponse.json(
-      {
-        success: false,
-        message: 'Inquiry submission failed.',
-      },
-      {
-        status: 500,
-      },
+      { success: false, message: 'Inquiry submission failed.' },
+      { status: 500 },
     )
   }
+}
+
+/** Reject enumeration / accidental GET */
+export async function GET() {
+  return NextResponse.json(
+    { success: false, message: 'Method not allowed.' },
+    { status: 405 },
+  )
 }

@@ -1,8 +1,12 @@
 // collections/ExperienceBriefs.ts
 
 import type { CollectionConfig } from 'payload'
+import { operationalCollectionAccess } from '@/lib/access'
 
 export const ExperienceBriefs: CollectionConfig = {
+
+  access: operationalCollectionAccess,
+
   slug: 'experience-briefs',
 
   admin: {

@@ -1,8 +1,12 @@
 // collections/Events.ts
 
 import type { CollectionConfig } from 'payload'
+import { operationalCollectionAccess } from '@/lib/access'
 
 export const Events: CollectionConfig = {
+
+  access: operationalCollectionAccess,
+
   slug: 'events',
 
   admin: {

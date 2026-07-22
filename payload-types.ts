@@ -421,7 +421,7 @@ export interface Inquiry {
    * The public channel or campaign that originated this inquiry.
    */
   leadSource?:
-    | ('website' | 'concierge' | 'packages' | 'partner-concierge' | 'realtor' | 'wine-country' | 'referral')
+    | ('website' | 'concierge' | 'packages' | 'partner-concierge' | 'community-partnership' | 'realtor' | 'wine-country' | 'referral')
     | null;
   eventTitle: string;
   client: string | Client;

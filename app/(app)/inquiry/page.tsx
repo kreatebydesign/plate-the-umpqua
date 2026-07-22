@@ -72,6 +72,7 @@ function InquiryForm() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [formStartedAt] = useState(() => Date.now());
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -97,6 +98,8 @@ function InquiryForm() {
       occasion: formData.get("occasion"),
       details: formData.get("details"),
       source: formData.get("source"),
+      companyWebsite: formData.get("companyWebsite"),
+      formStartedAt,
     };
 
     try {
@@ -195,6 +198,29 @@ function InquiryForm() {
 
         <form onSubmit={handleSubmit} className="grid gap-5 md:gap-6">
           <input type="hidden" name="source" value={source} />
+
+          {/* Honeypot — hidden from assistive tech and sighted users */}
+          <div
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              left: "-10000px",
+              top: "auto",
+              width: 1,
+              height: 1,
+              overflow: "hidden",
+            }}
+          >
+            <label htmlFor="companyWebsite">Company website</label>
+            <input
+              id="companyWebsite"
+              name="companyWebsite"
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              defaultValue=""
+            />
+          </div>
 
           <div className="grid gap-5 md:grid-cols-2 md:gap-6">
             <input

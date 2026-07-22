@@ -1,8 +1,12 @@
 // collections/VendorPartners.ts
 
 import type { CollectionConfig } from 'payload'
+import { operationalCollectionAccess } from '@/lib/access'
 
 export const VendorPartners: CollectionConfig = {
+
+  access: operationalCollectionAccess,
+
   slug: 'vendor-partners',
 
   admin: {
