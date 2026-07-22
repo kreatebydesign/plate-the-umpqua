@@ -100,4 +100,6 @@ export const OS_NAV = [
   { href: '/os/inquiries', label: 'Inquiries', exact: false },
   { href: '/os/events', label: 'Events', exact: false },
   { href: '/os/clients', label: 'Clients', exact: false },
+  { href: '/os/recipes', label: 'Recipes', exact: false },
+  { href: '/os/menus', label: 'Menus', exact: false },
 ] as const

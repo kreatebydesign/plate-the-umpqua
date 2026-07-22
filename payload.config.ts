@@ -14,7 +14,9 @@ import { Experiences } from './collections/Experiences'
 import { Inquiries } from './collections/Inquiries'
 import { Media } from './collections/Media'
 import { MenuConcepts } from './collections/MenuConcepts'
+import { Menus } from './collections/Menus'
 import { PackageOptions } from './collections/PackageOptions'
+import { Recipes } from './collections/Recipes'
 import { Proposals } from './collections/Proposals'
 import { Tasks } from './collections/Tasks'
 import { Testimonials } from './collections/Testimonials'
@@ -104,6 +106,8 @@ export default buildConfig({
     Tasks,
 
     MenuConcepts,
+    Recipes,
+    Menus,
     DietaryNotes,
 
     Testimonials,

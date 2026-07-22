@@ -24,6 +24,8 @@ const PAGE_META: Record<string, { title: string; eyebrow: string }> = {
   '/os/inquiries': { title: 'Inquiries', eyebrow: 'Leads & requests' },
   '/os/events': { title: 'Events', eyebrow: 'Confirmed hospitality' },
   '/os/clients': { title: 'Clients', eyebrow: 'Relationships' },
+  '/os/recipes': { title: 'Recipes', eyebrow: 'Culinary library' },
+  '/os/menus': { title: 'Menus', eyebrow: 'Client presentations' },
 }
 
 function navIsActive(pathname: string, href: string, exact?: boolean) {
@@ -48,6 +50,30 @@ export default function OsShell({
     }
     if (pathname.startsWith('/os/events/') && pathname !== '/os/events') {
       return { title: 'Event detail', eyebrow: 'Hospitality date' }
+    }
+    if (pathname.startsWith('/os/clients/') && pathname !== '/os/clients') {
+      return { title: 'Client detail', eyebrow: 'Relationship' }
+    }
+    if (pathname.startsWith('/os/recipes/') && pathname !== '/os/recipes') {
+      if (pathname.endsWith('/new')) {
+        return { title: 'New recipe', eyebrow: 'Culinary library' }
+      }
+      if (pathname.endsWith('/edit')) {
+        return { title: 'Edit recipe', eyebrow: 'Culinary library' }
+      }
+      return { title: 'Recipe detail', eyebrow: 'Culinary library' }
+    }
+    if (pathname.startsWith('/os/menus/') && pathname !== '/os/menus') {
+      if (pathname.endsWith('/new')) {
+        return { title: 'New menu', eyebrow: 'Client presentations' }
+      }
+      if (pathname.endsWith('/edit')) {
+        return { title: 'Edit menu', eyebrow: 'Menu builder' }
+      }
+      if (pathname.endsWith('/preview')) {
+        return { title: 'Menu preview', eyebrow: 'Client presentation' }
+      }
+      return { title: 'Menu detail', eyebrow: 'Client presentations' }
     }
     return (
       PAGE_META[pathname] || {

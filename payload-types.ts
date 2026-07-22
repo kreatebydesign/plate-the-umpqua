@@ -81,6 +81,8 @@ export interface Config {
     proposals: Proposal;
     tasks: Task;
     'menu-concepts': MenuConcept;
+    recipes: Recipe;
+    menus: Menu;
     'dietary-notes': DietaryNote;
     testimonials: Testimonial;
     'payload-kv': PayloadKv;
@@ -104,6 +106,8 @@ export interface Config {
     proposals: ProposalsSelect<false> | ProposalsSelect<true>;
     tasks: TasksSelect<false> | TasksSelect<true>;
     'menu-concepts': MenuConceptsSelect<false> | MenuConceptsSelect<true>;
+    recipes: RecipesSelect<false> | RecipesSelect<true>;
+    menus: MenusSelect<false> | MenusSelect<true>;
     'dietary-notes': DietaryNotesSelect<false> | DietaryNotesSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -237,8 +241,7 @@ export interface Brand {
    */
   brandSlug: string;
   brandType?:
-    | ('hospitalityBrand' | 'privateChef' | 'winery' | 'hotelResort' | 'eventCompany' | 'conciergeCompany')
-    | null;
+    ('hospitalityBrand' | 'privateChef' | 'winery' | 'hotelResort' | 'eventCompany' | 'conciergeCompany') | null;
   status?: ('setup' | 'active' | 'paused' | 'archived') | null;
   primaryMarket?: string | null;
   website?: string | null;
@@ -421,7 +424,16 @@ export interface Inquiry {
    * The public channel or campaign that originated this inquiry.
    */
   leadSource?:
-    | ('website' | 'concierge' | 'packages' | 'partner-concierge' | 'community-partnership' | 'realtor' | 'wine-country' | 'referral')
+    | (
+        | 'website'
+        | 'concierge'
+        | 'packages'
+        | 'partner-concierge'
+        | 'community-partnership'
+        | 'realtor'
+        | 'wine-country'
+        | 'referral'
+      )
     | null;
   eventTitle: string;
   client: string | Client;
@@ -441,8 +453,7 @@ export interface Inquiry {
   eventDate?: string | null;
   guestCount?: number | null;
   locationType?:
-    | ('privateHome' | 'estate' | 'winery' | 'venue' | 'countryClub' | 'hotel' | 'clubLounge' | 'undecided')
-    | null;
+    ('privateHome' | 'estate' | 'winery' | 'venue' | 'countryClub' | 'hotel' | 'clubLounge' | 'undecided') | null;
   preferredRegion?: string | null;
   /**
    * Capture the dream version of the experience. Mood, setting, food, music, atmosphere, and emotional goal.
@@ -501,8 +512,7 @@ export interface ExperienceBrief {
   inquiry?: (string | null) | Inquiry;
   status?: ('draft' | 'readyForPackage' | 'packageBuilt' | 'proposalReady') | null;
   packageReadiness?:
-    | ('needsReview' | 'ready' | 'needsVenueMatch' | 'needsVendorMatch' | 'needsCulinaryDirection')
-    | null;
+    ('needsReview' | 'ready' | 'needsVenueMatch' | 'needsVendorMatch' | 'needsCulinaryDirection') | null;
   experienceType?:
     | (
         | 'privateDinner'
@@ -543,8 +553,7 @@ export interface ExperienceBrief {
     | null;
   dietaryRestrictions?: (string | DietaryNote)[] | null;
   preferredVenueTypes?:
-    | ('estate' | 'winery' | 'privateResidence' | 'hotel' | 'countryClub' | 'outdoorScenic' | 'clubLounge')[]
-    | null;
+    ('estate' | 'winery' | 'privateResidence' | 'hotel' | 'countryClub' | 'outdoorScenic' | 'clubLounge')[] | null;
   desiredEnhancements?:
     | (
         | 'winePairing'
@@ -814,8 +823,7 @@ export interface Proposal {
   experienceBrief?: (string | null) | ExperienceBrief;
   packageOption?: (string | null) | PackageOption;
   proposalStatus?:
-    | ('draft' | 'internalReview' | 'sent' | 'viewed' | 'approved' | 'depositPaid' | 'booked' | 'declined')
-    | null;
+    ('draft' | 'internalReview' | 'sent' | 'viewed' | 'approved' | 'depositPaid' | 'booked' | 'declined') | null;
   proposalSummary?: {
     root: {
       type: string;
@@ -932,6 +940,233 @@ export interface Task {
   createdAt: string;
 }
 /**
+ * Private recipe library. Use visibility to mark menu-ready or publishing-candidate recipes.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "recipes".
+ */
+export interface Recipe {
+  id: string;
+  name: string;
+  shortDescription?: string | null;
+  category?:
+    | (
+        | 'appetizer'
+        | 'soup'
+        | 'salad'
+        | 'firstCourse'
+        | 'main'
+        | 'side'
+        | 'dessert'
+        | 'beverage'
+        | 'amuse'
+        | 'bread'
+        | 'sauce'
+        | 'other'
+      )
+    | null;
+  cuisine?:
+    | (
+        | 'modernAmerican'
+        | 'italian'
+        | 'french'
+        | 'japanese'
+        | 'mediterranean'
+        | 'wineCountrySeasonal'
+        | 'pacificNorthwest'
+        | 'farmToTable'
+        | 'custom'
+      )
+    | null;
+  course?: ('welcome' | 'appetizer' | 'first' | 'main' | 'side' | 'dessert' | 'beverage' | 'other') | null;
+  dietaryTags?:
+    ('vegetarian' | 'vegan' | 'pescatarian' | 'glutenFree' | 'dairyFree' | 'nutFree' | 'halal' | 'kosher')[] | null;
+  allergenTags?:
+    | (
+        | 'gluten'
+        | 'dairy'
+        | 'eggs'
+        | 'treeNuts'
+        | 'peanuts'
+        | 'shellfish'
+        | 'fish'
+        | 'soy'
+        | 'sesame'
+        | 'pork'
+        | 'alcohol'
+      )[]
+    | null;
+  yieldQuantity?: number | null;
+  yieldUnit?: ('servings' | 'portions' | 'pieces' | 'batch') | null;
+  prepTimeMinutes?: number | null;
+  cookTimeMinutes?: number | null;
+  ingredients?:
+    | {
+        quantity?: string | null;
+        unit?: string | null;
+        ingredient: string;
+        preparationNote?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  steps?:
+    | {
+        instruction: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Internal culinary notes — never shown on client menus.
+   */
+  chefNotes?: string | null;
+  platingNotes?: string | null;
+  /**
+   * Storage or make-ahead guidance.
+   */
+  storageNotes?: string | null;
+  /**
+   * Director-only cost notes. Hidden from non-directors.
+   */
+  internalCostNotes?: string | null;
+  featuredImage?: (string | null) | Media;
+  status: 'draft' | 'tested' | 'approved' | 'archived';
+  /**
+   * Private by default. Menu-ready recipes appear in the menu builder picker. Publishing candidates are reserved for a future cookbook/subscription.
+   */
+  visibility: 'private' | 'menuReady' | 'publishingCandidate';
+  /**
+   * Optional slug for a future public cookbook entry.
+   */
+  slug?: string | null;
+  publicTitle?: string | null;
+  publicSummary?: string | null;
+  heroImage?: (string | null) | Media;
+  /**
+   * Optional story or chef introduction for publishing.
+   */
+  chefIntroduction?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Client menu builder. Internal notes and review tokens never appear on the client review page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "menus".
+ */
+export interface Menu {
+  id: string;
+  /**
+   * Operator-facing name — not shown to clients.
+   */
+  internalName: string;
+  client: string | Client;
+  inquiry?: (string | null) | Inquiry;
+  event?: (string | null) | Event;
+  /**
+   * Client-facing occasion or event title.
+   */
+  occasionTitle: string;
+  serviceDate?: string | null;
+  guestCount?: number | null;
+  /**
+   * Client-visible opening note on the menu presentation.
+   */
+  introductoryMessage?: string | null;
+  sections?:
+    | {
+        sectionName: string;
+        items?:
+          | {
+              /**
+               * Optional link to a saved recipe. Client wording below is independent.
+               */
+              recipe?: (string | null) | Recipe;
+              clientTitle: string;
+              clientDescription?: string | null;
+              /**
+               * Show dietary / allergen labels on the client menu.
+               */
+              showDietary?: boolean | null;
+              /**
+               * Client-facing dietary labels (comma-separated).
+               */
+              dietaryDisplay?: string | null;
+              /**
+               * Client-facing allergen labels (comma-separated).
+               */
+              allergenDisplay?: string | null;
+              /**
+               * Never shown on client review.
+               */
+              internalItemNotes?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional client-facing pricing language (e.g. investment note). Do not include cost or margin data.
+   */
+  pricingPresentation?: string | null;
+  /**
+   * Optional client-visible investment figure. Follows established proposal-style presentation only — never show food cost or margin.
+   */
+  displayInvestment?: number | null;
+  /**
+   * Operator notes — never appear on client review.
+   */
+  internalNotes?: string | null;
+  status: 'draft' | 'readyForReview' | 'sent' | 'revisionRequested' | 'approved' | 'archived';
+  /**
+   * Incremented when a revision snapshot is recorded.
+   */
+  version?: number | null;
+  sentAt?: string | null;
+  approvedAt?: string | null;
+  /**
+   * Bounded snapshots of client-facing menu content.
+   */
+  revisionHistory?:
+    | {
+        version: number;
+        snapshotAt: string;
+        reason?: string | null;
+        /**
+         * JSON snapshot of client-visible menu fields.
+         */
+        snapshotJson: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * SHA-256 hash of the opaque review token. Plaintext is never stored.
+   */
+  reviewTokenHash?: string | null;
+  reviewTokenExpiresAt?: string | null;
+  reviewTokenRevokedAt?: string | null;
+  reviewTokenCreatedAt?: string | null;
+  /**
+   * Bounded structured client review history.
+   */
+  reviews?:
+    | {
+        action: 'approve' | 'requestRevision';
+        comment?: string | null;
+        submittedAt: string;
+        menuVersion?: number | null;
+        /**
+         * Truncated client key for abuse diagnostics — not PII.
+         */
+        clientKeyHint?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "testimonials".
  */
@@ -1042,6 +1277,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'menu-concepts';
         value: string | MenuConcept;
+      } | null)
+    | ({
+        relationTo: 'recipes';
+        value: string | Recipe;
+      } | null)
+    | ({
+        relationTo: 'menus';
+        value: string | Menu;
       } | null)
     | ({
         relationTo: 'dietary-notes';
@@ -1508,6 +1751,116 @@ export interface MenuConceptsSelect<T extends boolean = true> {
   chefNotes?: T;
   internalMarginNotes?: T;
   gallery?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "recipes_select".
+ */
+export interface RecipesSelect<T extends boolean = true> {
+  name?: T;
+  shortDescription?: T;
+  category?: T;
+  cuisine?: T;
+  course?: T;
+  dietaryTags?: T;
+  allergenTags?: T;
+  yieldQuantity?: T;
+  yieldUnit?: T;
+  prepTimeMinutes?: T;
+  cookTimeMinutes?: T;
+  ingredients?:
+    | T
+    | {
+        quantity?: T;
+        unit?: T;
+        ingredient?: T;
+        preparationNote?: T;
+        id?: T;
+      };
+  steps?:
+    | T
+    | {
+        instruction?: T;
+        id?: T;
+      };
+  chefNotes?: T;
+  platingNotes?: T;
+  storageNotes?: T;
+  internalCostNotes?: T;
+  featuredImage?: T;
+  status?: T;
+  visibility?: T;
+  slug?: T;
+  publicTitle?: T;
+  publicSummary?: T;
+  heroImage?: T;
+  chefIntroduction?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "menus_select".
+ */
+export interface MenusSelect<T extends boolean = true> {
+  internalName?: T;
+  client?: T;
+  inquiry?: T;
+  event?: T;
+  occasionTitle?: T;
+  serviceDate?: T;
+  guestCount?: T;
+  introductoryMessage?: T;
+  sections?:
+    | T
+    | {
+        sectionName?: T;
+        items?:
+          | T
+          | {
+              recipe?: T;
+              clientTitle?: T;
+              clientDescription?: T;
+              showDietary?: T;
+              dietaryDisplay?: T;
+              allergenDisplay?: T;
+              internalItemNotes?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  pricingPresentation?: T;
+  displayInvestment?: T;
+  internalNotes?: T;
+  status?: T;
+  version?: T;
+  sentAt?: T;
+  approvedAt?: T;
+  revisionHistory?:
+    | T
+    | {
+        version?: T;
+        snapshotAt?: T;
+        reason?: T;
+        snapshotJson?: T;
+        id?: T;
+      };
+  reviewTokenHash?: T;
+  reviewTokenExpiresAt?: T;
+  reviewTokenRevokedAt?: T;
+  reviewTokenCreatedAt?: T;
+  reviews?:
+    | T
+    | {
+        action?: T;
+        comment?: T;
+        submittedAt?: T;
+        menuVersion?: T;
+        clientKeyHint?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

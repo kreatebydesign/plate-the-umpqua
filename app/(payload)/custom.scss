@@ -1187,8 +1187,129 @@
     color: #ffffff;
   }
 
-  /* ---------- DEFAULT PAYLOAD ELEMENTS ---------- */
-  
+  /* ---------- AUTHENTICATED ADMIN FORM CONTROLS ---------- */
+  /* Scoped to .template-default so /admin/login is untouched. */
+  /* Avoid painting borders onto nested native selects (double-line inset). */
+
+  .template-default .field-type {
+    margin-bottom: 1.15rem;
+  }
+
+  .template-default .field-type .field-label,
+  .template-default .field-type label {
+    margin-bottom: 0.4rem;
+    color: var(--ptu-ink);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .template-default .field-type .input-wrapper,
+  .template-default .field-type .field-type__wrap,
+  .template-default .field-type .select-field,
+  .template-default .field-type .textarea-field {
+    width: 100%;
+  }
+
+  .template-default .field-type input:not([type='checkbox']):not([type='radio']):not([type='hidden']):not([type='file']),
+  .template-default .field-type textarea,
+  .template-default .field-type .rs__control {
+    min-height: 44px;
+    padding: 0.7rem 0.85rem !important;
+
+    border: 1px solid rgba(18, 18, 18, 0.14) !important;
+    border-radius: 4px !important;
+
+    background: #ffffff !important;
+    color: var(--ptu-ink) !important;
+
+    font-size: 15px !important;
+    line-height: 1.4 !important;
+    box-shadow: none !important;
+  }
+
+  .template-default .field-type textarea {
+    min-height: 7rem;
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+
+  /* Native selects: style the outer field, not a nested double border. */
+  .template-default .field-type--select .select-field,
+  .template-default .field-type select {
+    min-height: 44px;
+    padding: 0.65rem 0.85rem !important;
+
+    border: 1px solid rgba(18, 18, 18, 0.14) !important;
+    border-radius: 4px !important;
+
+    background: #ffffff !important;
+    color: var(--ptu-ink) !important;
+
+    font-size: 15px !important;
+    line-height: 1.4 !important;
+    box-shadow: none !important;
+  }
+
+  .template-default .field-type--select .select-field select {
+    border: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    min-height: 42px;
+    padding-left: 0.15rem !important;
+  }
+
+  .template-default .field-type input:focus,
+  .template-default .field-type textarea:focus,
+  .template-default .field-type select:focus,
+  .template-default .field-type .rs__control--is-focused,
+  .template-default .field-type--select .select-field:focus-within {
+    border-color: rgba(176, 138, 76, 0.65) !important;
+    box-shadow: 0 0 0 3px rgba(176, 138, 76, 0.14) !important;
+    outline: none !important;
+  }
+
+  .template-default .field-type input:disabled,
+  .template-default .field-type textarea:disabled,
+  .template-default .field-type select:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  .template-default .array-field__draggable-rows,
+  .template-default .array-field__rows,
+  .template-default .blocks-field__rows {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .template-default .array-field__row,
+  .template-default .row,
+  .template-default .blocks-field__block {
+    padding: 0.85rem 0.9rem !important;
+    border: 1px solid rgba(18, 18, 18, 0.08) !important;
+    border-radius: 4px !important;
+    background: rgba(255, 255, 255, 0.72) !important;
+  }
+
+  .template-default .array-field__add-row,
+  .template-default .btn.array-field__add-row,
+  .template-default .field-type .btn--add,
+  .template-default .array-field .btn--icon-style-secondary {
+    min-height: 44px !important;
+    margin-top: 0.65rem;
+    padding: 0 1rem !important;
+
+    border: 1px solid rgba(18, 18, 18, 0.12) !important;
+    border-radius: 4px !important;
+
+    background: #ffffff !important;
+    color: var(--ptu-ink) !important;
+
+    font-size: 13px !important;
+    font-weight: 700 !important;
+  }
+
   .card,
   .collection-card,
   .dashboard__card,
@@ -1230,29 +1351,6 @@
     background: #ffffff !important;
   
     color: var(--ptu-ink) !important;
-  }
-  
-  input,
-  textarea,
-  select,
-  .rs__control {
-    border:
-      1px solid rgba(18, 18, 18, 0.12) !important;
-  
-    border-radius: 3px !important;
-  
-    background: #ffffff !important;
-  }
-  
-  input:focus,
-  textarea:focus,
-  select:focus,
-  .rs__control--is-focused {
-    border-color:
-      rgba(176, 138, 76, 0.6) !important;
-  
-    box-shadow:
-      0 0 0 3px rgba(176, 138, 76, 0.12) !important;
   }
   
   /* ---------- RESPONSIVE ---------- */

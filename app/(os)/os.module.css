@@ -865,6 +865,367 @@
   font-size: 0.88rem;
 }
 
+.builderForm {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.builderSection {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1.1rem 1.15rem;
+  border: 1px solid var(--os-line);
+  border-radius: var(--os-radius);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.builderSectionTitle {
+  margin: 0;
+  color: var(--os-ivory);
+  font-family: var(--os-font-display);
+  font-size: 1.35rem;
+  font-weight: 500;
+}
+
+.builderHint {
+  margin: 0;
+  color: rgba(239, 230, 212, 0.55);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.builderGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.builderGrid3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.fieldFull {
+  grid-column: 1 / -1;
+}
+
+.checkboxRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1rem;
+}
+
+.checkboxLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 44px;
+  color: rgba(239, 230, 212, 0.78);
+  font-size: 0.88rem;
+}
+
+.repeatBlock {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.repeatCard {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border: 1px solid var(--os-line);
+  border-radius: var(--os-radius);
+}
+
+.repeatToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.unsavedBanner {
+  margin: 0;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid rgba(196, 164, 101, 0.4);
+  border-radius: var(--os-radius);
+  background: rgba(196, 164, 101, 0.08);
+  color: var(--os-gold);
+  font-size: 0.85rem;
+}
+
+.internalBadge {
+  display: inline-block;
+  margin-left: 0.45rem;
+  padding: 0.15rem 0.4rem;
+  border: 1px solid var(--os-line-strong);
+  border-radius: var(--os-radius);
+  color: rgba(239, 230, 212, 0.55);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.previewShell {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1.5rem 1.25rem 2rem;
+  border: 1px solid var(--os-line-strong);
+  border-radius: var(--os-radius);
+  background:
+    linear-gradient(180deg, rgba(196, 164, 101, 0.05), transparent 24%),
+    var(--os-charcoal-soft);
+}
+
+.previewBrand {
+  margin: 0;
+  color: var(--os-gold);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.previewTitle {
+  margin: 0.35rem 0 0;
+  color: var(--os-ivory);
+  font-family: var(--os-font-display);
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 500;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.previewMeta {
+  margin: 0.5rem 0 0;
+  color: rgba(239, 230, 212, 0.55);
+  font-size: 0.9rem;
+}
+
+.previewIntro {
+  margin: 0.75rem 0 0;
+  color: rgba(239, 230, 212, 0.78);
+  font-size: 1rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.previewSection {
+  display: grid;
+  gap: 0.85rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--os-line);
+}
+
+.previewSectionName {
+  margin: 0;
+  color: var(--os-gold);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.previewItem {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.previewItemTitle {
+  margin: 0;
+  color: var(--os-ivory);
+  font-family: var(--os-font-display);
+  font-size: 1.25rem;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.previewItemDesc {
+  margin: 0;
+  color: rgba(239, 230, 212, 0.7);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.previewTags {
+  margin: 0;
+  color: rgba(239, 230, 212, 0.5);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+
+.textareaControl {
+  min-height: 6.5rem;
+  resize: vertical;
+}
+
+@media (max-width: 860px) {
+  .builderGrid,
+  .builderGrid3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navLink,
+  .inquiryLink,
+  .button {
+    transition: none;
+  }
+}
+
+.relationshipPicker {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.structureChoices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.structureChoice {
+  display: grid;
+  gap: 0.25rem;
+  min-height: 44px;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--os-line);
+  border-radius: var(--os-radius);
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.structureChoice:hover {
+  border-color: var(--os-line-strong);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.structureChoice:focus-visible {
+  outline: 2px solid var(--os-gold);
+  outline-offset: 2px;
+}
+
+.structureChoiceActive {
+  border-color: var(--os-line-strong);
+  background: rgba(196, 164, 101, 0.08);
+  box-shadow: inset 3px 0 0 var(--os-gold);
+}
+
+.structureChoiceLabel {
+  color: var(--os-ivory);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.structureChoiceMeta {
+  color: rgba(239, 230, 212, 0.55);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.workflowBanner {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--os-line);
+  border-radius: var(--os-radius);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.workflowStatus {
+  margin: 0;
+  color: rgba(239, 230, 212, 0.7);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.workflowStatus strong {
+  color: var(--os-ivory);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 0.95rem;
+}
+
+.workflowNext {
+  margin: 0;
+  color: rgba(239, 230, 212, 0.78);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 860px) {
+  .structureChoices {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media print {
+  .osRoot {
+    background: #fff;
+    color: #14120e;
+  }
+
+  .sidebar,
+  .topbar,
+  .actions,
+  .drawer,
+  .backdrop,
+  .workflowBanner {
+    display: none !important;
+  }
+
+  .shell {
+    display: block;
+  }
+
+  .previewShell {
+    border: none;
+    background: transparent;
+    color: #14120e;
+  }
+
+  .previewBrand,
+  .previewSectionName {
+    color: #8a7040;
+  }
+
+  .previewTitle,
+  .previewItemTitle {
+    color: #14120e;
+  }
+
+  .previewMeta,
+  .previewIntro,
+  .previewItemDesc,
+  .previewTags {
+    color: #444;
+  }
+}
+
 @media (max-width: 860px) {
   .filterBar {
     grid-template-columns: 1fr 1fr;

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import styles from '../os.module.css'
 import { requirePlateOperator } from '@/lib/auth/requirePlateOperator'
 import { getTodayAtPlate } from '@/lib/os/getTodayAtPlate'
+import { getCulinaryTodaySnapshot } from '@/lib/os/menus/culinaryToday'
 import { firstNameFrom, formatLongDate, greetingForHour } from '@/lib/os/formatDate'
 
 export const metadata: Metadata = {
@@ -40,7 +41,10 @@ function attentionCopy(counts: {
 
 export default async function TodayAtPlatePage() {
   const user = await requirePlateOperator({ returnTo: '/os' })
-  const data = await getTodayAtPlate(user)
+  const [data, culinary] = await Promise.all([
+    getTodayAtPlate(user),
+    getCulinaryTodaySnapshot(user),
+  ])
   const firstName = firstNameFrom(user.fullName, user.email)
   const greeting = greetingForHour()
 
@@ -142,10 +146,77 @@ export default async function TodayAtPlatePage() {
             </Link>
           </div>
           <p className={styles.empty}>
-            Record creation and detailed editing stay in Payload Admin for now.
+            Detailed relationship edits stay in Payload Admin. Recipes and menus can
+            be created directly in Plate OS.
           </p>
         </section>
       </div>
+
+      <section className={styles.panel} aria-labelledby="culinary-title">
+        <div className={styles.panelHeader}>
+          <h2 id="culinary-title" className={styles.panelTitle}>
+            Culinary
+          </h2>
+          <Link href="/os/menus" className={styles.panelAction}>
+            Open menus
+          </Link>
+        </div>
+        <div className={styles.actions}>
+          <Link href="/os/recipes/new" className={styles.button}>
+            New recipe
+          </Link>
+          <Link href="/os/menus/new" className={`${styles.button} ${styles.buttonQuiet}`}>
+            Build menu
+          </Link>
+          <Link href="/os/menus" className={`${styles.button} ${styles.buttonQuiet}`}>
+            View menus
+          </Link>
+        </div>
+        {culinary.errors.length > 0 ? (
+          culinary.errors.map((error) => (
+            <p key={error} className={styles.sectionError}>
+              {error}
+            </p>
+          ))
+        ) : (
+          <p className={styles.listMeta} style={{ marginTop: '0.85rem' }}>
+            {[
+              culinary.draftMenus != null
+                ? `${culinary.draftMenus} draft menu${culinary.draftMenus === 1 ? '' : 's'}`
+                : null,
+              culinary.awaitingResponse != null
+                ? `${culinary.awaitingResponse} awaiting client response`
+                : null,
+            ]
+              .filter(Boolean)
+              .join(' · ') || 'No culinary summary yet.'}
+          </p>
+        )}
+        {culinary.recentMenus.length > 0 || culinary.recentRecipes.length > 0 ? (
+          <ul className={styles.list} style={{ marginTop: '0.85rem' }}>
+            {culinary.recentMenus.map((item) => (
+              <li key={`menu-${item.id}`} className={styles.listItem}>
+                <Link href={item.href} className={styles.listLink}>
+                  <p className={styles.listTitle}>{item.label}</p>
+                  <p className={styles.listMeta}>Recent menu</p>
+                </Link>
+              </li>
+            ))}
+            {culinary.recentRecipes.map((item) => (
+              <li key={`recipe-${item.id}`} className={styles.listItem}>
+                <Link href={item.href} className={styles.listLink}>
+                  <p className={styles.listTitle}>{item.label}</p>
+                  <p className={styles.listMeta}>Recent recipe</p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className={styles.empty}>
+            Saved recipes and client menus will appear here as you build them.
+          </p>
+        )}
+      </section>
 
       <div className={styles.grid}>
         <section className={styles.panel} aria-labelledby="events-title">
