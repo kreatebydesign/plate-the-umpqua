@@ -212,8 +212,20 @@ export default function MenuBuilderForm({
     setError(null)
     setMessage(null)
 
+    const formEl = event.currentTarget
+    if (!formEl.checkValidity()) {
+      const firstInvalid = formEl.querySelector<HTMLElement>(':invalid')
+      firstInvalid?.focus()
+      firstInvalid?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+      setError('Please complete the required fields before saving.')
+      return
+    }
+
     if (!form.client) {
       setError('Please choose a client.')
+      const clientField = document.getElementById(`${formId}-client`)
+      clientField?.focus()
+      clientField?.scrollIntoView({ block: 'center', behavior: 'smooth' })
       return
     }
     if (!form.internalName.trim()) {
@@ -506,11 +518,12 @@ export default function MenuBuilderForm({
                     }
                   />
                 </label>
-                <div className={styles.actions}>
+                <div className={styles.repeatActions}>
                   <button
                     type="button"
                     className={styles.textButton}
                     disabled={pending || sectionIndex === 0}
+                    aria-label={`Move section ${sectionIndex + 1} up`}
                     onClick={() => {
                       const next = [...form.sections]
                       const [moved] = next.splice(sectionIndex, 1)
@@ -524,6 +537,7 @@ export default function MenuBuilderForm({
                     type="button"
                     className={styles.textButton}
                     disabled={pending || sectionIndex === form.sections.length - 1}
+                    aria-label={`Move section ${sectionIndex + 1} down`}
                     onClick={() => {
                       const next = [...form.sections]
                       const [moved] = next.splice(sectionIndex, 1)
@@ -535,8 +549,9 @@ export default function MenuBuilderForm({
                   </button>
                   <button
                     type="button"
-                    className={styles.textButton}
+                    className={`${styles.textButton} ${styles.textButtonDanger}`}
                     disabled={pending}
+                    aria-label={`Remove section ${sectionIndex + 1}`}
                     onClick={() =>
                       patch({
                         sections: form.sections.filter((_, i) => i !== sectionIndex),
@@ -703,11 +718,12 @@ export default function MenuBuilderForm({
                         />
                       </label>
                     </div>
-                    <div className={styles.actions}>
+                    <div className={styles.repeatActions}>
                       <button
                         type="button"
                         className={styles.textButton}
                         disabled={pending || itemIndex === 0}
+                        aria-label={`Move item ${itemIndex + 1} in section ${sectionIndex + 1} up`}
                         onClick={() => {
                           const nextItems = [...section.items]
                           const [moved] = nextItems.splice(itemIndex, 1)
@@ -726,6 +742,7 @@ export default function MenuBuilderForm({
                         disabled={
                           pending || itemIndex === section.items.length - 1
                         }
+                        aria-label={`Move item ${itemIndex + 1} in section ${sectionIndex + 1} down`}
                         onClick={() => {
                           const nextItems = [...section.items]
                           const [moved] = nextItems.splice(itemIndex, 1)
@@ -740,8 +757,9 @@ export default function MenuBuilderForm({
                       </button>
                       <button
                         type="button"
-                        className={styles.textButton}
+                        className={`${styles.textButton} ${styles.textButtonDanger}`}
                         disabled={pending}
+                        aria-label={`Remove item ${itemIndex + 1} from section ${sectionIndex + 1}`}
                         onClick={() =>
                           updateSection(sectionIndex, {
                             ...section,
@@ -824,7 +842,7 @@ export default function MenuBuilderForm({
         </div>
       </section>
 
-      <div className={styles.actions}>
+      <div className={styles.formActions}>
         <button type="submit" className={styles.button} disabled={pending}>
           {pending
             ? 'Saving…'
@@ -834,7 +852,7 @@ export default function MenuBuilderForm({
         </button>
       </div>
 
-      <div aria-live="polite">
+      <div className={styles.formStatus} aria-live="polite">
         {message ? <p className={styles.formSuccess}>{message}</p> : null}
         {error ? <p className={styles.sectionError}>{error}</p> : null}
       </div>

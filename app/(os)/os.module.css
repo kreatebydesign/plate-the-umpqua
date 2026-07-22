@@ -22,6 +22,7 @@
   color: var(--os-ivory-soft);
   font-family: var(--os-font-body);
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
 }
 
 .shell {
@@ -278,10 +279,14 @@
   background: var(--os-charcoal-soft);
   transform: translateX(-105%);
   transition: transform 200ms ease;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .drawerOpen {
   transform: translateX(0);
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .backdrop {
@@ -464,6 +469,7 @@
   color: var(--os-ivory);
   font-size: 0.95rem;
   font-weight: 500;
+  overflow-wrap: anywhere;
 }
 
 .listMeta {
@@ -533,11 +539,13 @@
 .textButton {
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
+  justify-content: center;
+  min-height: 44px;
   padding: 0 0.85rem;
-  border: 0;
+  border: 1px solid transparent;
+  border-radius: var(--os-radius);
   background: transparent;
-  color: rgba(239, 230, 212, 0.55);
+  color: rgba(239, 230, 212, 0.7);
   font-size: 0.8rem;
   text-align: left;
   cursor: pointer;
@@ -545,6 +553,37 @@
 
 .textButton:hover {
   color: var(--os-ivory-soft);
+}
+
+.textButtonDanger {
+  color: rgba(232, 180, 180, 0.92);
+  border-color: rgba(232, 180, 180, 0.28);
+}
+
+.textButtonDanger:hover {
+  color: #f0c4c4;
+  border-color: rgba(232, 180, 180, 0.45);
+  background: rgba(232, 180, 180, 0.06);
+}
+
+.repeatActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.formStatus {
+  scroll-margin-bottom: 6rem;
+}
+
+.formActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 0.35rem;
+  padding-top: 0.25rem;
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
 }
 
 .foundation {
@@ -624,23 +663,11 @@
   .metrics {
     grid-template-columns: 1fr;
   }
-
-  .content {
-    padding-top: 1.25rem;
-  }
-
-  .heroGreeting {
-    font-size: 1.85rem;
-  }
 }
 
 @media (max-width: 360px) {
   .topbarTitle {
-    font-size: 1.2rem;
-  }
-
-  .metricValue {
-    font-size: 1.85rem;
+    font-size: 1.15rem;
   }
 }
 
@@ -673,15 +700,18 @@
 .fieldControl {
   width: 100%;
   min-height: 44px;
+  max-width: 100%;
   padding: 0 0.85rem;
   border: 1px solid var(--os-line-strong);
   border-radius: var(--os-radius);
   background: rgba(0, 0, 0, 0.22);
   color: var(--os-ivory);
   font: inherit;
-  font-size: 0.9rem;
+  /* 16px minimum prevents iOS Safari auto-zoom on focus */
+  font-size: 1rem;
   letter-spacing: normal;
   text-transform: none;
+  box-sizing: border-box;
 }
 
 .fieldControl:focus-visible {
@@ -1245,4 +1275,150 @@
   .inquiryTop {
     flex-direction: column;
   }
+
+  .topbar {
+    min-height: 56px;
+    gap: 0.65rem;
+  }
+
+  .topbarTitle {
+    font-size: 1.25rem;
+    overflow-wrap: anywhere;
+  }
+
+  .content {
+    padding-top: 1rem;
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
+
+  .hero {
+    gap: 0.4rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .heroGreeting {
+    font-size: 1.55rem;
+    overflow-wrap: anywhere;
+  }
+
+  .heroCompact .heroGreeting {
+    font-size: 1.35rem;
+  }
+
+  .heroLine {
+    font-size: 0.92rem;
+  }
+
+  .metrics {
+    gap: 0.65rem;
+    margin-bottom: 1.15rem;
+  }
+
+  .metricCard {
+    min-height: 0;
+    padding: 0.85rem 0.9rem;
+  }
+
+  .metricValue {
+    font-size: 1.65rem;
+  }
+
+  .builderSection {
+    padding: 0.85rem 0.9rem;
+    gap: 0.7rem;
+  }
+
+  .builderSectionTitle {
+    font-size: 1.15rem;
+  }
+
+  .repeatCard {
+    padding: 0.7rem;
+  }
+
+  .repeatCard .repeatCard {
+    margin-left: 0;
+    padding: 0.65rem;
+    background: rgba(0, 0, 0, 0.16);
+  }
+
+  .repeatToolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.55rem;
+  }
+
+  .repeatActions,
+  .repeatToolbar > .actions {
+    width: 100%;
+  }
+
+  .repeatActions .textButton,
+  .repeatToolbar .textButton {
+    flex: 1 1 calc(50% - 0.45rem);
+    justify-content: center;
+    text-align: center;
+  }
+
+  .textButtonDanger {
+    flex: 1 1 100%;
+  }
+
+  .button {
+    width: auto;
+    min-width: min(100%, 11rem);
+  }
+
+  .actions > .button,
+  .formActions > .button,
+  .hero .button {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .formActions .button {
+    width: 100%;
+  }
+
+  .workflowBanner {
+    padding: 0.75rem 0.85rem;
+  }
+
+  .structureChoice {
+    padding: 0.7rem 0.8rem;
+  }
+
+  .previewShell {
+    padding: 1.15rem 0.95rem 1.5rem;
+  }
+
+  .statusChip {
+    white-space: normal;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 360px) {
+  .heroGreeting {
+    font-size: 1.4rem;
+  }
+
+  .metricValue {
+    font-size: 1.5rem;
+  }
+
+  .repeatActions .textButton,
+  .repeatToolbar .textButton {
+    flex: 1 1 100%;
+  }
+}
+
+.heroCompact {
+  margin-bottom: 1.1rem;
 }

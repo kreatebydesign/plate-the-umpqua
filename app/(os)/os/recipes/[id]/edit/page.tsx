@@ -23,7 +23,7 @@ export default async function EditRecipePage({ params }: { params: Params }) {
 
   return (
     <div>
-      <section className={styles.hero} aria-label="Edit recipe">
+      <section className={`${styles.hero} ${styles.heroCompact}`} aria-label="Edit recipe">
         <p className={styles.heroDate}>Culinary library</p>
         <h2 className={styles.heroGreeting}>Edit recipe</h2>
         <p className={styles.heroLine}>{recipe.name}</p>

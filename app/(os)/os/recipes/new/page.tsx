@@ -18,7 +18,7 @@ export default async function NewRecipePage() {
 
   return (
     <div>
-      <section className={styles.hero} aria-label="New recipe">
+      <section className={`${styles.hero} ${styles.heroCompact}`} aria-label="New recipe">
         <p className={styles.heroDate}>Culinary library</p>
         <h2 className={styles.heroGreeting}>Add recipe</h2>
         <p className={styles.heroLine}>

@@ -215,6 +215,15 @@ export default function RecipeForm({
     setError(null)
     setMessage(null)
 
+    const formEl = event.currentTarget
+    if (!formEl.checkValidity()) {
+      const firstInvalid = formEl.querySelector<HTMLElement>(':invalid')
+      firstInvalid?.focus()
+      firstInvalid?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+      setError('Please complete the required fields before saving.')
+      return
+    }
+
     const payload = {
       name: form.name,
       shortDescription: form.shortDescription,
@@ -563,8 +572,9 @@ export default function RecipeForm({
               </div>
               <button
                 type="button"
-                className={styles.textButton}
+                className={`${styles.textButton} ${styles.textButtonDanger}`}
                 disabled={pending || form.ingredients.length <= 1}
+                aria-label={`Remove ingredient ${index + 1}`}
                 onClick={() =>
                   patch({
                     ingredients: form.ingredients.filter((_, i) => i !== index),
@@ -609,11 +619,12 @@ export default function RecipeForm({
                   }}
                 />
               </label>
-              <div className={styles.actions}>
+              <div className={styles.repeatActions}>
                 <button
                   type="button"
                   className={styles.textButton}
                   disabled={pending || index === 0}
+                  aria-label={`Move step ${index + 1} up`}
                   onClick={() => {
                     const next = [...form.steps]
                     const [moved] = next.splice(index, 1)
@@ -627,6 +638,7 @@ export default function RecipeForm({
                   type="button"
                   className={styles.textButton}
                   disabled={pending || index === form.steps.length - 1}
+                  aria-label={`Move step ${index + 1} down`}
                   onClick={() => {
                     const next = [...form.steps]
                     const [moved] = next.splice(index, 1)
@@ -638,8 +650,9 @@ export default function RecipeForm({
                 </button>
                 <button
                   type="button"
-                  className={styles.textButton}
+                  className={`${styles.textButton} ${styles.textButtonDanger}`}
                   disabled={pending || form.steps.length <= 1}
+                  aria-label={`Remove step ${index + 1}`}
                   onClick={() =>
                     patch({ steps: form.steps.filter((_, i) => i !== index) })
                   }
@@ -763,13 +776,13 @@ export default function RecipeForm({
         </div>
       </section>
 
-      <div className={styles.actions}>
+      <div className={styles.formActions}>
         <button type="submit" className={styles.button} disabled={pending}>
           {pending ? 'Saving…' : mode === 'create' ? 'Save recipe' : 'Save changes'}
         </button>
       </div>
 
-      <div aria-live="polite">
+      <div className={styles.formStatus} aria-live="polite">
         {message ? <p className={styles.formSuccess}>{message}</p> : null}
         {error ? <p className={styles.sectionError}>{error}</p> : null}
       </div>

@@ -61,7 +61,7 @@ export default async function EditMenuPage({ params }: { params: Params }) {
 
   return (
     <div>
-      <section className={styles.hero} aria-label="Edit menu">
+      <section className={`${styles.hero} ${styles.heroCompact}`} aria-label="Edit menu">
         <p className={styles.heroDate}>Menu builder</p>
         <h2 className={styles.heroGreeting}>Edit menu</h2>
         <p className={styles.heroLine}>{menu.internalName}</p>

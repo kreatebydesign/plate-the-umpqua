@@ -41,8 +41,14 @@ export default function OsShell({
   const pathname = usePathname()
   const router = useRouter()
   const [open, setOpen] = useState(false)
+  const [drawerPath, setDrawerPath] = useState(pathname)
   const drawerId = useId()
   const titleId = useId()
+
+  if (drawerPath !== pathname) {
+    setDrawerPath(pathname)
+    if (open) setOpen(false)
+  }
 
   const page = useMemo(() => {
     if (pathname.startsWith('/os/inquiries/') && pathname !== '/os/inquiries') {
@@ -208,6 +214,7 @@ export default function OsShell({
         id={drawerId}
         className={`${styles.drawer} ${open ? styles.drawerOpen : ''}`}
         aria-hidden={!open}
+        inert={!open ? true : undefined}
         aria-label="Mobile navigation"
       >
         {nav}

@@ -30,7 +30,7 @@ export default async function NewMenuPage() {
 
   return (
     <div>
-      <section className={styles.hero} aria-label="New menu">
+      <section className={`${styles.hero} ${styles.heroCompact}`} aria-label="New menu">
         <p className={styles.heroDate}>Client presentations</p>
         <h2 className={styles.heroGreeting}>New menu</h2>
         <p className={styles.heroLine}>

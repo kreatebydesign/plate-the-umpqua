@@ -19,6 +19,7 @@
   color: var(--mr-ivory-soft);
   font-family: var(--mr-font-body);
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
 }
 
 .page {
@@ -28,6 +29,37 @@
     max(2rem, env(safe-area-inset-top))
     0
     max(3rem, env(safe-area-inset-bottom));
+}
+
+@media (max-width: 390px) {
+  .page {
+    width: min(720px, calc(100% - 1.25rem));
+  }
+
+  .shell,
+  .stateCard,
+  .form {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 320px) {
+  .page {
+    width: calc(100% - 1rem);
+  }
+
+  .title {
+    font-size: 1.55rem;
+  }
 }
 
 .brand {
@@ -169,12 +201,15 @@
 .textarea {
   width: 100%;
   min-height: 44px;
+  max-width: 100%;
   padding: 0.7rem 0.85rem;
   border: 1px solid var(--mr-line);
   border-radius: var(--mr-radius);
   background: rgba(0, 0, 0, 0.25);
   color: var(--mr-ivory);
   font: inherit;
+  font-size: 1rem;
+  box-sizing: border-box;
 }
 
 .textarea {

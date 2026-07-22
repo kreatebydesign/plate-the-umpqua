@@ -25,6 +25,9 @@ export default function MenuReviewForm({ token, alreadyApproved }: Props) {
 
     if (action === 'requestRevision' && comment.trim().length < 4) {
       setError('Please share a short note about the revisions you need.')
+      const commentField = document.getElementById('review-comment')
+      commentField?.focus()
+      commentField?.scrollIntoView({ block: 'center', behavior: 'smooth' })
       return
     }
 
