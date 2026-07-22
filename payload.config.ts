@@ -29,12 +29,37 @@ export default buildConfig({
   admin: {
     user: Users.slug,
 
+    meta: {
+      titleSuffix: '· Plate The Umpqua',
+      description: 'Sign in to Plate OS for Plate The Umpqua.',
+      robots: 'noindex, nofollow',
+      icons: [
+        {
+          rel: 'icon',
+          type: 'image/png',
+          url: '/branding/plate-the-umpqua-logo.png',
+        },
+      ],
+      openGraph: {
+        siteName: 'Plate The Umpqua',
+        description: 'Sign in to Plate OS for Plate The Umpqua.',
+      },
+    },
+
     components: {
       beforeDashboard: [
         {
           path: '@/components/admin/KXDHospitalityDashboard',
         },
       ],
+
+      beforeLogin: ['@/components/admin/login/BeforeLogin'],
+      afterLogin: ['@/components/admin/login/AfterLogin'],
+
+      graphics: {
+        Logo: '@/components/admin/graphics/Logo',
+        Icon: '@/components/admin/graphics/Icon',
+      },
 
       views: {
         partners: {
@@ -46,6 +71,16 @@ export default buildConfig({
 
     importMap: {
       baseDir: path.resolve(dirname),
+    },
+  },
+
+  i18n: {
+    translations: {
+      en: {
+        authentication: {
+          login: 'Enter Plate OS',
+        },
+      },
     },
   },
 
