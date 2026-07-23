@@ -1,0 +1,719 @@
+/* Plate The Umpqua OS — Premium branded menu print
+   Typography wordmark · US Letter · toolbar hidden when printing */
+
+.root {
+  --print-ink: #14120e;
+  --print-ink-soft: #2a2722;
+  --print-body: #3f3a33;
+  --print-muted: #6a6358;
+  --print-gold: #8a7040;
+  --print-gold-line: rgba(138, 112, 64, 0.42);
+  --print-rule: rgba(20, 18, 14, 0.12);
+  --print-paper: #fbf8f2;
+  --chrome-bg: #0a0908;
+  --chrome-panel: #14120e;
+  --chrome-text: #efe6d4;
+  --chrome-muted: #8a8276;
+  --chrome-gold: #c4a465;
+  --chrome-line: rgba(239, 230, 212, 0.12);
+  --radius: 4px;
+  --font-display: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
+  --font-body: var(--font-work), 'Work Sans', system-ui, sans-serif;
+
+  min-height: 100dvh;
+  background: var(--chrome-bg);
+  color: var(--chrome-text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Non-printing toolbar ─── */
+
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem 0.9rem;
+  background: color-mix(in srgb, var(--chrome-panel) 94%, transparent);
+  border-bottom: 1px solid var(--chrome-line);
+  backdrop-filter: blur(10px);
+}
+
+.toolbarRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.toolbarTitle {
+  margin: 0;
+  flex: 1 1 10rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--chrome-text);
+}
+
+.toolbarMeta {
+  margin: 0;
+  width: 100%;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--chrome-muted);
+}
+
+.toolbarControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.65rem;
+  width: 100%;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  min-width: min(100%, 11rem);
+  flex: 1 1 10rem;
+}
+
+.fieldLabel {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--chrome-muted);
+}
+
+.select {
+  min-height: 44px;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--chrome-line);
+  border-radius: var(--radius);
+  background: #1a1713;
+  color: var(--chrome-text);
+  font: inherit;
+  font-size: 0.92rem;
+}
+
+.select:focus-visible,
+.button:focus-visible,
+.checkbox:focus-visible {
+  outline: 2px solid var(--chrome-gold);
+  outline-offset: 2px;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.35rem 0.15rem;
+  font-size: 0.88rem;
+  color: var(--chrome-text);
+}
+
+.checkbox {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--chrome-gold);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 7.5rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: var(--chrome-gold);
+  color: #14120e;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button:hover {
+  filter: brightness(1.05);
+}
+
+.buttonQuiet {
+  background: transparent;
+  border-color: var(--chrome-line);
+  color: var(--chrome-text);
+  font-weight: 500;
+}
+
+.buttonQuiet:hover {
+  border-color: var(--chrome-gold);
+  color: var(--chrome-gold);
+  filter: none;
+}
+
+.guidance {
+  margin: 0;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--chrome-line);
+  border-radius: var(--radius);
+  background: #12100d;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--chrome-muted);
+}
+
+.guidance strong {
+  color: var(--chrome-text);
+  font-weight: 600;
+}
+
+.styleHint {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--chrome-muted);
+}
+
+/* ─── Preview stage ─── */
+
+.stage {
+  padding: 1rem 0.75rem 2.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.sheetFrame {
+  width: min(100%, 52rem);
+}
+
+.sheet {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 8.5 / 11;
+  min-height: 0;
+  margin: 0 auto;
+  padding: clamp(1.15rem, 5vw, 0.85in) clamp(1rem, 4.5vw, 0.8in);
+  background: var(--print-paper);
+  color: var(--print-ink);
+  box-shadow:
+    0 0 0 1px rgba(239, 230, 212, 0.08),
+    0 18px 48px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  container-type: inline-size;
+}
+
+.sheetInner {
+  height: 100%;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+@media (max-width: 767px) {
+  .stage {
+    padding: 0.75rem 0.5rem 2rem;
+  }
+
+  .sheet {
+    aspect-ratio: auto;
+    min-height: min(72dvh, 36rem);
+  }
+}
+
+/* ─── Document ─── */
+
+.doc {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  font-family: var(--font-body);
+  color: var(--print-ink);
+}
+
+.docBody {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+  padding-block: 0.35rem 0.75rem;
+}
+
+.brandBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  text-align: center;
+}
+
+.wordmark {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(0.92rem, 3.1cqw, 1.12rem);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--print-gold);
+  line-height: 1.2;
+}
+
+.brandRule {
+  width: min(38%, 7.5rem);
+  height: 1px;
+  margin: 0;
+  background: var(--print-gold-line);
+  border: 0;
+}
+
+.masthead {
+  margin-top: 1.35rem;
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.55rem, 5.6cqw, 2.28rem);
+  font-weight: 500;
+  line-height: 1.16;
+  letter-spacing: 0.01em;
+  color: var(--print-ink);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.meta {
+  margin: 0.7rem 0 0;
+  font-size: clamp(0.72rem, 2.3cqw, 0.82rem);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--print-muted);
+  line-height: 1.5;
+}
+
+.metaLine {
+  display: block;
+}
+
+.metaStrong {
+  color: var(--print-ink-soft);
+}
+
+.intro {
+  margin: 1.05rem auto 0;
+  max-width: 34rem;
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 2.9cqw, 1.08rem);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--print-body);
+  text-wrap: pretty;
+}
+
+.courses {
+  margin-top: 1.55rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.section {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.sectionName {
+  margin: 0 0 0.45rem;
+  font-family: var(--font-display);
+  font-size: clamp(0.78rem, 2.6cqw, 0.9rem);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--print-gold);
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+.sectionRule {
+  width: 100%;
+  max-width: 22rem;
+  height: 1px;
+  margin: 0 auto 0.75rem;
+  background: var(--print-rule);
+  border: 0;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+.item {
+  margin: 0 0 0.95rem;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  orphans: 3;
+  widows: 3;
+}
+
+.item:last-child {
+  margin-bottom: 0;
+}
+
+.itemTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.08rem, 3.5cqw, 1.28rem);
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--print-ink);
+  overflow-wrap: anywhere;
+}
+
+.itemDesc {
+  margin: 0.3rem 0 0;
+  font-size: clamp(0.8rem, 2.5cqw, 0.9rem);
+  line-height: 1.5;
+  color: var(--print-body);
+  text-wrap: pretty;
+}
+
+.tags {
+  margin: 0.3rem 0 0;
+  font-size: clamp(0.64rem, 2cqw, 0.7rem);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--print-muted);
+  line-height: 1.4;
+}
+
+.investment {
+  margin-top: 1.45rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--print-rule);
+  text-align: center;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.investmentLabel {
+  margin: 0 0 0.35rem;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--print-gold);
+}
+
+.investmentAmount {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 3.6cqw, 1.4rem);
+  font-weight: 500;
+  color: var(--print-ink);
+}
+
+.investmentCopy {
+  margin: 0.35rem auto 0;
+  max-width: 30rem;
+  font-size: clamp(0.75rem, 2.3cqw, 0.86rem);
+  line-height: 1.5;
+  color: var(--print-body);
+}
+
+.emptyState {
+  margin: 1.75rem auto;
+  max-width: 26rem;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-style: italic;
+  color: var(--print-muted);
+}
+
+.footer {
+  flex: 0 0 auto;
+  margin-top: 1.5rem;
+  padding-top: 0.85rem;
+  text-align: center;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.footerRule {
+  width: min(32%, 6.5rem);
+  height: 1px;
+  margin: 0 auto 0.65rem;
+  background: var(--print-gold-line);
+  border: 0;
+}
+
+.footerLine {
+  margin: 0;
+  font-size: clamp(0.6rem, 1.9cqw, 0.68rem);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--print-muted);
+  line-height: 1.55;
+}
+
+/* Classic Dinner — centered formal */
+
+.styleClassic .brandBlock,
+.styleClassic .masthead,
+.styleClassic .investment,
+.styleClassic .footer {
+  text-align: center;
+}
+
+.styleClassic .item {
+  max-width: 34rem;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.styleClassic .itemDesc,
+.styleClassic .tags {
+  max-width: 30rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Private Event — structured hierarchy; dish copy left for readability */
+
+.styleEvent .brandBlock {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.styleEvent .brandRule {
+  margin-left: 0;
+}
+
+.styleEvent .masthead {
+  margin-top: 1.15rem;
+  padding-bottom: 0.95rem;
+  border-bottom: 1px solid var(--print-rule);
+  text-align: left;
+}
+
+.styleEvent .title {
+  font-size: clamp(1.45rem, 5cqw, 2.05rem);
+}
+
+.styleEvent .meta {
+  display: grid;
+  gap: 0.22rem;
+  margin-top: 0.8rem;
+  letter-spacing: 0.03em;
+  text-transform: none;
+  font-size: clamp(0.78rem, 2.4cqw, 0.88rem);
+}
+
+.styleEvent .metaStrong {
+  font-family: var(--font-display);
+  font-size: 1.05em;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+
+.styleEvent .intro {
+  margin-left: 0;
+  margin-right: 0;
+  max-width: none;
+  text-align: left;
+}
+
+.styleEvent .sectionRule {
+  margin-left: 0;
+  max-width: 100%;
+}
+
+.styleEvent .item,
+.styleEvent .investment,
+.styleEvent .footer {
+  text-align: left;
+}
+
+.styleEvent .investmentCopy {
+  margin-left: 0;
+}
+
+.styleEvent .footerRule {
+  margin-left: 0;
+}
+
+/* Minimal Luxury */
+
+.styleMinimal .docBody {
+  justify-content: flex-start;
+  padding-top: 0.85rem;
+}
+
+.styleMinimal .brandBlock {
+  align-items: flex-start;
+  text-align: left;
+  gap: 0.4rem;
+}
+
+.styleMinimal .wordmark {
+  letter-spacing: 0.14em;
+  font-size: clamp(0.78rem, 2.5cqw, 0.9rem);
+  color: var(--print-ink-soft);
+}
+
+.styleMinimal .brandRule {
+  display: none;
+}
+
+.styleMinimal .masthead {
+  margin-top: 1.85rem;
+  text-align: left;
+}
+
+.styleMinimal .title {
+  font-size: clamp(1.7rem, 6cqw, 2.5rem);
+  letter-spacing: -0.01em;
+}
+
+.styleMinimal .meta {
+  margin-top: 0.9rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.styleMinimal .intro {
+  margin: 1.35rem 0 0;
+  max-width: 28rem;
+  text-align: left;
+  font-style: normal;
+  font-family: var(--font-body);
+  font-size: clamp(0.85rem, 2.5cqw, 0.94rem);
+}
+
+.styleMinimal .courses {
+  margin-top: 1.95rem;
+  gap: 1.55rem;
+}
+
+.styleMinimal .sectionName {
+  letter-spacing: 0.08em;
+  font-size: clamp(0.7rem, 2.2cqw, 0.8rem);
+  color: var(--print-muted);
+}
+
+.styleMinimal .sectionRule {
+  max-width: 3.25rem;
+  margin-left: 0;
+  background: var(--print-gold-line);
+}
+
+.styleMinimal .item {
+  margin-bottom: 1.1rem;
+  text-align: left;
+}
+
+.styleMinimal .itemTitle {
+  font-size: clamp(1.12rem, 3.7cqw, 1.35rem);
+}
+
+.styleMinimal .investment {
+  text-align: left;
+  border-top-color: transparent;
+  padding-top: 0.35rem;
+}
+
+.styleMinimal .footer {
+  text-align: left;
+}
+
+.styleMinimal .footerRule {
+  display: none;
+}
+
+/* ─── Print ─── */
+
+@media print {
+  @page {
+    size: Letter portrait;
+    margin: 0.7in 0.75in;
+  }
+
+  .root {
+    background: #fff;
+    color: var(--print-ink);
+    min-height: 0;
+  }
+
+  .toolbar,
+  .guidance,
+  .styleHint {
+    display: none !important;
+  }
+
+  .stage {
+    padding: 0;
+    display: block;
+  }
+
+  .sheetFrame,
+  .sheet {
+    width: 100%;
+    max-width: none;
+    aspect-ratio: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  .sheetInner {
+    overflow: visible;
+    height: auto;
+  }
+
+  .doc {
+    min-height: auto;
+  }
+
+  .docBody {
+    justify-content: flex-start;
+    padding-block: 0;
+  }
+
+  .section {
+    break-inside: avoid-page;
+  }
+
+  .item {
+    break-inside: avoid;
+  }
+
+  .sectionName,
+  .sectionRule {
+    break-after: avoid;
+  }
+
+  .footer {
+    break-before: avoid;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toolbar,
+  .button,
+  .select {
+    transition: none;
+  }
+}

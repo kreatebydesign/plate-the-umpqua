@@ -106,13 +106,15 @@ function asId(value: unknown): string {
   return ''
 }
 
-function relId(value: unknown): string | null {
-  if (!value) return null
-  if (typeof value === 'string' || typeof value === 'number') return String(value)
-  if (typeof value === 'object' && 'id' in value) {
-    return String((value as { id: string | number }).id)
-  }
-  return null
+/**
+ * OS client links only when the relationship populated under access control.
+ * Raw ID strings (inaccessible / unpopulated) must not become hrefs.
+ */
+function authorizedClientHref(value: unknown): string | null {
+  if (!value || typeof value !== 'object' || !('id' in value)) return null
+  const id = (value as { id?: string | number }).id
+  if (id == null || id === '') return null
+  return `/os/clients/${String(id)}`
 }
 
 /**
@@ -179,7 +181,6 @@ export async function getTodayAtPlate(user: User): Promise<TodayAtPlateData> {
     newInquiriesCount = newResult.totalDocs
     openInquiriesCount = openResult.totalDocs
     recentInquiries = recentResult.docs.map((doc) => {
-      const clientId = relId(doc.client)
       return {
         id: asId(doc.id),
         title: doc.eventTitle || 'Hospitality inquiry',
@@ -187,7 +188,7 @@ export async function getTodayAtPlate(user: User): Promise<TodayAtPlateData> {
         sourceLabel: LEAD_SOURCE_LABELS[doc.leadSource || ''] || doc.leadSource || '—',
         receivedLabel: formatShortDate(doc.createdAt),
         clientName: relName(doc.client, 'fullName'),
-        clientHref: clientId ? `/os/clients/${clientId}` : null,
+        clientHref: authorizedClientHref(doc.client),
         adminHref: `/os/inquiries/${doc.id}`,
       }
     })
@@ -236,7 +237,6 @@ export async function getTodayAtPlate(user: User): Promise<TodayAtPlateData> {
 
     upcomingEventsCount = upcomingCountResult.totalDocs
     upcomingEvents = upcomingResult.docs.map((doc) => {
-      const clientId = relId(doc.client)
       return {
         id: asId(doc.id),
         name: doc.eventName || 'Untitled event',
@@ -245,7 +245,7 @@ export async function getTodayAtPlate(user: User): Promise<TodayAtPlateData> {
         guestCount: typeof doc.guestCount === 'number' ? doc.guestCount : null,
         venueName: relName(doc.venue, 'venueName'),
         clientName: relName(doc.client, 'fullName'),
-        clientHref: clientId ? `/os/clients/${clientId}` : null,
+        clientHref: authorizedClientHref(doc.client),
         adminHref: `/os/events/${doc.id}`,
       }
     })

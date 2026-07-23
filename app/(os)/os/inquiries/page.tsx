@@ -56,7 +56,7 @@ export default async function InquiriesWorkspacePage({
         </p>
         <div className={styles.actions}>
           <Link href="/os" className={`${styles.button} ${styles.buttonQuiet}`}>
-            Today at Plate
+            Today at Plate The Umpqua
           </Link>
           {result.canManageInAdmin ? (
             <Link

@@ -1,0 +1,422 @@
+/* 96″ × 36″ event banner — final art direction polish
+   Composition approved. Craftsmanship only. */
+
+.banner {
+  --ink: #14120e;
+  --cream: #efe6d4;
+  --gold: #c4a465;
+  --gold-soft: rgba(196, 164, 101, 0.72);
+  --deep: #0c1210;
+
+  position: relative;
+  width: 100%;
+  aspect-ratio: 96 / 36;
+  overflow: hidden;
+  background: var(--deep);
+  color: var(--cream);
+  container-type: inline-size;
+  font-family: var(--font-work), "Work Sans", sans-serif;
+  isolation: isolate;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ─── Atmosphere — deeper, quieter, supportive only ─── */
+
+.atmosphere {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.wash {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(70% 55% at 50% 38%, rgba(28, 46, 38, 0.38) 0%, transparent 68%),
+    radial-gradient(45% 40% at 72% 72%, rgba(18, 32, 26, 0.28) 0%, transparent 60%),
+    linear-gradient(180deg, #131f1a 0%, #0d1512 42%, #090e0c 100%);
+}
+
+.vineyard {
+  position: absolute;
+  inset: 0;
+  opacity: 0.065;
+  background-image: repeating-linear-gradient(
+    108deg,
+    transparent 0,
+    transparent 2.4cqw,
+    rgba(196, 164, 101, 0.07) 2.4cqw,
+    rgba(196, 164, 101, 0.07) 2.46cqw
+  );
+  mask-image: linear-gradient(to bottom, transparent 18%, black 45%, black 74%, transparent 100%);
+}
+
+.mountains {
+  position: absolute;
+  inset: 0;
+  opacity: 0.42;
+  background:
+    radial-gradient(120% 46% at 50% 120%, transparent 40%, rgba(6, 10, 8, 0.9) 80%),
+    radial-gradient(72% 26% at 16% 102%, transparent 22%, rgba(10, 16, 14, 0.4) 72%),
+    radial-gradient(68% 24% at 88% 104%, transparent 20%, rgba(8, 14, 12, 0.42) 74%);
+}
+
+.contourA,
+.contourB {
+  position: absolute;
+  inset: -12% -8%;
+  border-radius: 45% 55% 40% 60%;
+  border: 1px solid rgba(239, 230, 212, 0.035);
+  box-shadow:
+    0 0 0 2.2cqw rgba(239, 230, 212, 0.012),
+    0 0 0 4.4cqw rgba(196, 164, 101, 0.01);
+}
+
+.contourA {
+  transform: rotate(-6deg) translate(-2%, 10%);
+  opacity: 0.55;
+}
+
+.contourB {
+  border-radius: 55% 40% 60% 45%;
+  border-color: rgba(196, 164, 101, 0.04);
+  transform: rotate(10deg) translate(6%, -5%);
+  opacity: 0.38;
+}
+
+.goldLight {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(42% 34% at 50% 40%, rgba(196, 164, 101, 0.045) 0%, transparent 72%),
+    linear-gradient(180deg, rgba(239, 230, 212, 0.018) 0%, transparent 22%);
+}
+
+.grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.11;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  background-size: 20cqw 20cqw;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(78% 68% at 50% 46%, transparent 48%, rgba(6, 10, 8, 0.55) 100%);
+}
+
+/* ─── Three zones preserved (20 / 60 / 20) ─── */
+
+.safe {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: 20% 60% 20%;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 5cqh 5.5cqw 4cqh;
+}
+
+/* TOP — brand */
+
+.zoneTop {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 0;
+  padding-bottom: 2.2cqh;
+}
+
+.brand {
+  margin: 0;
+  color: var(--cream);
+  font-family: var(--font-cormorant), "Cormorant Garamond", serif;
+  font-size: 3.15cqw;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* MIDDLE — hero */
+
+.zoneMiddle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4.8cqh;
+  min-height: 0;
+  overflow: hidden;
+  text-align: center;
+  padding: 0 0 1.5cqh;
+}
+
+.hero {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.55cqh;
+  color: var(--cream);
+  line-height: 0.95;
+}
+
+/* EXPLORE ≈ 27% smaller than THE UMPQUA; both uppercase */
+.heroExplore {
+  display: block;
+  font-family: var(--font-cormorant), "Cormorant Garamond", serif;
+  font-size: 4.7cqw;
+  font-weight: 500;
+  font-style: normal;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+/* THE UMPQUA −10% from prior 7.2cqw */
+.heroPlace {
+  display: block;
+  font-family: var(--font-cormorant), "Cormorant Garamond", serif;
+  font-size: 6.48cqw;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.categories {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1cqw;
+  color: var(--gold-soft);
+  font-size: 1.05cqw;
+  font-weight: 500;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+}
+
+.categoryItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 1cqw;
+}
+
+.bullet {
+  opacity: 0.55;
+  letter-spacing: 0;
+}
+
+/* BOTTOM — one band: website | QR | sponsors
+   Caption sits at the far left of the sponsor column */
+
+.zoneBottom {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    "website scan caption"
+    "website scan partners";
+  column-gap: 2.8cqw;
+  row-gap: 0.9cqh;
+  align-items: end;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.website {
+  grid-area: website;
+  align-self: end;
+  margin: 0;
+  /* Reserve space so URL shares horizon with QR square */
+  padding-bottom: 1.35cqh;
+  color: var(--cream);
+  font-family: var(--font-cormorant), "Cormorant Garamond", serif;
+  /* +15% from 2.35cqw */
+  font-size: 2.7cqw;
+  font-weight: 500;
+  letter-spacing: 0.055em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.scan {
+  grid-area: scan;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: end;
+  flex-shrink: 0;
+  padding-bottom: 1.35cqh;
+}
+
+.qrFrame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* −10% from 5.2cqw */
+  width: 4.68cqw;
+  height: 4.68cqw;
+  padding: 0.24cqw;
+  background: #fff;
+  opacity: 0.96;
+}
+
+.qr {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.scanLabel {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  color: rgba(239, 230, 212, 0.58);
+  font-size: 0.58cqw;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Far left of the sponsor section — labels the full partner row */
+.partnersCaption {
+  grid-area: caption;
+  justify-self: stretch;
+  align-self: end;
+  margin: 0;
+  padding: 0;
+  color: var(--gold-soft);
+  font-size: 0.68cqw;
+  font-weight: 600;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.partnerRow {
+  grid-area: partners;
+  margin: 0;
+  padding: 0 0 1.35cqh;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: center;
+  column-gap: 2.6cqw;
+  width: 100%;
+  min-width: 0;
+}
+
+.partnerSlot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* +15% from 5.8cqh ≈ 6.67, optically tuned per mark below */
+  height: 6.5cqh;
+}
+
+.sponsorLogo {
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.logoOpb {
+  height: 5.9cqh;
+  max-width: 15cqw;
+}
+
+.logoSpitz {
+  height: 6.2cqh;
+  max-width: 14.5cqw;
+}
+
+.logoKreate {
+  height: 5.8cqh;
+  max-width: 13.5cqw;
+}
+
+.allenMark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35cqh;
+  height: 6.5cqh;
+  color: var(--cream);
+  text-align: center;
+  line-height: 1;
+}
+
+.allenName {
+  font-family: var(--font-cormorant), "Cormorant Garamond", serif;
+  font-size: 1.48cqw;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+.allenTrade {
+  color: rgba(239, 230, 212, 0.58);
+  font-size: 0.55cqw;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+/* ─── Preview chrome ─── */
+
+.preview {
+  min-height: 100vh;
+  margin: 0;
+  padding: 2.5rem 2rem 3rem;
+  background: #0a0a0a;
+  color: #efe6d4;
+  font-family: var(--font-work), "Work Sans", sans-serif;
+}
+
+.previewChrome {
+  max-width: 1200px;
+  margin: 0 auto 1.5rem;
+}
+
+.previewLabel {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(196, 164, 101, 0.85);
+}
+
+.previewSpec {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(239, 230, 212, 0.55);
+}
+
+.previewStage {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.previewFrame {
+  width: 100%;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+}

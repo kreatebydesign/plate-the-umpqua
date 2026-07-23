@@ -33,7 +33,7 @@ export default buildConfig({
 
     meta: {
       titleSuffix: '· Plate The Umpqua',
-      description: 'Sign in to Plate OS for Plate The Umpqua.',
+      description: 'Sign in to Plate The Umpqua OS for Plate The Umpqua.',
       robots: 'noindex, nofollow',
       icons: [
         {
@@ -44,7 +44,7 @@ export default buildConfig({
       ],
       openGraph: {
         siteName: 'Plate The Umpqua',
-        description: 'Sign in to Plate OS for Plate The Umpqua.',
+        description: 'Sign in to Plate The Umpqua OS for Plate The Umpqua.',
       },
     },
 
@@ -80,7 +80,7 @@ export default buildConfig({
     translations: {
       en: {
         authentication: {
-          login: 'Enter Plate OS',
+          login: 'Enter Plate The Umpqua OS',
         },
       },
     },

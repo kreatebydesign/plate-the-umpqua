@@ -41,7 +41,7 @@ export const generateMetadata = async ({
       absolute: 'Sign In | Plate The Umpqua',
     },
     description:
-      'Sign in to manage Plate operations, inquiries, events, and client relationships.',
+      'Sign in to manage Plate The Umpqua operations, inquiries, events, and client relationships.',
     robots: {
       index: false,
       follow: false,

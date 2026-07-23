@@ -9,14 +9,14 @@ export default function BeforeLogin() {
           Private Chef & Hospitality Concierge
         </p>
         <span className="ptu-login-story__rule" aria-hidden="true" />
-        <p className="ptu-login-story__note">Plate OS</p>
+        <p className="ptu-login-story__note">Plate The Umpqua OS</p>
       </aside>
 
       <header className="ptu-login-intro">
         <h1 className="ptu-login-intro__title">Welcome back</h1>
         <p className="ptu-login-intro__copy">
-          Sign in to manage Plate operations, inquiries, events, and client
-          relationships.
+          Sign in to manage Plate The Umpqua operations, inquiries, events, and
+          client relationships.
         </p>
       </header>
     </>

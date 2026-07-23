@@ -21,12 +21,12 @@ import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93
 import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { default as default_34253356f327048e5e1d0c8dd6259985 } from '@/components/admin/graphics/Icon'
+import { default as default_7290b7198794a8ea161f702320c1cd8a } from '@/components/admin/graphics/Logo'
+import { default as default_2f87d5ffb27b3b776f96c445e1a61929 } from '@/components/admin/login/AfterLogin'
 import { default as default_65a82131453b53af1e7486d49186e5b2 } from '@/components/admin/KXDHospitalityDashboard'
+import { default as default_3b13d75565116913f23de261a80a142a } from '@/components/admin/login/BeforeLogin'
 import { default as default_44ae5abc9085a4b8d7aa9a6041039559 } from '@/components/admin/PartnerConciergeDashboard'
-import { default as default_ptuBeforeLogin } from '@/components/admin/login/BeforeLogin'
-import { default as default_ptuAfterLogin } from '@/components/admin/login/AfterLogin'
-import { default as default_ptuLogo } from '@/components/admin/graphics/Logo'
-import { default as default_ptuIcon } from '@/components/admin/graphics/Icon'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -54,11 +54,11 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#UnderlineFeatureClient": UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "@/components/admin/graphics/Icon#default": default_34253356f327048e5e1d0c8dd6259985,
+  "@/components/admin/graphics/Logo#default": default_7290b7198794a8ea161f702320c1cd8a,
+  "@/components/admin/login/AfterLogin#default": default_2f87d5ffb27b3b776f96c445e1a61929,
   "@/components/admin/KXDHospitalityDashboard#default": default_65a82131453b53af1e7486d49186e5b2,
+  "@/components/admin/login/BeforeLogin#default": default_3b13d75565116913f23de261a80a142a,
   "@/components/admin/PartnerConciergeDashboard#default": default_44ae5abc9085a4b8d7aa9a6041039559,
-  "@/components/admin/login/BeforeLogin#default": default_ptuBeforeLogin,
-  "@/components/admin/login/AfterLogin#default": default_ptuAfterLogin,
-  "@/components/admin/graphics/Logo#default": default_ptuLogo,
-  "@/components/admin/graphics/Icon#default": default_ptuIcon,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

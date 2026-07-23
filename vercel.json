@@ -1,4 +1,10 @@
 {
   "installCommand": "npm install --include=optional",
-  "buildCommand": "next build --webpack"
+  "buildCommand": "next build --webpack",
+  "crons": [
+    {
+      "path": "/api/cron/feedback-sweep",
+      "schedule": "15 * * * *"
+    }
+  ]
 }

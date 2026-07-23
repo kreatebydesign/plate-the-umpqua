@@ -78,6 +78,12 @@ export default async function EditMenuPage({ params }: { params: Params }) {
           >
             Preview
           </Link>
+          <Link
+            href={`/os/menus/${menu.id}/print`}
+            className={`${styles.button} ${styles.buttonQuiet}`}
+          >
+            Print / PDF
+          </Link>
         </div>
       </section>
 

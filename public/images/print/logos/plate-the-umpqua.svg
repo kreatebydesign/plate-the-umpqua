@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 220" role="img" aria-label="Plate The Umpqua">
+  <!-- Wordmark asset for print export / future use. Live banner uses CSS typography for font fidelity. -->
+  <text
+    x="460"
+    y="108"
+    text-anchor="middle"
+    fill="#efe6d4"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="54"
+    letter-spacing="6"
+  >PLATE THE UMPQUA</text>
+  <line x1="250" y1="138" x2="670" y2="138" stroke="#c4a465" stroke-width="1.25" />
+  <text
+    x="460"
+    y="172"
+    text-anchor="middle"
+    fill="#c4a465"
+    font-family="Helvetica, Arial, sans-serif"
+    font-size="13"
+    letter-spacing="5.5"
+  >PRIVATE HOSPITALITY · OREGON</text>
+</svg>

@@ -7,7 +7,7 @@ import { getCulinaryTodaySnapshot } from '@/lib/os/menus/culinaryToday'
 import { firstNameFrom, formatLongDate, greetingForHour } from '@/lib/os/formatDate'
 
 export const metadata: Metadata = {
-  title: 'Today at Plate',
+  title: 'Today at Plate The Umpqua',
 }
 
 export const dynamic = 'force-dynamic'
@@ -147,7 +147,7 @@ export default async function TodayAtPlatePage() {
           </div>
           <p className={styles.empty}>
             Detailed relationship edits stay in Payload Admin. Recipes and menus can
-            be created directly in Plate OS.
+            be created directly in Plate The Umpqua OS.
           </p>
         </section>
       </div>

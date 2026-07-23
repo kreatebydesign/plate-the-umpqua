@@ -889,6 +889,37 @@ export interface Event {
    */
   specialMoments?: string | null;
   gallery?: (string | Media)[] | null;
+  /**
+   * Skip the post-event client feedback email for this event.
+   */
+  feedbackOptOut?: boolean | null;
+  /**
+   * When the post-event feedback email was accepted by the provider. Prevents duplicate sends.
+   */
+  feedbackSentAt?: string | null;
+  /**
+   * Email provider message id for the feedback request.
+   */
+  feedbackProviderMessageId?: string | null;
+  /**
+   * Safe last delivery error summary (no secrets).
+   */
+  feedbackLastError?: string | null;
+  /**
+   * Lease timestamp while a feedback send is in progress.
+   */
+  feedbackSendClaimedAt?: string | null;
+  /**
+   * SHA-256 hash of the active feedback link token.
+   */
+  feedbackTokenHash?: string | null;
+  feedbackTokenExpiresAt?: string | null;
+  feedbackTokenRevokedAt?: string | null;
+  feedbackTokenCreatedAt?: string | null;
+  /**
+   * When the client submitted private experience feedback.
+   */
+  feedbackSubmittedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1172,6 +1203,9 @@ export interface Menu {
  */
 export interface Testimonial {
   id: string;
+  /**
+   * Internal label. Public pages use publicDisplayName when published.
+   */
   clientName: string;
   experienceType?:
     | (
@@ -1183,9 +1217,63 @@ export interface Testimonial {
         | 'whiteLabelHospitality'
       )
     | null;
+  /**
+   * Original client comments (private until an approved public excerpt is published).
+   */
   testimonial: string;
+  /**
+   * Optional client answer to “What stood out?”
+   */
+  stoodOut?: string | null;
+  /**
+   * Private experience rating. Not shown publicly by default.
+   */
   rating?: number | null;
+  source?: ('manual' | 'clientFeedback') | null;
+  /**
+   * Published testimonials may appear on the homepage. Consent and an approved excerpt are required.
+   */
+  publicationStatus?: ('private' | 'awaitingModeration' | 'published' | 'unpublished') | null;
+  /**
+   * Client explicitly allowed Plate The Umpqua to share comments as a testimonial.
+   */
+  testimonialPermission?: boolean | null;
+  /**
+   * Version id of the consent wording shown to the client.
+   */
+  consentWordingVersion?: string | null;
+  /**
+   * Exact consent wording accepted by the client.
+   */
+  consentWordingExact?: string | null;
+  consentGrantedAt?: string | null;
+  /**
+   * Operator-approved public excerpt. Must preserve the client’s meaning.
+   */
+  publicExcerpt?: string | null;
+  /**
+   * Public attribution, e.g. “Martin S.” or “Private dinner client”.
+   */
+  publicDisplayName?: string | null;
+  /**
+   * Lower numbers appear first on the homepage.
+   */
+  displayOrder?: number | null;
+  publishedAt?: string | null;
+  event?: (string | null) | Event;
+  client?: (string | null) | Client;
+  submittedAt?: string | null;
+  /**
+   * Truncated token hash hint for audit only.
+   */
+  tokenHint?: string | null;
+  /**
+   * Legacy highlight flag. Homepage uses publicationStatus.
+   */
   featured?: boolean | null;
+  /**
+   * Legacy short pull-quote field.
+   */
   featuredQuote?: string | null;
   eventGallery?: (string | Media)[] | null;
   clientPhoto?: (string | null) | Media;
@@ -1658,6 +1746,16 @@ export interface EventsSelect<T extends boolean = true> {
   arrivalInstructions?: T;
   specialMoments?: T;
   gallery?: T;
+  feedbackOptOut?: T;
+  feedbackSentAt?: T;
+  feedbackProviderMessageId?: T;
+  feedbackLastError?: T;
+  feedbackSendClaimedAt?: T;
+  feedbackTokenHash?: T;
+  feedbackTokenExpiresAt?: T;
+  feedbackTokenRevokedAt?: T;
+  feedbackTokenCreatedAt?: T;
+  feedbackSubmittedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1888,7 +1986,22 @@ export interface TestimonialsSelect<T extends boolean = true> {
   clientName?: T;
   experienceType?: T;
   testimonial?: T;
+  stoodOut?: T;
   rating?: T;
+  source?: T;
+  publicationStatus?: T;
+  testimonialPermission?: T;
+  consentWordingVersion?: T;
+  consentWordingExact?: T;
+  consentGrantedAt?: T;
+  publicExcerpt?: T;
+  publicDisplayName?: T;
+  displayOrder?: T;
+  publishedAt?: T;
+  event?: T;
+  client?: T;
+  submittedAt?: T;
+  tokenHint?: T;
   featured?: T;
   featuredQuote?: T;
   eventGallery?: T;

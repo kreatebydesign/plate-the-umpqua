@@ -17,11 +17,11 @@ const cormorant = Cormorant_Garamond({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Today at Plate',
-    template: '%s · Plate Business OS',
+    default: 'Today at Plate The Umpqua',
+    template: '%s · Plate The Umpqua OS',
   },
   description:
-    'Plate The Umpqua Business OS — private hospitality operations for Plate The Umpqua.',
+    'Plate The Umpqua OS — private hospitality operations for Plate The Umpqua.',
   robots: {
     index: false,
     follow: false,

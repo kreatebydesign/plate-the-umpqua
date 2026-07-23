@@ -20,7 +20,7 @@ type OsShellProps = {
 }
 
 const PAGE_META: Record<string, { title: string; eyebrow: string }> = {
-  '/os': { title: 'Today at Plate', eyebrow: 'Daily overview' },
+  '/os': { title: 'Today at Plate The Umpqua', eyebrow: 'Daily overview' },
   '/os/inquiries': { title: 'Inquiries', eyebrow: 'Leads & requests' },
   '/os/events': { title: 'Events', eyebrow: 'Confirmed hospitality' },
   '/os/clients': { title: 'Clients', eyebrow: 'Relationships' },
@@ -83,7 +83,7 @@ export default function OsShell({
     }
     return (
       PAGE_META[pathname] || {
-        title: 'Plate Business OS',
+        title: 'Plate The Umpqua OS',
         eyebrow: 'Operations',
       }
     )
@@ -124,12 +124,12 @@ export default function OsShell({
   const nav = (
     <>
       <div className={styles.brand}>
-        <p className={styles.brandEyebrow}>Business OS</p>
+        <p className={styles.brandEyebrow}>Plate The Umpqua OS</p>
         <p className={styles.brandTitle}>Plate The Umpqua</p>
         <p className={styles.brandSub}>Hospitality operations</p>
       </div>
 
-      <nav className={styles.nav} aria-label="Plate OS">
+      <nav className={styles.nav} aria-label="Plate The Umpqua OS">
         {OS_NAV.map((item) => {
           const active = navIsActive(pathname, item.href, item.exact)
           return (

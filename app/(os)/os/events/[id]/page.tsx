@@ -194,6 +194,52 @@ export default async function EventDetailPage({ params }: { params: Params }) {
         </section>
       ) : null}
 
+      <section className={styles.panel} aria-labelledby="feedback-title">
+        <h2 id="feedback-title" className={styles.panelTitle}>
+          Experience feedback
+        </h2>
+        <dl className={styles.detailList}>
+          <div>
+            <dt>Follow-up email</dt>
+            <dd>
+              {event.feedback.optedOut
+                ? 'Opted out'
+                : event.feedback.sentAtLabel
+                  ? `Sent ${event.feedback.sentAtLabel}`
+                  : 'Not sent yet'}
+            </dd>
+          </div>
+          <div>
+            <dt>Client submission</dt>
+            <dd>
+              {event.feedback.submittedAtLabel
+                ? `Received ${event.feedback.submittedAtLabel}`
+                : event.feedback.hasActiveLink
+                  ? 'Link active — awaiting reply'
+                  : 'None yet'}
+            </dd>
+          </div>
+          <div>
+            <dt>Delivery note</dt>
+            <dd>{event.feedback.lastError || '—'}</dd>
+          </div>
+        </dl>
+        <p className={styles.fieldHint}>
+          Private feedback stays private until consent and operator approval.
+          Google reviews stay on Google — a link click is not proof of a review.
+        </p>
+        {event.canEditOperational ? (
+          <div className={styles.actions} style={{ marginTop: '0.85rem' }}>
+            <Link
+              href={event.feedback.testimonialsAdminHref}
+              className={`${styles.button} ${styles.buttonQuiet}`}
+            >
+              Moderate testimonials
+            </Link>
+          </div>
+        ) : null}
+      </section>
+
       <section className={styles.panel} aria-labelledby="ops-title">
         <h2 id="ops-title" className={styles.panelTitle}>
           Operational status

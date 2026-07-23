@@ -253,6 +253,7 @@ function revalidateMenus(id?: string) {
     revalidatePath(`/os/menus/${id}`)
     revalidatePath(`/os/menus/${id}/preview`)
     revalidatePath(`/os/menus/${id}/edit`)
+    revalidatePath(`/os/menus/${id}/print`)
   }
 }
 

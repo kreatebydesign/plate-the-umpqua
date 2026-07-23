@@ -850,7 +850,29 @@ export default function MenuBuilderForm({
               ? 'Save menu'
               : 'Save changes'}
         </button>
+        {mode === 'edit' && menuId ? (
+          <a
+            href={`/os/menus/${menuId}/print`}
+            className={`${styles.button} ${styles.buttonQuiet}`}
+            onClick={(event) => {
+              if (!dirty) return
+              const ok = window.confirm(
+                'You have unsaved changes. Print preview shows the last saved version only. Continue without saving?',
+              )
+              if (!ok) event.preventDefault()
+            }}
+          >
+            Print / PDF
+          </a>
+        ) : null}
       </div>
+
+      {mode === 'edit' && dirty ? (
+        <p className={styles.builderHint} role="note">
+          Print / PDF always uses the last saved menu. Save changes first if you
+          want the preview to include your latest edits.
+        </p>
+      ) : null}
 
       <div className={styles.formStatus} aria-live="polite">
         {message ? <p className={styles.formSuccess}>{message}</p> : null}

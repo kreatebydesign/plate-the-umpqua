@@ -70,7 +70,7 @@ export default function EventOperationalForm({
 
       <p className={styles.fieldHint}>
         Status updates apply only to this event record. There is no automated
-        email or calendar sync from Plate OS.
+        email or calendar sync from Plate The Umpqua OS.
       </p>
 
       <div className={styles.actions}>

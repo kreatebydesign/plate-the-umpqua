@@ -100,6 +100,14 @@ export type EventDetail = {
   /** OS client detail when an authorized client relationship is present. */
   clientOsHref: string | null
   clientAdminHref: string | null
+  feedback: {
+    optedOut: boolean
+    sentAtLabel: string | null
+    submittedAtLabel: string | null
+    lastError: string | null
+    hasActiveLink: boolean
+    testimonialsAdminHref: string
+  }
 }
 
 function asId(value: unknown): string {
@@ -501,6 +509,13 @@ export async function getEventDetail(
         arrivalInstructions: true,
         specialMoments: true,
         timelineNotes: true,
+        feedbackOptOut: true,
+        feedbackSentAt: true,
+        feedbackSubmittedAt: true,
+        feedbackLastError: true,
+        feedbackTokenHash: true,
+        feedbackTokenExpiresAt: true,
+        feedbackTokenRevokedAt: true,
       },
     })
 
@@ -516,6 +531,14 @@ export async function getEventDetail(
       todayStart,
       weekAhead,
     })
+
+    const tokenActive = Boolean(
+      doc.feedbackTokenHash &&
+        !doc.feedbackTokenRevokedAt &&
+        !doc.feedbackSubmittedAt &&
+        (!doc.feedbackTokenExpiresAt ||
+          Date.parse(String(doc.feedbackTokenExpiresAt)) > Date.now()),
+    )
 
     return {
       id: asId(doc.id),
@@ -538,6 +561,21 @@ export async function getEventDetail(
       clientAdminHref: client.id
         ? `/admin/collections/clients/${client.id}`
         : null,
+      feedback: {
+        optedOut: Boolean(doc.feedbackOptOut),
+        sentAtLabel: doc.feedbackSentAt
+          ? formatShortDate(doc.feedbackSentAt)
+          : null,
+        submittedAtLabel: doc.feedbackSubmittedAt
+          ? formatShortDate(doc.feedbackSubmittedAt)
+          : null,
+        lastError:
+          typeof doc.feedbackLastError === 'string'
+            ? doc.feedbackLastError
+            : null,
+        hasActiveLink: tokenActive,
+        testimonialsAdminHref: '/admin/collections/testimonials',
+      },
     }
   } catch (err) {
     const status =
