@@ -79,6 +79,9 @@ export interface Config {
     'package-options': PackageOption;
     events: Event;
     proposals: Proposal;
+    invoices: Invoice;
+    'invoice-payments': InvoicePayment;
+    'invoice-sequences': InvoiceSequence;
     tasks: Task;
     'menu-concepts': MenuConcept;
     recipes: Recipe;
@@ -104,6 +107,9 @@ export interface Config {
     'package-options': PackageOptionsSelect<false> | PackageOptionsSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
     proposals: ProposalsSelect<false> | ProposalsSelect<true>;
+    invoices: InvoicesSelect<false> | InvoicesSelect<true>;
+    'invoice-payments': InvoicePaymentsSelect<false> | InvoicePaymentsSelect<true>;
+    'invoice-sequences': InvoiceSequencesSelect<false> | InvoiceSequencesSelect<true>;
     tasks: TasksSelect<false> | TasksSelect<true>;
     'menu-concepts': MenuConceptsSelect<false> | MenuConceptsSelect<true>;
     recipes: RecipesSelect<false> | RecipesSelect<true>;
@@ -863,6 +869,109 @@ export interface Proposal {
   depositPaid?: boolean | null;
   clientFeedback?: string | null;
   internalNotes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "invoices".
+ */
+export interface Invoice {
+  id: string;
+  invoiceNumber: string;
+  status: 'draft' | 'sent' | 'viewed' | 'partiallyPaid' | 'paid' | 'overdue' | 'voided';
+  client: string | Client;
+  event?: (string | null) | Event;
+  issueDate: string;
+  dueDate: string;
+  paymentTerms?: ('dueOnReceipt' | 'net7' | 'net14' | 'net30' | 'custom') | null;
+  paymentTermsCustom?: string | null;
+  billing: {
+    name: string;
+    email: string;
+    phone?: string | null;
+    company?: string | null;
+  };
+  lineItems: {
+    itemKey: string;
+    sortOrder: number;
+    description: string;
+    detail?: string | null;
+    billingType: 'flat' | 'perEvent' | 'perPerson' | 'perHour' | 'quantity';
+    quantity: number;
+    unitPriceCents: number;
+    isCredit?: boolean | null;
+    lineTotalCents: number;
+    id?: string | null;
+  }[];
+  discountType?: ('none' | 'fixed' | 'percent') | null;
+  discountValue?: number | null;
+  taxRateBps?: number | null;
+  depositRequiredCents?: number | null;
+  subtotalCents?: number | null;
+  creditCents?: number | null;
+  discountCents?: number | null;
+  taxCents?: number | null;
+  totalCents?: number | null;
+  amountPaidCents?: number | null;
+  balanceDueCents?: number | null;
+  clientMemo?: string | null;
+  internalNotes?: string | null;
+  publicTokenHash?: string | null;
+  publicTokenCreatedAt?: string | null;
+  publicTokenRevokedAt?: string | null;
+  publicTokenPlaintextOnce?: string | null;
+  firstViewedAt?: string | null;
+  lastViewedAt?: string | null;
+  sentAt?: string | null;
+  lastSentTo?: string | null;
+  lastSendAttemptAt?: string | null;
+  lastSendError?: string | null;
+  voidedAt?: string | null;
+  voidedBy?: (string | null) | User;
+  voidReason?: string | null;
+  createdBy?: (string | null) | User;
+  updatedBy?: (string | null) | User;
+  square?: {
+    customerId?: string | null;
+    invoiceId?: string | null;
+    orderId?: string | null;
+    paymentLinkId?: string | null;
+    paymentLinkUrl?: string | null;
+    paymentId?: string | null;
+    status?: string | null;
+    lastSyncedAt?: string | null;
+    idempotencyKey?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "invoice-payments".
+ */
+export interface InvoicePayment {
+  id: string;
+  invoice: string | Invoice;
+  amountCents: number;
+  paidAt: string;
+  method: 'cash' | 'check' | 'card' | 'bankTransfer' | 'square' | 'other';
+  reference?: string | null;
+  internalNote?: string | null;
+  recordedBy?: (string | null) | User;
+  squarePaymentId?: string | null;
+  squareWebhookEventId?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "invoice-sequences".
+ */
+export interface InvoiceSequence {
+  id: string;
+  year: number;
+  lastSequence: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -1792,6 +1901,79 @@ export interface ProposalsSelect<T extends boolean = true> {
   depositPaid?: T;
   clientFeedback?: T;
   internalNotes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+export interface InvoicesSelect<T extends boolean = true> {
+  invoiceNumber?: T;
+  status?: T;
+  client?: T;
+  event?: T;
+  issueDate?: T;
+  dueDate?: T;
+  paymentTerms?: T;
+  paymentTermsCustom?: T;
+  billing?: T | { name?: T; email?: T; phone?: T; company?: T };
+  lineItems?: T | {
+    itemKey?: T;
+    sortOrder?: T;
+    description?: T;
+    detail?: T;
+    billingType?: T;
+    quantity?: T;
+    unitPriceCents?: T;
+    isCredit?: T;
+    lineTotalCents?: T;
+    id?: T;
+  };
+  discountType?: T;
+  discountValue?: T;
+  taxRateBps?: T;
+  depositRequiredCents?: T;
+  subtotalCents?: T;
+  creditCents?: T;
+  discountCents?: T;
+  taxCents?: T;
+  totalCents?: T;
+  amountPaidCents?: T;
+  balanceDueCents?: T;
+  clientMemo?: T;
+  internalNotes?: T;
+  publicTokenHash?: T;
+  publicTokenCreatedAt?: T;
+  publicTokenRevokedAt?: T;
+  publicTokenPlaintextOnce?: T;
+  firstViewedAt?: T;
+  lastViewedAt?: T;
+  sentAt?: T;
+  lastSentTo?: T;
+  lastSendAttemptAt?: T;
+  lastSendError?: T;
+  voidedAt?: T;
+  voidedBy?: T;
+  voidReason?: T;
+  createdBy?: T;
+  updatedBy?: T;
+  square?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+export interface InvoicePaymentsSelect<T extends boolean = true> {
+  invoice?: T;
+  amountCents?: T;
+  paidAt?: T;
+  method?: T;
+  reference?: T;
+  internalNote?: T;
+  recordedBy?: T;
+  squarePaymentId?: T;
+  squareWebhookEventId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+export interface InvoiceSequencesSelect<T extends boolean = true> {
+  year?: T;
+  lastSequence?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -12,6 +12,9 @@ import { Events } from './collections/Events'
 import { ExperienceBriefs } from './collections/ExperienceBriefs'
 import { Experiences } from './collections/Experiences'
 import { Inquiries } from './collections/Inquiries'
+import { Invoices } from './collections/Invoices'
+import { InvoicePayments } from './collections/InvoicePayments'
+import { InvoiceSequences } from './collections/InvoiceSequences'
 import { Media } from './collections/Media'
 import { MenuConcepts } from './collections/MenuConcepts'
 import { Menus } from './collections/Menus'
@@ -103,6 +106,9 @@ export default buildConfig({
     PackageOptions,
     Events,
     Proposals,
+    Invoices,
+    InvoicePayments,
+    InvoiceSequences,
     Tasks,
 
     MenuConcepts,

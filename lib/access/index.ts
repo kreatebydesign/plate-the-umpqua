@@ -38,6 +38,37 @@ export const operationalCollectionAccess = {
 }
 
 /**
+ * Invoices: staff read; directors/curators create/update; hard-delete disabled.
+ * Voiding is the supported retirement path.
+ */
+export const invoicesCollectionAccess = {
+  read: authenticatedStaffRead,
+  create: operationalWrite,
+  update: operationalWrite,
+  delete: () => false,
+}
+
+/**
+ * Invoice payments: append-only ledger. No update or delete through Payload.
+ */
+export const invoicePaymentsCollectionAccess = {
+  read: authenticatedStaffRead,
+  create: operationalWrite,
+  update: () => false,
+  delete: () => false,
+}
+
+/**
+ * Invoice number sequences: operational writers only; no public access.
+ */
+export const invoiceSequencesCollectionAccess = {
+  read: operationalWrite,
+  create: operationalWrite,
+  update: operationalWrite,
+  delete: () => false,
+}
+
+/**
  * Culinary-owned collections (menus): staff read; culinary + directors + curators write.
  */
 export const culinaryCollectionAccess = {

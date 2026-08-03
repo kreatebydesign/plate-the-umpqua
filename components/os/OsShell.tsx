@@ -24,6 +24,7 @@ const PAGE_META: Record<string, { title: string; eyebrow: string }> = {
   '/os/inquiries': { title: 'Inquiries', eyebrow: 'Leads & requests' },
   '/os/events': { title: 'Events', eyebrow: 'Confirmed hospitality' },
   '/os/clients': { title: 'Clients', eyebrow: 'Relationships' },
+  '/os/invoices': { title: 'Invoices', eyebrow: 'Hospitality billing' },
   '/os/recipes': { title: 'Recipes', eyebrow: 'Culinary library' },
   '/os/menus': { title: 'Menus', eyebrow: 'Client presentations' },
 }
@@ -59,6 +60,15 @@ export default function OsShell({
     }
     if (pathname.startsWith('/os/clients/') && pathname !== '/os/clients') {
       return { title: 'Client detail', eyebrow: 'Relationship' }
+    }
+    if (pathname.startsWith('/os/invoices/') && pathname !== '/os/invoices') {
+      if (pathname.endsWith('/new')) {
+        return { title: 'Create invoice', eyebrow: 'Hospitality billing' }
+      }
+      if (pathname.endsWith('/edit')) {
+        return { title: 'Edit invoice', eyebrow: 'Hospitality billing' }
+      }
+      return { title: 'Invoice detail', eyebrow: 'Hospitality billing' }
     }
     if (pathname.startsWith('/os/recipes/') && pathname !== '/os/recipes') {
       if (pathname.endsWith('/new')) {
