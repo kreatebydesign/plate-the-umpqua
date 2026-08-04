@@ -5,6 +5,7 @@ import styles from '../../../os.module.css'
 import { requirePlateOperator } from '@/lib/auth/requirePlateOperator'
 import { getInvoiceDetail } from '@/lib/os/invoices/invoiceQueries'
 import InvoiceActions from '@/components/os/invoices/InvoiceActions'
+import SquareInvoiceActions from '@/components/os/invoices/SquareInvoiceActions'
 import { BILLING_TYPE_LABELS, type BillingTypeValue } from '@/lib/os/invoices/invoiceConstants'
 
 export const metadata: Metadata = {
@@ -223,11 +224,18 @@ export default async function InvoiceDetailPage({ params }: { params: Params }) 
       </section>
 
       <section className={`${styles.panel} ${styles.noPrint}`}>
-        <h2 className={styles.panelTitle}>Square</h2>
-        <p className={styles.empty}>
-          Square: Not connected. Manual payments are available now. See{' '}
-          <code>docs/square-invoicing.md</code> for credentials needed later.
-        </p>
+        <h2 className={styles.panelTitle}>Square Payment</h2>
+        <SquareInvoiceActions
+          invoiceId={invoice.id}
+          squareInvoiceId={invoice.squareInvoiceId}
+          squarePublicUrl={invoice.squarePublicUrl}
+          squareStatus={invoice.squareStatus}
+          squareLastSyncedAt={invoice.squareLastSyncedAt}
+          squareLastError={invoice.squareLastError}
+          squareState={invoice.squareState}
+          canManage={invoice.canManage}
+          status={String(invoice.status)}
+        />
       </section>
 
       <div className={styles.noPrint}>

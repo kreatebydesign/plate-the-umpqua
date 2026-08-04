@@ -16,6 +16,7 @@ import styles from '@/app/(os)/os.module.css'
 type OsShellProps = {
   userName: string
   userRoleLabel: string
+  isDirector?: boolean
   children: ReactNode
 }
 
@@ -37,6 +38,7 @@ function navIsActive(pathname: string, href: string, exact?: boolean) {
 export default function OsShell({
   userName,
   userRoleLabel,
+  isDirector = false,
   children,
 }: OsShellProps) {
   const pathname = usePathname()
@@ -141,6 +143,7 @@ export default function OsShell({
 
       <nav className={styles.nav} aria-label="Plate The Umpqua OS">
         {OS_NAV.map((item) => {
+          if ('directorOnly' in item && item.directorOnly && !isDirector) return null
           const active = navIsActive(pathname, item.href, item.exact)
           return (
             <Link

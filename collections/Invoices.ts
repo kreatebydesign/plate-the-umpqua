@@ -379,20 +379,77 @@ export const Invoices: CollectionConfig = {
     {
       type: 'group',
       name: 'square',
-      label: 'Square (not connected)',
+      label: 'Square Payment',
       admin: {
-        description: 'Reserved for future Square integration. Do not store access tokens here.',
+        description: 'Square invoice and payment link. Never store access tokens here.',
       },
       fields: [
-        { name: 'customerId', type: 'text' },
-        { name: 'invoiceId', type: 'text' },
-        { name: 'orderId', type: 'text' },
-        { name: 'paymentLinkId', type: 'text' },
-        { name: 'paymentLinkUrl', type: 'text' },
-        { name: 'paymentId', type: 'text' },
-        { name: 'status', type: 'text' },
-        { name: 'lastSyncedAt', type: 'date' },
-        { name: 'idempotencyKey', type: 'text' },
+        {
+          name: 'customerId',
+          type: 'text',
+          admin: { readOnly: true, description: 'Square customer ID (upserted from billing email).' },
+        },
+        {
+          name: 'invoiceId',
+          type: 'text',
+          admin: { readOnly: true, description: 'Square invoice ID.' },
+        },
+        {
+          name: 'orderId',
+          type: 'text',
+          admin: { readOnly: true, description: 'Square order ID backing the invoice.' },
+        },
+        {
+          name: 'paymentLinkId',
+          type: 'text',
+          admin: { readOnly: true },
+        },
+        {
+          name: 'paymentLinkUrl',
+          type: 'text',
+          admin: { readOnly: true, description: 'Square-hosted payment URL (SHARE_MANUALLY).' },
+        },
+        {
+          name: 'publicUrl',
+          type: 'text',
+          admin: { readOnly: true, description: 'Public Square invoice URL for client.' },
+        },
+        {
+          name: 'paymentId',
+          type: 'text',
+          admin: { readOnly: true },
+        },
+        {
+          name: 'status',
+          type: 'text',
+          admin: { readOnly: true, description: 'Square invoice status (DRAFT, UNPAID, PAID, etc.).' },
+        },
+        {
+          name: 'version',
+          type: 'number',
+          admin: { readOnly: true, description: 'Square invoice version for optimistic concurrency.' },
+        },
+        {
+          name: 'deliveryMethod',
+          type: 'text',
+          defaultValue: 'SHARE_MANUALLY',
+          admin: { readOnly: true, description: 'Always SHARE_MANUALLY — no Square emails sent.' },
+        },
+        {
+          name: 'lastSyncedAt',
+          type: 'date',
+          admin: { readOnly: true },
+        },
+        {
+          name: 'lastError',
+          type: 'text',
+          admin: { readOnly: true, description: 'Last Square sync error, if any.' },
+        },
+        {
+          name: 'idempotencyKey',
+          type: 'text',
+          admin: { readOnly: true },
+        },
       ],
     },
   ],

@@ -21,6 +21,9 @@ import { Menus } from './collections/Menus'
 import { PackageOptions } from './collections/PackageOptions'
 import { Recipes } from './collections/Recipes'
 import { Proposals } from './collections/Proposals'
+import { SquareConnections } from './collections/SquareConnections'
+import { SquareOAuthStates } from './collections/SquareOAuthStates'
+import { SquareWebhookEvents } from './collections/SquareWebhookEvents'
 import { Tasks } from './collections/Tasks'
 import { Testimonials } from './collections/Testimonials'
 import { Users } from './collections/Users'
@@ -117,6 +120,10 @@ export default buildConfig({
     DietaryNotes,
 
     Testimonials,
+
+    SquareConnections,
+    SquareOAuthStates,
+    SquareWebhookEvents,
   ],
 
   editor: lexicalEditor(),

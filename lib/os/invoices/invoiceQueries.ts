@@ -129,7 +129,12 @@ export type InvoiceDetail = {
   canEdit: boolean
   canRecordPayment: boolean
   canManage: boolean
-  squareState: 'not_connected' | 'connected'
+  squareState: 'not_connected' | 'connected' | 'error' | 'disconnected'
+  squareInvoiceId: string | null
+  squarePublicUrl: string | null
+  squareStatus: string | null
+  squareLastSyncedAt: string | null
+  squareLastError: string | null
   adminHref: string
   sentAtLabel: string | null
   firstViewedAtLabel: string | null
@@ -468,7 +473,12 @@ export async function getInvoiceDetail(
       canEdit: canManage && derived !== 'voided',
       canRecordPayment: canManage && derived !== 'voided' && derived !== 'draft',
       canManage,
-      squareState: getSquareConnectionState(),
+      squareState: await getSquareConnectionState(),
+      squareInvoiceId: doc.square?.invoiceId ?? null,
+      squarePublicUrl: doc.square?.publicUrl ?? doc.square?.paymentLinkUrl ?? null,
+      squareStatus: doc.square?.status ?? null,
+      squareLastSyncedAt: doc.square?.lastSyncedAt ?? null,
+      squareLastError: doc.square?.lastError ?? null,
       adminHref: `/admin/collections/invoices/${doc.id}`,
       sentAtLabel: doc.sentAt ? formatShortDate(doc.sentAt) : null,
       firstViewedAtLabel: doc.firstViewedAt ? formatShortDate(doc.firstViewedAt) : null,

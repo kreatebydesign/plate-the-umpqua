@@ -103,4 +103,5 @@ export const OS_NAV = [
   { href: '/os/invoices', label: 'Invoices', exact: false },
   { href: '/os/recipes', label: 'Recipes', exact: false },
   { href: '/os/menus', label: 'Menus', exact: false },
+  { href: '/os/settings/square', label: 'Square', exact: false, directorOnly: true },
 ] as const

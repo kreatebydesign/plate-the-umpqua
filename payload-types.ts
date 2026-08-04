@@ -942,6 +942,10 @@ export interface Invoice {
     status?: string | null;
     lastSyncedAt?: string | null;
     idempotencyKey?: string | null;
+    version?: number | null;
+    publicUrl?: string | null;
+    deliveryMethod?: string | null;
+    lastError?: string | null;
   };
   updatedAt: string;
   createdAt: string;

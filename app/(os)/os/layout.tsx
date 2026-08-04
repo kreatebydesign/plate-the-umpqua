@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import OsShell from '@/components/os/OsShell'
 import { requirePlateOperator, getPlateUserRole } from '@/lib/auth/requirePlateOperator'
+import { asPlateUser, isDirector } from '@/lib/access/roles'
 import { ROLE_LABELS } from '@/lib/os/constants'
 
 export const dynamic = 'force-dynamic'
@@ -10,9 +11,10 @@ export default async function OsAppLayout({ children }: { children: ReactNode })
   const role = getPlateUserRole(user)
   const userName = user.fullName?.trim() || user.email || 'Operator'
   const userRoleLabel = (role && ROLE_LABELS[role]) || 'Operator'
+  const isDir = isDirector(asPlateUser(user))
 
   return (
-    <OsShell userName={userName} userRoleLabel={userRoleLabel}>
+    <OsShell userName={userName} userRoleLabel={userRoleLabel} isDirector={isDir}>
       {children}
     </OsShell>
   )
