@@ -26,6 +26,7 @@ export async function GET(): Promise<NextResponse> {
   let configError: string | null = null
   let authorizeUrlSafe: ReturnType<typeof assertAuthorizeUrlSafe> | null = null
   let authorizeError: string | null = null
+  let authorizeUrl: string | null = null
 
   try {
     getSquareEnv()
@@ -48,6 +49,7 @@ export async function GET(): Promise<NextResponse> {
     try {
       const { state } = generateOAuthState()
       const url = buildAuthorizeUrl(state)
+      authorizeUrl = url
       authorizeUrlSafe = assertAuthorizeUrlSafe(url)
 
       const parsed = new URL(url)
@@ -103,6 +105,7 @@ export async function GET(): Promise<NextResponse> {
     configError,
     authorizeUrlSafe,
     authorizeError,
+    authorizeUrl,
     squarePageProbe,
     notes: [
       'No secrets, tokens, or full Application IDs are included.',
