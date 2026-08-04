@@ -11,6 +11,7 @@ import config from '../../../payload.config'
 import { getSquareClientWithConnection } from './client'
 import { touchConnectionSyncedAt } from './connection'
 import { deriveInvoiceStatus } from '@/lib/os/invoices/invoiceStatus'
+import { extractCompletedSquarePaymentRequests } from './paymentRequestSync'
 
 export type SyncResult = {
   squareStatus: string | null
@@ -43,42 +44,31 @@ export async function syncSquareInvoice(plateInvoiceId: string): Promise<SyncRes
 
   const squareStatus = squareInvoice.status ?? null
 
-  // Collect paid payment requests
+  // Collect completed payment request amounts via totalCompletedAmountMoney.
+  // InvoicePaymentRequest has no status field — do not check req.status.
   let newPaymentsRecorded = 0
-  const paymentRequests: any[] = squareInvoice.paymentRequests ?? []
+  const completedRequests = extractCompletedSquarePaymentRequests(squareInvoice.paymentRequests)
 
-  for (const req of paymentRequests) {
-    const reqUid = req.uid
-    if (!reqUid) continue
-
-    // Only sync if there's actual payment data
-    if (!req.computedAmountMoney?.amount) continue
-
+  for (const req of completedRequests) {
     const alreadyExists = await payload.find({
       collection: 'invoice-payments',
       overrideAccess: true,
       depth: 0,
       limit: 1,
-      where: { squarePaymentId: { equals: reqUid } },
+      where: { squarePaymentId: { equals: req.uid } },
     })
     if (alreadyExists.totalDocs > 0) continue
-
-    const amountCents = Number(req.computedAmountMoney.amount)
-    if (amountCents <= 0) continue
-
-    // Only record if status indicates paid
-    if (req.status !== 'COMPLETED') continue
 
     await payload.create({
       collection: 'invoice-payments',
       overrideAccess: true,
       data: {
         invoice: plateInvoiceId,
-        amountCents,
+        amountCents: req.amountCents,
         paidAt: new Date().toISOString(),
         method: 'square',
-        reference: reqUid,
-        squarePaymentId: reqUid,
+        reference: req.uid,
+        squarePaymentId: req.uid,
         squareWebhookEventId: null,
         internalNote: `Synced from Square invoice ${squareInvoiceId}`,
         recordedBy: null,

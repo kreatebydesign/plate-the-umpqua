@@ -14,6 +14,7 @@ import { getSquareConnection, decryptAccessToken } from '@/lib/os/square/connect
 import { createSquarePaymentInvoice } from '@/lib/os/square/createInvoice'
 import { syncSquareInvoice } from '@/lib/os/square/sync'
 import { getSquareClient } from '@/lib/os/square/client'
+import { processSquareWebhookEvent } from '@/lib/os/square/webhooks'
 import { SQUARE_SCOPES } from '@/lib/os/square/scopes'
 import { allocateInvoiceNumber } from '@/lib/os/invoices/invoiceNumber'
 import { generateInvoiceToken, hashInvoiceToken } from '@/lib/os/invoices/invoiceToken'
@@ -77,6 +78,17 @@ export async function GET(request: Request): Promise<NextResponse> {
         return NextResponse.json({ ok: false, error: 'invoiceId required' }, { status: 400 })
       }
       return NextResponse.json(await runVoid(invoiceId))
+    }
+    if (phase === 'webhook-events') {
+      const invoiceId = url.searchParams.get('invoiceId')
+      return NextResponse.json(await runWebhookEvents(invoiceId))
+    }
+    if (phase === 'replay-webhook') {
+      const invoiceId = url.searchParams.get('invoiceId')
+      if (!invoiceId) {
+        return NextResponse.json({ ok: false, error: 'invoiceId required' }, { status: 400 })
+      }
+      return NextResponse.json(await runReplayWebhook(invoiceId))
     }
 
     return NextResponse.json({ ok: false, error: 'Unknown phase' }, { status: 400 })
@@ -448,9 +460,112 @@ async function runSync(invoiceId: string) {
     syncResult: result,
     paymentCountBefore: before.paymentCount,
     paymentCountAfter: after.paymentCount,
-    duplicatedPayment: after.paymentCount > before.paymentCount && result.newPaymentsRecorded === 0
-      ? 'unexpected_increase'
-      : after.paymentCount === before.paymentCount + result.newPaymentsRecorded,
+    paymentCountDelta: after.paymentCount - before.paymentCount,
+    matchesReportedNewPayments:
+      after.paymentCount === before.paymentCount + result.newPaymentsRecorded,
+    status: after.invoice,
+  }
+}
+
+async function runWebhookEvents(invoiceId: string | null) {
+  const payload = await getPayload({ config })
+  const where = invoiceId
+    ? { invoiceId: { equals: invoiceId } }
+    : undefined
+  const result = await (payload as any).find({
+    collection: 'square-webhook-events',
+    overrideAccess: true,
+    depth: 0,
+    limit: 50,
+    sort: '-processedAt',
+    ...(where ? { where } : {}),
+  })
+
+  return {
+    ok: true,
+    phase: 'webhook-events',
+    count: result.totalDocs,
+    events: (result.docs as any[]).map((e) => ({
+      eventIdRedacted: e.eventId ? `${String(e.eventId).slice(0, 8)}…` : null,
+      type: e.type,
+      processedAt: e.processedAt,
+      invoiceId: e.invoiceId || null,
+      summary: String(e.summary || '').slice(0, 200),
+    })),
+  }
+}
+
+async function runReplayWebhook(invoiceId: string) {
+  const payload = await getPayload({ config })
+  const before = await runStatus(invoiceId)
+  const events = await (payload as any).find({
+    collection: 'square-webhook-events',
+    overrideAccess: true,
+    depth: 0,
+    limit: 10,
+    sort: '-processedAt',
+    where: { invoiceId: { equals: invoiceId } },
+  })
+
+  const docs = (events.docs as any[]) || []
+  if (docs.length === 0) {
+    // Fall back: any invoice.* events (older webhooks may lack invoiceId linkage)
+    const anyEvents = await (payload as any).find({
+      collection: 'square-webhook-events',
+      overrideAccess: true,
+      depth: 0,
+      limit: 20,
+      sort: '-processedAt',
+    })
+    const candidates = ((anyEvents.docs as any[]) || []).filter((e) =>
+      String(e.type || '').startsWith('invoice.'),
+    )
+    if (candidates.length === 0) {
+      return {
+        ok: false,
+        phase: 'replay-webhook',
+        error: 'No stored webhook events found to replay',
+        paymentCountBefore: before.paymentCount,
+      }
+    }
+    const target = candidates[0]
+    const replay = await processSquareWebhookEvent({
+      event_id: String(target.eventId),
+      type: String(target.type),
+      data: { id: before.invoice?.square?.invoiceId || undefined },
+    })
+    const after = await runStatus(invoiceId)
+    return {
+      ok: true,
+      phase: 'replay-webhook',
+      source: 'global-invoice-events',
+      replayedType: target.type,
+      eventIdRedacted: `${String(target.eventId).slice(0, 8)}…`,
+      replay,
+      paymentCountBefore: before.paymentCount,
+      paymentCountAfter: after.paymentCount,
+      noDuplicateLedger: after.paymentCount === before.paymentCount,
+      status: after.invoice,
+    }
+  }
+
+  const target = docs[0]
+  const replay = await processSquareWebhookEvent({
+    event_id: String(target.eventId),
+    type: String(target.type),
+    data: { id: before.invoice?.square?.invoiceId || undefined },
+  })
+  const after = await runStatus(invoiceId)
+  return {
+    ok: true,
+    phase: 'replay-webhook',
+    source: 'invoice-linked-events',
+    replayedType: target.type,
+    eventIdRedacted: `${String(target.eventId).slice(0, 8)}…`,
+    replay,
+    paymentCountBefore: before.paymentCount,
+    paymentCountAfter: after.paymentCount,
+    noDuplicateLedger: after.paymentCount === before.paymentCount,
     status: after.invoice,
   }
 }

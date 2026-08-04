@@ -396,6 +396,66 @@ withSquareEnv(
 )
 
 // ─────────────────────────────────────────────────────────────────────────────
+section('10. Payment request sync extraction')
+
+const {
+  extractCompletedSquarePaymentRequests,
+} = require('../lib/os/square/paymentRequestSync') as typeof import('../lib/os/square/paymentRequestSync')
+
+assert('completed amount is recorded without status field', (() => {
+  const rows = extractCompletedSquarePaymentRequests([
+    {
+      uid: 'req_1',
+      computedAmountMoney: { amount: 1000 },
+      totalCompletedAmountMoney: { amount: 1000 },
+    },
+  ])
+  return rows.length === 1 && rows[0].uid === 'req_1' && rows[0].amountCents === 1000
+})())
+
+assert('zero completed amount is skipped', (() => {
+  const rows = extractCompletedSquarePaymentRequests([
+    {
+      uid: 'req_2',
+      computedAmountMoney: { amount: 1000 },
+      totalCompletedAmountMoney: { amount: 0 },
+    },
+  ])
+  return rows.length === 0
+})())
+
+assert('missing uid is skipped', (() => {
+  const rows = extractCompletedSquarePaymentRequests([
+    {
+      uid: null,
+      totalCompletedAmountMoney: { amount: 500 },
+    },
+  ])
+  return rows.length === 0
+})())
+
+assert('legacy status COMPLETED alone does not create payment without completed money', (() => {
+  const rows = extractCompletedSquarePaymentRequests([
+    {
+      uid: 'req_3',
+      status: 'COMPLETED',
+      computedAmountMoney: { amount: 1000 },
+    },
+  ])
+  return rows.length === 0
+})())
+
+assert('bigint completed amounts convert to cents', (() => {
+  const rows = extractCompletedSquarePaymentRequests([
+    {
+      uid: 'req_4',
+      totalCompletedAmountMoney: { amount: BigInt(1000) },
+    },
+  ])
+  return rows.length === 1 && rows[0].amountCents === 1000
+})())
+
+// ─────────────────────────────────────────────────────────────────────────────
 console.log('\n─────────────────────────────────────────────')
 console.log(`Results: ${passed} passed, ${failed} failed`)
 if (failed > 0) {
