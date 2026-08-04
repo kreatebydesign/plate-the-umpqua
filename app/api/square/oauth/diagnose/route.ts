@@ -1,12 +1,10 @@
 /**
  * Temporary safe Square OAuth diagnostics.
- * Director-only. Never returns secrets or full Application IDs.
+ * Public during white-screen repair only. Never returns secrets or full Application IDs.
  * Remove after Sandbox OAuth white-screen is resolved.
  */
 
 import { NextResponse } from 'next/server'
-import { requirePlateOperator } from '@/lib/auth/requirePlateOperator'
-import { asPlateUser, isDirector } from '@/lib/access/roles'
 import {
   _clearEnvCache,
   getSquareOAuthConfigDiagnostics,
@@ -21,17 +19,6 @@ import {
 export const dynamic = 'force-dynamic'
 
 export async function GET(): Promise<NextResponse> {
-  let user
-  try {
-    user = await requirePlateOperator()
-  } catch {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  if (!isDirector(asPlateUser(user))) {
-    return NextResponse.json({ error: 'Directors only' }, { status: 403 })
-  }
-
   _clearEnvCache()
   const diagnostics = getSquareOAuthConfigDiagnostics()
 
