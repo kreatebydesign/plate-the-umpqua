@@ -86,23 +86,26 @@ async function createSquareOrder(
 ): Promise<string> {
   const lineItems: SquareTypes.OrderLineItem[] = (invoice.lineItems ?? [])
     .filter((l) => !l.isCredit)
-    .map((l) => ({
+    .map((l, index) => ({
+      uid: `line-${index + 1}`,
       name: String(l.description ?? '').slice(0, 500),
       quantity: String(Math.max(1, Number(l.quantity || 1))),
+      itemType: 'ITEM',
       basePriceMoney: {
         amount: BigInt(Math.abs(Number(l.unitPriceCents || 0))),
-        currency: 'USD',
+        currency: 'USD' as const,
       },
     }))
 
   const discounts: SquareTypes.OrderLineItemDiscount[] = []
   if ((invoice.discountCents ?? 0) > 0) {
     discounts.push({
+      uid: 'discount-1',
       name: 'Discount',
       type: 'FIXED_AMOUNT',
       amountMoney: {
         amount: BigInt(Number(invoice.discountCents)),
-        currency: 'USD',
+        currency: 'USD' as const,
       },
       scope: 'ORDER',
     })
@@ -112,6 +115,7 @@ async function createSquareOrder(
   if ((invoice.taxRateBps ?? 0) > 0) {
     const taxPct = ((invoice.taxRateBps ?? 0) / 100).toFixed(4)
     taxes.push({
+      uid: 'tax-1',
       name: 'Tax',
       type: 'ADDITIVE',
       percentage: taxPct,
@@ -119,29 +123,42 @@ async function createSquareOrder(
     })
   }
 
-  const orderResult = await client.orders.create({
-    idempotencyKey: idempotencyKey(String(invoice.id), 'order'),
-    order: {
-      locationId,
-      customerId,
-      referenceId: String(invoice.invoiceNumber ?? invoice.id),
-      lineItems: lineItems.length ? lineItems : [
-        {
-          name: 'Invoice',
-          quantity: '1',
-          basePriceMoney: {
-            amount: BigInt(Math.max(0, Number(invoice.totalCents || 0))),
-            currency: 'USD',
-          },
-        },
-      ],
-      discounts: discounts.length ? discounts : undefined,
-      taxes: taxes.length ? taxes : undefined,
-    },
-  })
+  let orderResult: any
+  try {
+    orderResult = await client.orders.create({
+      idempotencyKey: idempotencyKey(String(invoice.id), 'order-v2'),
+      order: {
+        locationId,
+        customerId,
+        referenceId: String(invoice.invoiceNumber ?? invoice.id),
+        lineItems: lineItems.length
+          ? lineItems
+          : [
+              {
+                uid: 'line-1',
+                name: 'Invoice',
+                quantity: '1',
+                itemType: 'ITEM',
+                basePriceMoney: {
+                  amount: BigInt(Math.max(0, Number(invoice.totalCents || 0))),
+                  currency: 'USD' as const,
+                },
+              },
+            ],
+        discounts: discounts.length ? discounts : undefined,
+        taxes: taxes.length ? taxes : undefined,
+      },
+    })
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err)
+    throw new Error(`Square order create failed: ${detail}`)
+  }
 
-  const orderId = (orderResult as any).order?.id
-  if (!orderId) throw new Error('Failed to create Square order: no ID in response')
+  const orderId = orderResult?.order?.id
+  if (!orderId) {
+    const detail = JSON.stringify(orderResult?.errors ?? orderResult).slice(0, 300)
+    throw new Error(`Failed to create Square order: no ID in response (${detail})`)
+  }
   return orderId
 }
 
@@ -227,39 +244,42 @@ export async function createSquarePaymentInvoice(
   }
 
   // 4. Create invoice draft
+  // Note: customFields require Invoices Plus — omit to keep Sandbox/base invoices working.
   const invoiceTitle = `Invoice ${invoice.invoiceNumber ?? plateInvoiceId}`
   const description = invoice.clientMemo?.trim().slice(0, 1000) || undefined
 
-  const createdResult = await client.invoices.create({
-    idempotencyKey: idempotencyKey(plateInvoiceId, 'invoice'),
-    invoice: {
-      locationId,
-      orderId: squareOrderId,
-      primaryRecipient: { customerId: squareCustomerId },
-      paymentRequests,
-      deliveryMethod: 'SHARE_MANUALLY',
-      invoiceNumber: invoice.invoiceNumber ?? undefined,
-      title: invoiceTitle,
-      description,
-      acceptedPaymentMethods: {
-        card: true,
-        squareGiftCard: false,
-        bankAccount: false,
-        buyNowPayLater: false,
-        cashAppPay: false,
-      },
-      customFields: [
-        {
-          label: 'Invoice Reference',
-          value: invoice.invoiceNumber ?? plateInvoiceId,
-          placement: 'ABOVE_LINE_ITEMS',
+  let createdResult: any
+  try {
+    createdResult = await client.invoices.create({
+      idempotencyKey: idempotencyKey(plateInvoiceId, 'invoice-v2'),
+      invoice: {
+        locationId,
+        orderId: squareOrderId,
+        primaryRecipient: { customerId: squareCustomerId },
+        paymentRequests,
+        deliveryMethod: 'SHARE_MANUALLY',
+        invoiceNumber: invoice.invoiceNumber ?? undefined,
+        title: invoiceTitle,
+        description,
+        acceptedPaymentMethods: {
+          card: true,
+          squareGiftCard: false,
+          bankAccount: false,
+          buyNowPayLater: false,
+          cashAppPay: false,
         },
-      ],
-    },
-  })
+      },
+    })
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err)
+    throw new Error(`Square invoice create failed: ${detail}`)
+  }
 
-  const squareInvoiceId = (createdResult as any).invoice?.id
-  if (!squareInvoiceId) throw new Error('Square invoice creation failed: no ID in response')
+  const squareInvoiceId = createdResult?.invoice?.id
+  if (!squareInvoiceId) {
+    const detail = JSON.stringify(createdResult?.errors ?? createdResult).slice(0, 400)
+    throw new Error(`Square invoice creation failed: no ID in response (${detail})`)
+  }
 
   const draftVersion = Number((createdResult as any).invoice?.version ?? 0)
 
