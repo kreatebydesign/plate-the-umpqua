@@ -104,14 +104,24 @@ export default function InvoiceActions({
             Open client view
           </a>
         ) : null}
-        <button
-          type="button"
-          className={`${styles.button} ${styles.buttonQuiet}`}
-          disabled={pending}
-          onClick={() => window.print()}
-        >
-          Print invoice
-        </button>
+        {link ? (
+          <a
+            href={`${link.replace(/\/$/, '')}/print`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${styles.button} ${styles.buttonQuiet}`}
+          >
+            Print / Save PDF
+          </a>
+        ) : null}
+        {link ? (
+          <a
+            href={`/api/invoice/${encodeURIComponent(link.split('/invoice/')[1] || '')}/pdf`}
+            className={`${styles.button} ${styles.buttonQuiet}`}
+          >
+            Download PDF
+          </a>
+        ) : null}
         <button
           type="button"
           className={`${styles.button} ${styles.buttonQuiet}`}

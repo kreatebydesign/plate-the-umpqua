@@ -1,0 +1,460 @@
+.docRoot {
+  --doc-ink: #14120e;
+  --doc-soft: #3d3830;
+  --doc-muted: #6a6358;
+  --doc-line: #d9d0c0;
+  --doc-paper: #fbf8f2;
+  --doc-panel: #ffffff;
+  --doc-gold: #8a7040;
+  --doc-display: var(--font-cormorant), 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --doc-body: var(--font-work), 'Work Sans', Helvetica, Arial, sans-serif;
+  color: var(--doc-ink);
+  font-family: var(--doc-body);
+  background:
+    radial-gradient(circle at top, rgba(196, 164, 101, 0.14), transparent 42%),
+    var(--doc-paper);
+  min-height: 100vh;
+  padding: 1.25rem 1rem 2.5rem;
+}
+
+.printMode {
+  background: #fff;
+  min-height: auto;
+  padding: 0;
+}
+
+.toolbar {
+  max-width: 8.5in;
+  margin: 0 auto 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.toolbarCopy {
+  flex: 1 1 16rem;
+}
+
+.toolbarTitle {
+  margin: 0;
+  font-family: var(--doc-display);
+  font-size: 1.35rem;
+  font-weight: 500;
+}
+
+.toolbarHint {
+  margin: 0.35rem 0 0;
+  color: var(--doc-muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  max-width: 36rem;
+}
+
+.toolbarActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.toolbarButton,
+.toolbarButtonQuiet,
+.payButton {
+  appearance: none;
+  border: 1px solid var(--doc-ink);
+  background: var(--doc-ink);
+  color: #f6f3ec;
+  text-decoration: none;
+  font: inherit;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.7rem 0.95rem;
+  cursor: pointer;
+}
+
+.toolbarButtonQuiet {
+  background: transparent;
+  color: var(--doc-ink);
+}
+
+.sheet {
+  max-width: 8.5in;
+  margin: 0 auto;
+  background: var(--doc-panel);
+  border: 1px solid var(--doc-line);
+  padding: 0.85in 0.75in 0.7in;
+  box-shadow: 0 18px 40px rgba(20, 18, 14, 0.06);
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 1.5rem;
+  padding-bottom: 1.1rem;
+  border-bottom: 1.5px solid var(--doc-ink);
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.wordmark {
+  margin: 0;
+  font-family: var(--doc-display);
+  font-size: 2rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  color: var(--doc-ink);
+}
+
+.businessMeta {
+  margin: 0.65rem 0 0;
+  color: var(--doc-soft);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.invoiceMeta {
+  text-align: right;
+}
+
+.invoiceLabel {
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--doc-gold);
+  font-weight: 600;
+}
+
+.invoiceNumber {
+  margin: 0.2rem 0 0.75rem;
+  font-family: var(--doc-display);
+  font-size: 1.7rem;
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.metaList {
+  margin: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.metaList div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  justify-content: end;
+  font-size: 0.9rem;
+}
+
+.metaList dt {
+  margin: 0;
+  color: var(--doc-muted);
+  font-weight: 500;
+}
+
+.metaList dd {
+  margin: 0;
+  color: var(--doc-ink);
+  font-weight: 500;
+}
+
+.parties {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-top: 1.15rem;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.sectionLabel {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--doc-gold);
+  font-weight: 600;
+}
+
+.partyCopy {
+  margin: 0;
+  color: var(--doc-soft);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.partyCopy strong {
+  color: var(--doc-ink);
+  font-weight: 600;
+}
+
+.dueBanner {
+  margin: 1.15rem 0 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--doc-line);
+  background: linear-gradient(180deg, #f7f2e8 0%, #fbf8f2 100%);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  align-items: baseline;
+  justify-content: space-between;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.dueCaption {
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--doc-gold);
+  font-weight: 600;
+}
+
+.dueAmount {
+  margin: 0.15rem 0 0;
+  font-family: var(--doc-display);
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.dueNote {
+  margin: 0;
+  flex: 1 1 14rem;
+  color: var(--doc-muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+  max-width: 22rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.35rem;
+  font-size: 0.92rem;
+}
+
+.table thead {
+  display: table-header-group;
+}
+
+.table th {
+  text-align: left;
+  padding: 0.55rem 0.4rem;
+  border-bottom: 1.5px solid var(--doc-ink);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--doc-ink);
+  font-weight: 600;
+}
+
+.table td {
+  padding: 0.7rem 0.4rem;
+  border-bottom: 1px solid var(--doc-line);
+  vertical-align: top;
+  color: var(--doc-soft);
+}
+
+.table tr {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.colDesc {
+  width: 42%;
+}
+
+.colBasis {
+  width: 16%;
+}
+
+.colQty,
+.colRate {
+  width: 12%;
+}
+
+.colAmt {
+  width: 18%;
+  text-align: right;
+}
+
+.table td:last-child,
+.table th:last-child {
+  text-align: right;
+}
+
+.lineTitle {
+  display: block;
+  color: var(--doc-ink);
+  font-weight: 600;
+}
+
+.lineDetail {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--doc-muted);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.creditRow td {
+  color: var(--doc-soft);
+}
+
+.totalsWrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.totalsPanel {
+  width: min(100%, 18.5rem);
+  border-top: 1.5px solid var(--doc-ink);
+  padding-top: 0.55rem;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.totalsRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.28rem 0;
+  color: var(--doc-soft);
+  font-size: 0.92rem;
+}
+
+.totalsStrong {
+  margin-top: 0.25rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--doc-line);
+  color: var(--doc-ink);
+  font-weight: 600;
+}
+
+.totalsDue {
+  color: var(--doc-ink);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.memo,
+.payBlock {
+  margin-top: 1.25rem;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.memo p {
+  margin: 0;
+  color: var(--doc-soft);
+  white-space: pre-wrap;
+  line-height: 1.55;
+  font-size: 0.95rem;
+}
+
+.payHint {
+  margin: 0.55rem 0 0;
+  color: var(--doc-muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.footer {
+  margin-top: 1.6rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--doc-line);
+  text-align: center;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.footerWordmark {
+  margin: 0;
+  font-family: var(--doc-display);
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+.footerThanks {
+  margin: 0.35rem 0 0;
+  color: var(--doc-soft);
+  font-size: 0.92rem;
+}
+
+.footerMeta {
+  margin: 0.35rem 0 0;
+  color: var(--doc-muted);
+  font-size: 0.82rem;
+}
+
+@media (max-width: 720px) {
+  .sheet {
+    padding: 1.25rem 1rem 1.5rem;
+  }
+
+  .header,
+  .parties {
+    grid-template-columns: 1fr;
+  }
+
+  .invoiceMeta {
+    text-align: left;
+  }
+
+  .metaList div {
+    justify-content: start;
+  }
+
+  .table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+@page {
+  size: Letter;
+  margin: 0.55in;
+}
+
+@media print {
+  .docRoot {
+    background: #fff !important;
+    padding: 0 !important;
+    min-height: auto;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .toolbar,
+  .payBlock,
+  .printHide {
+    display: none !important;
+  }
+
+  .sheet {
+    max-width: none;
+    width: 100%;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .dueBanner {
+    background: #f7f2e8 !important;
+  }
+
+  .wordmark,
+  .invoiceNumber,
+  .dueAmount,
+  .footerWordmark {
+    font-family: var(--doc-display);
+  }
+}

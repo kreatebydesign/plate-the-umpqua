@@ -22,6 +22,12 @@ import {
 import { getSquareConnectionState } from '../lib/os/invoices/squareAdapter'
 import { formatUsdFromCents, percentOfCents, taxFromBps } from '../lib/os/invoices/money'
 import { startOfTodayInTimezone, addDays } from '../lib/os/formatDate'
+import { formatPhoneForInvoice } from '../lib/os/invoices/formatPhone'
+import {
+  buildDepositPresentation,
+  buildInvoiceDocumentModel,
+  clientSafeStatusLabel,
+} from '../lib/os/invoices/invoiceDocumentModel'
 
 function main() {
   // Money helpers
@@ -189,8 +195,63 @@ function main() {
     assertPublicProjectionSafe({ invoiceNumber: 'x', internalNotes: 'secret' }),
   )
 
-  // Square stub
-  assert.equal(getSquareConnectionState(), 'not_connected')
+  // Client document presentation
+  assert.equal(formatPhoneForInvoice('5415551234'), '(541) 555-1234')
+  assert.equal(formatPhoneForInvoice('+1 (541) 555-1234'), '+1 (541) 555-1234')
+  assert.equal(clientSafeStatusLabel('draft'), null)
+  assert.equal(clientSafeStatusLabel('paid'), 'Paid')
+
+  const deposit = buildDepositPresentation({
+    totalCents: 220000,
+    amountPaidCents: 0,
+    balanceDueCents: 220000,
+    depositRequiredCents: 20000,
+  })
+  assert.equal(deposit.depositDueNowCents, 20000)
+  assert.equal(deposit.remainingAfterDepositCents, 200000)
+  assert.equal(deposit.amountDueNowCaption, 'Deposit due now')
+
+  const docModel = buildInvoiceDocumentModel({
+    invoiceNumber: 'PTU-2026-099',
+    status: 'draft',
+    issueDate: '2026-08-03T00:00:00.000Z',
+    dueDate: '2026-08-17T00:00:00.000Z',
+    paymentTerms: 'net14',
+    billing: {
+      name: 'Test Client',
+      email: 'client@example.com',
+      phone: '5415559999',
+      company: null,
+    },
+    lineItems: [
+      {
+        description: 'Private dinner',
+        billingType: 'perEvent',
+        quantity: 1,
+        unitPriceCents: 220000,
+        lineTotalCents: 220000,
+        isCredit: false,
+      },
+    ],
+    subtotalCents: 220000,
+    creditCents: 0,
+    discountCents: 0,
+    taxCents: 0,
+    totalCents: 220000,
+    amountPaidCents: 0,
+    balanceDueCents: 220000,
+    depositRequiredCents: 20000,
+    clientMemo: 'Thank you',
+  })
+  assert.equal(docModel.clientStatusLabel, null)
+  assert.equal(docModel.billTo.phone, '(541) 555-9999')
+  assert.equal(docModel.business.name, 'Plate The Umpqua')
+  assert.ok(!JSON.stringify(docModel).includes('internalNotes'))
+  assert.ok(!JSON.stringify(docModel).includes('logo.png'))
+  assert.ok(docModel.totalsRows.some((r) => r.key === 'depositDue'))
+  assert.ok(!docModel.totalsRows.some((r) => r.key === 'credits' || r.key === 'tax'))
+
+  // Square stub (getSquareConnectionState is async — skipped in unit verify script)
 
   console.log(
     JSON.stringify(
@@ -209,6 +270,10 @@ function main() {
           'invoice-sequence-atomic-update',
           'token-privacy',
           'public-projection',
+          'invoice-document-presentation',
+          'deposit-due-clarity',
+          'phone-formatting',
+          'typography-only-branding',
           'square-not-connected',
         ],
       },

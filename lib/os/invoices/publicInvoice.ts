@@ -1,54 +1,13 @@
 import { getPayload } from 'payload'
 import config from '../../../payload.config'
-import { formatShortDate } from '../formatDate'
-import { formatUsdFromCents } from './money'
 import {
-  BILLING_TYPE_LABELS,
-  PLATE_INVOICE_BUSINESS,
-  paymentTermsLabel,
-  type BillingTypeValue,
-} from './invoiceConstants'
+  buildInvoiceDocumentModel,
+  type InvoiceDocumentModel,
+} from './invoiceDocumentModel'
 import { hashInvoiceToken, normalizeInvoiceTokenParam } from './invoiceToken'
 
-export type PublicInvoiceLine = {
-  description: string
-  detail: string | null
-  billingTypeLabel: string
-  quantity: number
-  unitPriceLabel: string
-  lineTotalLabel: string
-  isCredit: boolean
-}
-
-export type PublicInvoiceView = {
-  invoiceNumber: string
-  status: string
-  issueDateLabel: string
-  dueDateLabel: string
-  paymentTermsLabel: string
-  billTo: {
-    name: string
-    email: string
-    phone: string | null
-    company: string | null
-  }
-  event: {
-    name: string | null
-    dateLabel: string | null
-  }
-  lines: PublicInvoiceLine[]
-  subtotalLabel: string
-  creditLabel: string
-  discountLabel: string
-  taxLabel: string
-  totalLabel: string
-  amountPaidLabel: string
-  balanceDueLabel: string
-  depositRequiredLabel: string | null
-  clientMemo: string | null
-  business: typeof PLATE_INVOICE_BUSINESS
-  voided: boolean
-}
+/** @deprecated Prefer InvoiceDocumentModel — kept for verify script imports. */
+export type PublicInvoiceView = InvoiceDocumentModel
 
 /** Fields that must never appear in a public invoice projection. */
 export const PUBLIC_INVOICE_FORBIDDEN_KEYS = [
@@ -63,12 +22,9 @@ export const PUBLIC_INVOICE_FORBIDDEN_KEYS = [
   'recordedBy',
 ] as const
 
-export async function lookupPublicInvoice(
-  rawToken: string,
-): Promise<{ state: 'invalid' | 'voided' | 'valid'; view: PublicInvoiceView | null; id: string | null }> {
-  const token = normalizeInvoiceTokenParam(rawToken)
-  if (!token) return { state: 'invalid', view: null, id: null }
+type LookupState = 'invalid' | 'voided' | 'valid'
 
+async function loadInvoiceByToken(token: string) {
   const payload = await getPayload({ config })
   const hash = hashInvoiceToken(token)
 
@@ -76,7 +32,7 @@ export async function lookupPublicInvoice(
     collection: 'invoices',
     where: { publicTokenHash: { equals: hash } },
     limit: 1,
-    depth: 1,
+    depth: 2,
     overrideAccess: true,
     select: {
       invoiceNumber: true,
@@ -100,78 +56,82 @@ export async function lookupPublicInvoice(
       voidedAt: true,
       publicTokenRevokedAt: true,
       firstViewedAt: true,
-      // intentionally omit internalNotes and square
+      square: true,
+      // intentionally omit internalNotes
     },
   })
 
-  const doc = found.docs[0]
+  return { payload, doc: found.docs[0] || null }
+}
+
+function toDocumentModel(doc: NonNullable<Awaited<ReturnType<typeof loadInvoiceByToken>>['doc']>) {
+  const squareUrl =
+    doc.square && typeof doc.square === 'object' && 'paymentLinkUrl' in doc.square
+      ? String((doc.square as { paymentLinkUrl?: string | null }).paymentLinkUrl || '') || null
+      : null
+
+  return buildInvoiceDocumentModel({
+    invoiceNumber: doc.invoiceNumber,
+    status: String(doc.status || ''),
+    issueDate: doc.issueDate,
+    dueDate: doc.dueDate,
+    paymentTerms: doc.paymentTerms,
+    paymentTermsCustom: doc.paymentTermsCustom,
+    billing: doc.billing,
+    event: doc.event as Parameters<typeof buildInvoiceDocumentModel>[0]['event'],
+    lineItems: doc.lineItems,
+    subtotalCents: Number(doc.subtotalCents || 0),
+    creditCents: Number(doc.creditCents || 0),
+    discountCents: Number(doc.discountCents || 0),
+    taxCents: Number(doc.taxCents || 0),
+    totalCents: Number(doc.totalCents || 0),
+    amountPaidCents: Number(doc.amountPaidCents || 0),
+    balanceDueCents: Number(doc.balanceDueCents || 0),
+    depositRequiredCents: Number(doc.depositRequiredCents || 0),
+    clientMemo: doc.clientMemo,
+    squarePaymentUrl: squareUrl,
+  })
+}
+
+/**
+ * Resolve a public invoice document without marking viewed.
+ * Use for PDF/print helpers when the caller controls view tracking separately.
+ */
+export async function getPublicInvoiceDocument(
+  rawToken: string,
+): Promise<{ state: LookupState; view: InvoiceDocumentModel | null; id: string | null }> {
+  const token = normalizeInvoiceTokenParam(rawToken)
+  if (!token) return { state: 'invalid', view: null, id: null }
+
+  const { doc } = await loadInvoiceByToken(token)
   if (!doc) return { state: 'invalid', view: null, id: null }
-
-  if (doc.publicTokenRevokedAt) {
-    return { state: 'invalid', view: null, id: null }
-  }
-
+  if (doc.publicTokenRevokedAt) return { state: 'invalid', view: null, id: null }
   if (doc.voidedAt || doc.status === 'voided') {
     return { state: 'voided', view: null, id: String(doc.id) }
   }
 
-  const eventRel = doc.event
-  const eventName =
-    eventRel && typeof eventRel === 'object' && 'eventName' in eventRel
-      ? String((eventRel as { eventName?: string }).eventName || '') || null
-      : null
-  const eventDate =
-    eventRel && typeof eventRel === 'object' && 'eventDate' in eventRel
-      ? (eventRel as { eventDate?: string }).eventDate
-      : null
+  const view = toDocumentModel(doc)
+  assertPublicProjectionSafe(view)
+  return { state: 'valid', view, id: String(doc.id) }
+}
 
-  const lines = (doc.lineItems || []).map((line) => {
-    const billingType = (line.billingType || 'flat') as BillingTypeValue
-    return {
-      description: line.description || 'Line item',
-      detail: line.detail?.trim() || null,
-      billingTypeLabel: BILLING_TYPE_LABELS[billingType] || billingType,
-      quantity: Number(line.quantity || 0),
-      unitPriceLabel: formatUsdFromCents(Number(line.unitPriceCents || 0)),
-      lineTotalLabel: formatUsdFromCents(Number(line.lineTotalCents || 0)),
-      isCredit: Boolean(line.isCredit),
-    }
-  })
+export async function lookupPublicInvoice(
+  rawToken: string,
+): Promise<{ state: LookupState; view: InvoiceDocumentModel | null; id: string | null }> {
+  const token = normalizeInvoiceTokenParam(rawToken)
+  if (!token) return { state: 'invalid', view: null, id: null }
 
-  const view: PublicInvoiceView = {
-    invoiceNumber: doc.invoiceNumber,
-    status: String(doc.status || ''),
-    issueDateLabel: formatShortDate(doc.issueDate),
-    dueDateLabel: formatShortDate(doc.dueDate),
-    paymentTermsLabel: paymentTermsLabel(doc.paymentTerms, doc.paymentTermsCustom),
-    billTo: {
-      name: doc.billing?.name || '—',
-      email: doc.billing?.email || '—',
-      phone: doc.billing?.phone || null,
-      company: doc.billing?.company || null,
-    },
-    event: {
-      name: eventName,
-      dateLabel: eventDate ? formatShortDate(eventDate) : null,
-    },
-    lines,
-    subtotalLabel: formatUsdFromCents(Number(doc.subtotalCents || 0)),
-    creditLabel: formatUsdFromCents(Number(doc.creditCents || 0)),
-    discountLabel: formatUsdFromCents(Number(doc.discountCents || 0)),
-    taxLabel: formatUsdFromCents(Number(doc.taxCents || 0)),
-    totalLabel: formatUsdFromCents(Number(doc.totalCents || 0)),
-    amountPaidLabel: formatUsdFromCents(Number(doc.amountPaidCents || 0)),
-    balanceDueLabel: formatUsdFromCents(Number(doc.balanceDueCents || 0)),
-    depositRequiredLabel:
-      Number(doc.depositRequiredCents || 0) > 0
-        ? formatUsdFromCents(Number(doc.depositRequiredCents || 0))
-        : null,
-    clientMemo: doc.clientMemo?.trim() || null,
-    business: PLATE_INVOICE_BUSINESS,
-    voided: false,
+  const { payload, doc } = await loadInvoiceByToken(token)
+  if (!doc) return { state: 'invalid', view: null, id: null }
+  if (doc.publicTokenRevokedAt) return { state: 'invalid', view: null, id: null }
+  if (doc.voidedAt || doc.status === 'voided') {
+    return { state: 'voided', view: null, id: String(doc.id) }
   }
 
-  // Mark viewed only from the public surface.
+  const view = toDocumentModel(doc)
+  assertPublicProjectionSafe(view)
+
+  // Mark viewed only from the interactive public surface.
   const now = new Date().toISOString()
   const patch: Record<string, unknown> = { lastViewedAt: now }
   if (!doc.firstViewedAt) {
@@ -197,5 +157,16 @@ export function assertPublicProjectionSafe(view: unknown): void {
     if (serialized.includes(`"${key}"`)) {
       throw new Error(`Public invoice projection leaked ${key}`)
     }
+  }
+  if (serialized.includes('internalNotes')) {
+    throw new Error('Public invoice projection leaked internalNotes')
+  }
+  // Logo / graphic mark paths must never appear in client document data.
+  if (
+    serialized.includes('/logo') ||
+    serialized.includes('logo.png') ||
+    serialized.includes('logo.svg')
+  ) {
+    throw new Error('Public invoice projection must not include logo assets')
   }
 }

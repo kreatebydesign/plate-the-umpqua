@@ -3,12 +3,35 @@ export const INVOICE_PAGE_SIZE_MAX = 50
 export const INVOICE_SEARCH_MAX = 80
 export const INVOICE_SEND_COOLDOWN_MS = 60_000
 
+/**
+ * Configured Plate The Umpqua business identity for invoices.
+ * Optional contact fields may be supplied via env (never invent values).
+ * Wordmark is always live typography — never a logo image.
+ */
 export const PLATE_INVOICE_BUSINESS = {
   name: 'Plate The Umpqua',
   email: 'info@platetheumpqua.com',
+  website: 'www.platetheumpqua.com',
   region: 'Roseburg · Umpqua Valley, Oregon',
-  phone: '',
 } as const
+
+export function getInvoiceBusiness(): {
+  name: string
+  email: string
+  website: string
+  region: string
+  phone: string
+  address: string
+} {
+  return {
+    name: PLATE_INVOICE_BUSINESS.name,
+    email: PLATE_INVOICE_BUSINESS.email,
+    website: PLATE_INVOICE_BUSINESS.website,
+    region: PLATE_INVOICE_BUSINESS.region,
+    phone: (process.env.INVOICE_BUSINESS_PHONE || '').trim(),
+    address: (process.env.INVOICE_BUSINESS_ADDRESS || '').trim(),
+  }
+}
 
 export const INVOICE_STATUS_VALUES = [
   'draft',
