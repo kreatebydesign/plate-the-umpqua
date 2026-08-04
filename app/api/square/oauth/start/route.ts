@@ -11,7 +11,11 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { requirePlateOperator } from '@/lib/auth/requirePlateOperator'
 import { asPlateUser, isDirector } from '@/lib/access/roles'
-import { generateOAuthState, buildAuthorizeUrl } from '@/lib/os/square/oauth'
+import {
+  generateOAuthState,
+  buildAuthorizeUrl,
+  assertAuthorizeUrlSafe,
+} from '@/lib/os/square/oauth'
 import { getSquareEnv } from '@/lib/os/square/env'
 
 export const dynamic = 'force-dynamic'
@@ -54,5 +58,17 @@ export async function GET(): Promise<NextResponse> {
   })
 
   const authorizeUrl = buildAuthorizeUrl(state)
+  try {
+    assertAuthorizeUrlSafe(authorizeUrl)
+  } catch (err) {
+    return NextResponse.redirect(
+      new URL(
+        `/os/settings/square?error=${encodeURIComponent(
+          err instanceof Error ? err.message : 'Invalid Square OAuth configuration',
+        )}`,
+        process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
+      ),
+    )
+  }
   return NextResponse.redirect(authorizeUrl)
 }

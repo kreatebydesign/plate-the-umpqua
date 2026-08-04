@@ -31,6 +31,10 @@ export function generateOAuthState(): OAuthState {
 
 /** Build the Square authorize URL. */
 export function buildAuthorizeUrl(state: string): string {
+  if (!state?.trim()) {
+    throw new Error('OAuth state is required before building the authorize URL')
+  }
+
   const env = getSquareEnv()
   const scopes = scopeString()
 
@@ -39,10 +43,89 @@ export function buildAuthorizeUrl(state: string): string {
     scope: scopes,
     state,
     redirect_uri: env.oauthRedirectUrl,
-    session: 'false',
   })
 
+  // Sandbox only supports the default session=true behavior. session=false is
+  // production-only and can render a blank Square authorization page in Sandbox.
+  if (env.environment === 'production') {
+    params.set('session', 'false')
+  }
+
   return `${env.squareBaseUrl}/oauth2/authorize?${params.toString()}`
+}
+
+/**
+ * Validate a generated authorize URL without exposing secrets.
+ * Throws if the URL would send the seller to a broken Square page.
+ */
+export function assertAuthorizeUrlSafe(url: string): {
+  hostname: string
+  pathname: string
+  clientIdPresent: boolean
+  clientIdPlaceholder: boolean
+  redirectUri: string | null
+  redirectUriMatch: boolean
+  scopeCount: number
+  statePresent: boolean
+  sessionParam: string | null
+} {
+  const env = getSquareEnv()
+  const parsed = new URL(url)
+  const clientId = parsed.searchParams.get('client_id') ?? ''
+  const redirectUri = parsed.searchParams.get('redirect_uri')
+  const state = parsed.searchParams.get('state') ?? ''
+  const scope = parsed.searchParams.get('scope') ?? ''
+  const sessionParam = parsed.searchParams.get('session')
+  const placeholder =
+    !clientId ||
+    clientId === 'SQUARE_APPLICATION_ID' ||
+    clientId === '${SQUARE_APPLICATION_ID}' ||
+    clientId === 'undefined' ||
+    clientId === 'null' ||
+    clientId.startsWith('${')
+
+  const expectedHost =
+    env.environment === 'production' ? 'connect.squareup.com' : 'connect.squareupsandbox.com'
+  const expectedRedirect = env.oauthRedirectUrl
+
+  if (parsed.hostname !== expectedHost) {
+    throw new Error(`Square OAuth hostname mismatch (expected ${expectedHost})`)
+  }
+  if (parsed.pathname !== '/oauth2/authorize') {
+    throw new Error('Square OAuth path must be /oauth2/authorize')
+  }
+  if (placeholder) {
+    throw new Error('Square OAuth client_id is missing or still a placeholder')
+  }
+  if (env.environment === 'sandbox' && !clientId.startsWith('sandbox-sq0id')) {
+    throw new Error('Square Sandbox OAuth requires a sandbox-sq0id Application ID')
+  }
+  if (redirectUri !== expectedRedirect) {
+    throw new Error('Square OAuth redirect_uri does not match SQUARE_OAUTH_REDIRECT_URL')
+  }
+  if (!state.trim()) {
+    throw new Error('Square OAuth state is missing')
+  }
+  if (env.environment === 'sandbox' && sessionParam === 'false') {
+    throw new Error('Square Sandbox OAuth must not set session=false')
+  }
+
+  const scopeCount = scope.split(/[+\s]/).filter(Boolean).length
+  if (scopeCount !== 8) {
+    throw new Error(`Square OAuth scope count must be 8 (got ${scopeCount})`)
+  }
+
+  return {
+    hostname: parsed.hostname,
+    pathname: parsed.pathname,
+    clientIdPresent: Boolean(clientId),
+    clientIdPlaceholder: placeholder,
+    redirectUri,
+    redirectUriMatch: redirectUri === expectedRedirect,
+    scopeCount,
+    statePresent: Boolean(state.trim()),
+    sessionParam,
+  }
 }
 
 /** Exchange an authorization code for access + refresh tokens. */

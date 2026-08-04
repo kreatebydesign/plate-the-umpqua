@@ -16,7 +16,12 @@ import {
   disconnectSquareConnection,
   decryptAccessToken,
 } from './connection'
-import { revokeTokens, buildAuthorizeUrl, generateOAuthState } from './oauth'
+import {
+  revokeTokens,
+  buildAuthorizeUrl,
+  generateOAuthState,
+  assertAuthorizeUrlSafe,
+} from './oauth'
 import { createSquarePaymentInvoice } from './createInvoice'
 import { syncSquareInvoice } from './sync'
 import { getPayload } from 'payload'
@@ -178,6 +183,7 @@ export async function getSquareOAuthStartUrl(): Promise<ActionResult<{ url: stri
     })
 
     const url = buildAuthorizeUrl(state)
+    assertAuthorizeUrlSafe(url)
     return { ok: true, url }
   } catch (err) {
     return { ok: false, message: err instanceof Error ? err.message : 'Unable to start OAuth.' }

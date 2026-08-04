@@ -3,6 +3,7 @@
  * Verify Square integration correctness without live credentials.
  * Run: npx tsx scripts/verify-square.ts
  */
+/* eslint-disable @typescript-eslint/no-require-imports -- dynamic env cache resets need fresh module state */
 
 import crypto from 'crypto'
 import { roundtripTest } from '../lib/crypto/sealedSecrets'
@@ -225,6 +226,174 @@ assert('already-expired token triggers refresh', (() => {
   const exp = new Date(Date.now() - 1000).toISOString()
   return tokenExpiresWithin(exp)
 })())
+
+// ─────────────────────────────────────────────────────────────────────────────
+section('9. OAuth authorize URL construction')
+
+const {
+  buildAuthorizeUrl,
+  assertAuthorizeUrlSafe,
+  generateOAuthState: genState,
+} = require('../lib/os/square/oauth') as typeof import('../lib/os/square/oauth')
+const {
+  getSquareEnv,
+  _clearEnvCache,
+  getSquareOAuthConfigDiagnostics,
+} = require('../lib/os/square/env') as typeof import('../lib/os/square/env')
+
+const VALID_SANDBOX_APP_ID = 'sandbox-sq0idb-TESTAPPID0000000001'
+const VALID_SECRET = 'sandbox-sq0csb-TESTSECRET0000000000001'
+const VALID_REDIRECT = 'https://www.platetheumpqua.com/api/square/oauth/callback'
+
+function withSquareEnv(vars: Record<string, string | undefined>, fn: () => void) {
+  const keys = [
+    'SQUARE_ENVIRONMENT',
+    'SQUARE_APPLICATION_ID',
+    'SQUARE_APPLICATION_SECRET',
+    'SQUARE_OAUTH_REDIRECT_URL',
+    'SQUARE_WEBHOOK_SIGNATURE_KEY',
+  ]
+  const prior: Record<string, string | undefined> = {}
+  for (const key of keys) prior[key] = process.env[key]
+  try {
+    for (const [key, value] of Object.entries(vars)) {
+      if (value === undefined) delete process.env[key]
+      else process.env[key] = value
+    }
+    _clearEnvCache()
+    fn()
+  } finally {
+    for (const key of keys) {
+      if (prior[key] === undefined) delete process.env[key]
+      else process.env[key] = prior[key]
+    }
+    _clearEnvCache()
+  }
+}
+
+withSquareEnv(
+  {
+    SQUARE_ENVIRONMENT: 'sandbox',
+    SQUARE_APPLICATION_ID: VALID_SANDBOX_APP_ID,
+    SQUARE_APPLICATION_SECRET: VALID_SECRET,
+    SQUARE_OAUTH_REDIRECT_URL: VALID_REDIRECT,
+  },
+  () => {
+    const { state } = genState()
+    const url = buildAuthorizeUrl(state)
+    const parsed = new URL(url)
+    assert(
+      'valid sandbox app id uses sandbox OAuth hostname',
+      parsed.hostname === 'connect.squareupsandbox.com',
+    )
+    assert('authorize path is /oauth2/authorize', parsed.pathname === '/oauth2/authorize')
+    assert('redirect_uri matches configured callback', parsed.searchParams.get('redirect_uri') === VALID_REDIRECT)
+    assert('client_id is the sandbox application id', parsed.searchParams.get('client_id') === VALID_SANDBOX_APP_ID)
+    const scope = parsed.searchParams.get('scope') ?? ''
+    const scopes = scope.split(/[+\s]/).filter(Boolean)
+    assert('all eight scopes are present', scopes.length === 8 && SQUARE_SCOPES.every((s) => scopes.includes(s)))
+    assert('CSRF state is nonempty', Boolean(parsed.searchParams.get('state')?.trim()))
+    assert('sandbox omits session=false', parsed.searchParams.get('session') !== 'false')
+    assert('assertAuthorizeUrlSafe accepts valid sandbox URL', (() => {
+      assertAuthorizeUrlSafe(url)
+      return true
+    })())
+  },
+)
+
+withSquareEnv(
+  {
+    SQUARE_ENVIRONMENT: 'sandbox',
+    SQUARE_APPLICATION_ID: 'SQUARE_APPLICATION_ID',
+    SQUARE_APPLICATION_SECRET: VALID_SECRET,
+    SQUARE_OAUTH_REDIRECT_URL: VALID_REDIRECT,
+  },
+  () => {
+    assert('literal SQUARE_APPLICATION_ID is rejected', (() => {
+      try {
+        getSquareEnv()
+        return false
+      } catch (err) {
+        const message = err instanceof Error ? err.message : ''
+        return message.includes('placeholder') && !message.includes(VALID_SECRET)
+      }
+    })())
+  },
+)
+
+withSquareEnv(
+  {
+    SQUARE_ENVIRONMENT: 'sandbox',
+    SQUARE_APPLICATION_ID: undefined,
+    SQUARE_APPLICATION_SECRET: VALID_SECRET,
+    SQUARE_OAUTH_REDIRECT_URL: VALID_REDIRECT,
+  },
+  () => {
+    assert('missing application ID is rejected', (() => {
+      try {
+        getSquareEnv()
+        return false
+      } catch {
+        return true
+      }
+    })())
+  },
+)
+
+withSquareEnv(
+  {
+    SQUARE_ENVIRONMENT: 'sandbox',
+    SQUARE_APPLICATION_ID: '${SQUARE_APPLICATION_ID}',
+    SQUARE_APPLICATION_SECRET: VALID_SECRET,
+    SQUARE_OAUTH_REDIRECT_URL: VALID_REDIRECT,
+  },
+  () => {
+    assert('unresolved ${...} placeholder is rejected', (() => {
+      try {
+        getSquareEnv()
+        return false
+      } catch (err) {
+        const message = err instanceof Error ? err.message : ''
+        return message.includes('placeholder') && !message.includes(VALID_SECRET)
+      }
+    })())
+  },
+)
+
+withSquareEnv(
+  {
+    SQUARE_ENVIRONMENT: 'sandbox',
+    SQUARE_APPLICATION_ID: 'sq0idp-ProductionLookingId0001',
+    SQUARE_APPLICATION_SECRET: VALID_SECRET,
+    SQUARE_OAUTH_REDIRECT_URL: VALID_REDIRECT,
+  },
+  () => {
+    assert('production-looking app id rejected in sandbox', (() => {
+      try {
+        getSquareEnv()
+        return false
+      } catch (err) {
+        const message = err instanceof Error ? err.message : ''
+        return message.includes('Sandbox Application ID') && !message.includes(VALID_SECRET)
+      }
+    })())
+  },
+)
+
+withSquareEnv(
+  {
+    SQUARE_ENVIRONMENT: 'sandbox',
+    SQUARE_APPLICATION_ID: VALID_SANDBOX_APP_ID,
+    SQUARE_APPLICATION_SECRET: VALID_SECRET,
+    SQUARE_OAUTH_REDIRECT_URL: VALID_REDIRECT,
+  },
+  () => {
+    const diag = getSquareOAuthConfigDiagnostics()
+    assert('diagnostics report sandbox environment', diag.environment === 'sandbox')
+    assert('diagnostics never include full app id', diag.applicationIdRedacted !== VALID_SANDBOX_APP_ID)
+    assert('production Square is not activated by sandbox config', process.env.SQUARE_ENVIRONMENT !== 'production')
+  },
+)
 
 // ─────────────────────────────────────────────────────────────────────────────
 console.log('\n─────────────────────────────────────────────')
