@@ -87,6 +87,14 @@ export default function SquareSettingsClient({
         Square handles secure payment collection only. Invoice emails come from Plate, not Square.
       </p>
 
+      {sandboxMode && (
+        <p className={squareStyles.description}>
+          Sandbox tip: open the Square Sandbox Dashboard and sign in as your Sandbox test seller
+          before clicking Connect. Square’s Sandbox authorization page stays blank until that
+          seller session exists.
+        </p>
+      )}
+
       {feedback && (
         <div
           className={feedback.type === 'ok' ? squareStyles.successBanner : squareStyles.errorBanner}
