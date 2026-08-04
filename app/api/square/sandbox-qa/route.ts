@@ -220,6 +220,8 @@ async function findOrCreateQaInvoice(
 
   const lines = [
     {
+      itemKey: 'sandbox-qa-line-1',
+      sortOrder: 0,
       description: QA_LINE,
       billingType: 'flat' as const,
       quantity: 1,
