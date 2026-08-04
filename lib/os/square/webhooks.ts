@@ -36,7 +36,15 @@ export async function verifySquareWebhookSignature(
 ): Promise<boolean> {
   const env = getSquareEnv()
   if (!env.webhookSignatureKey) {
-    console.warn('[square/webhooks] SQUARE_WEBHOOK_SIGNATURE_KEY not set — skipping signature verification (sandbox only)')
+    if (env.environment === 'production') {
+      console.error(
+        '[square/webhooks] SQUARE_WEBHOOK_SIGNATURE_KEY is required in production — rejecting webhook',
+      )
+      return false
+    }
+    console.warn(
+      '[square/webhooks] SQUARE_WEBHOOK_SIGNATURE_KEY not set — skipping signature verification (sandbox only)',
+    )
     return true
   }
 

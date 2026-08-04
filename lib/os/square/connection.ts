@@ -38,16 +38,27 @@ async function getPayloadInstance() {
   return getPayload({ config }) as unknown as any
 }
 
-/** Get the current active connection record (if any). Returns null if none. */
+/** Current Square environment from SQUARE_ENVIRONMENT (defaults to sandbox). */
+export function currentSquareEnvironment(): 'sandbox' | 'production' {
+  return process.env.SQUARE_ENVIRONMENT === 'production' ? 'production' : 'sandbox'
+}
+
+/** Get the current active connection for THIS environment only. Returns null if none. */
 export async function getSquareConnection(): Promise<ConnectionRecord | null> {
   const payload = await getPayloadInstance()
+  const environment = currentSquareEnvironment()
   const result = await payload.find({
     collection: 'square-connections',
     limit: 1,
     sort: '-connectedAt',
     overrideAccess: true,
     depth: 0,
-    where: { status: { equals: 'connected' } },
+    where: {
+      and: [
+        { status: { equals: 'connected' } },
+        { environment: { equals: environment } },
+      ],
+    },
   })
 
   const doc = result.docs[0]
@@ -56,15 +67,17 @@ export async function getSquareConnection(): Promise<ConnectionRecord | null> {
   return docToRecord(doc)
 }
 
-/** Get the most recent connection of any status. */
+/** Get the most recent connection for THIS environment (any status). */
 export async function getAnySquareConnection(): Promise<ConnectionRecord | null> {
   const payload = await getPayloadInstance()
+  const environment = currentSquareEnvironment()
   const result = await payload.find({
     collection: 'square-connections',
     limit: 1,
     sort: '-connectedAt',
     overrideAccess: true,
     depth: 0,
+    where: { environment: { equals: environment } },
   })
 
   const doc = result.docs[0]
@@ -80,7 +93,7 @@ export async function saveSquareConnection(
   connectedByUserId: string,
 ): Promise<ConnectionRecord> {
   const payload = await getPayloadInstance()
-  const env = process.env.SQUARE_ENVIRONMENT === 'production' ? 'production' : 'sandbox'
+  const env = currentSquareEnvironment()
 
   const encryptedAccessToken = sealSecret(tokens.accessToken)
   const encryptedRefreshToken = tokens.refreshToken ? sealSecret(tokens.refreshToken) : ''

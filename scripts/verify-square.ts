@@ -396,6 +396,101 @@ withSquareEnv(
 )
 
 // ─────────────────────────────────────────────────────────────────────────────
+section('11. Production transition safety')
+
+const VALID_PROD_APP_ID = 'sq0idp-TESTPRODAPPID00000001'
+const VALID_PROD_SECRET = 'sq0csp-TESTPRODSECRET0000000001'
+const VALID_PROD_WEBHOOK = 'whsec_TEST_PRODUCTION_SIGNATURE_KEY_01'
+
+withSquareEnv(
+  {
+    SQUARE_ENVIRONMENT: 'production',
+    SQUARE_APPLICATION_ID: VALID_PROD_APP_ID,
+    SQUARE_APPLICATION_SECRET: VALID_PROD_SECRET,
+    SQUARE_OAUTH_REDIRECT_URL: VALID_REDIRECT,
+    SQUARE_WEBHOOK_SIGNATURE_KEY: VALID_PROD_WEBHOOK,
+  },
+  () => {
+    const { state } = genState()
+    const url = buildAuthorizeUrl(state)
+    const parsed = new URL(url)
+    assert('production uses live OAuth hostname', parsed.hostname === 'connect.squareup.com')
+    assert('production sets session=false', parsed.searchParams.get('session') === 'false')
+    assert('production client_id is production app id', parsed.searchParams.get('client_id') === VALID_PROD_APP_ID)
+    assert('production redirect matches callback', parsed.searchParams.get('redirect_uri') === VALID_REDIRECT)
+    assert('assertAuthorizeUrlSafe accepts production URL', (() => {
+      assertAuthorizeUrlSafe(url)
+      return true
+    })())
+    const env = getSquareEnv()
+    assert('production webhook signature key required and present', env.webhookSignatureKey === VALID_PROD_WEBHOOK)
+  },
+)
+
+withSquareEnv(
+  {
+    SQUARE_ENVIRONMENT: 'production',
+    SQUARE_APPLICATION_ID: VALID_SANDBOX_APP_ID,
+    SQUARE_APPLICATION_SECRET: VALID_PROD_SECRET,
+    SQUARE_OAUTH_REDIRECT_URL: VALID_REDIRECT,
+    SQUARE_WEBHOOK_SIGNATURE_KEY: VALID_PROD_WEBHOOK,
+  },
+  () => {
+    assert('sandbox app id rejected in production', (() => {
+      try {
+        getSquareEnv()
+        return false
+      } catch (err) {
+        const message = err instanceof Error ? err.message : ''
+        return message.includes('Sandbox ID') && !message.includes(VALID_PROD_SECRET)
+      }
+    })())
+  },
+)
+
+withSquareEnv(
+  {
+    SQUARE_ENVIRONMENT: 'production',
+    SQUARE_APPLICATION_ID: VALID_PROD_APP_ID,
+    SQUARE_APPLICATION_SECRET: VALID_PROD_SECRET,
+    SQUARE_OAUTH_REDIRECT_URL: VALID_REDIRECT,
+    SQUARE_WEBHOOK_SIGNATURE_KEY: undefined,
+  },
+  () => {
+    assert('missing webhook signature key rejected in production', (() => {
+      try {
+        getSquareEnv()
+        return false
+      } catch (err) {
+        const message = err instanceof Error ? err.message : ''
+        return message.includes('SQUARE_WEBHOOK_SIGNATURE_KEY') && !message.includes(VALID_PROD_SECRET)
+      }
+    })())
+  },
+)
+
+withSquareEnv(
+  {
+    SQUARE_ENVIRONMENT: 'production',
+    SQUARE_APPLICATION_ID: 'not-a-square-id',
+    SQUARE_APPLICATION_SECRET: VALID_PROD_SECRET,
+    SQUARE_OAUTH_REDIRECT_URL: VALID_REDIRECT,
+    SQUARE_WEBHOOK_SIGNATURE_KEY: VALID_PROD_WEBHOOK,
+  },
+  () => {
+    assert('malformed production app id rejected', (() => {
+      try {
+        getSquareEnv()
+        return false
+      } catch (err) {
+        const message = err instanceof Error ? err.message : ''
+        return message.includes('sq0idp-') && !message.includes(VALID_PROD_SECRET)
+      }
+    })())
+  },
+)
+
+// ─────────────────────────────────────────────────────────────────────────────
 section('10. Payment request sync extraction')
 
 const {

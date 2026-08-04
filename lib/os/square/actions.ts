@@ -24,6 +24,7 @@ import {
 } from './oauth'
 import { createSquarePaymentInvoice } from './createInvoice'
 import { syncSquareInvoice } from './sync'
+import { listSquareLocations } from './locations'
 import { getPayload } from 'payload'
 import config from '../../../payload.config'
 
@@ -58,16 +59,59 @@ export async function selectSquareLocation(
     const connection = await getSquareConnection()
     if (!connection) return { ok: false, message: 'No active Square connection.' }
 
+    const trimmedId = locationId.trim()
+    const locations = await listSquareLocations()
+    const match = locations.find((l) => l.id === trimmedId)
+    if (!match) {
+      return {
+        ok: false,
+        message: 'That location ID is not available on the connected Square merchant.',
+      }
+    }
+
     await updateSquareLocation(
       connection.id,
-      locationId.trim(),
-      typeof locationName === 'string' ? locationName.trim() : locationId.trim(),
+      match.id,
+      typeof locationName === 'string' && locationName.trim()
+        ? locationName.trim()
+        : match.name,
     )
 
     revalidatePath('/os/settings/square')
     return { ok: true }
   } catch (err) {
     return { ok: false, message: err instanceof Error ? err.message : 'Unable to select location.' }
+  }
+}
+
+/** List Square locations for the connected merchant (read-only). */
+export async function listConnectedSquareLocations(): Promise<
+  ActionResult<{
+    locations: Array<{ id: string; name: string; status: string; address: string | null }>
+  }>
+> {
+  const { user, error } = await requireDirector()
+  if (error || !user) return { ok: false, message: error ?? 'Unauthorized' }
+
+  try {
+    const connection = await getSquareConnection()
+    if (!connection) return { ok: false, message: 'No active Square connection.' }
+
+    const locations = await listSquareLocations()
+    return {
+      ok: true,
+      locations: locations.map((l) => ({
+        id: l.id,
+        name: l.name,
+        status: l.status,
+        address: l.address,
+      })),
+    }
+  } catch (err) {
+    return {
+      ok: false,
+      message: err instanceof Error ? err.message : 'Unable to list Square locations.',
+    }
   }
 }
 

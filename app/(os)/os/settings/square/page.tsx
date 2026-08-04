@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
 import { requirePlateOperator } from '@/lib/auth/requirePlateOperator'
 import { asPlateUser, isDirector } from '@/lib/access/roles'
-import { getAnySquareConnection } from '@/lib/os/square/connection'
+import { getAnySquareConnection, getSquareConnection } from '@/lib/os/square/connection'
 import { isSandbox } from '@/lib/os/square/env'
+import { listSquareLocations } from '@/lib/os/square/locations'
 import SquareSettingsClient from './SquareSettingsClient'
 
 export const metadata: Metadata = {
@@ -31,8 +32,20 @@ export default async function SquareSettingsPage({
   const connected = params.connected === '1'
   const errorParam = typeof params.error === 'string' ? params.error : null
 
-  const connection = await getAnySquareConnection()
+  // Environment-scoped: never show a Sandbox connection while running Production (and vice versa).
+  const active = await getSquareConnection()
+  const connection = active ?? (await getAnySquareConnection())
   const sandboxMode = isSandbox()
+
+  let locations: Array<{ id: string; name: string; status: string; address: string | null }> = []
+  let locationsError: string | null = null
+  if (active) {
+    try {
+      locations = await listSquareLocations()
+    } catch (err) {
+      locationsError = err instanceof Error ? err.message : 'Unable to list Square locations.'
+    }
+  }
 
   return (
     <SquareSettingsClient
@@ -40,6 +53,8 @@ export default async function SquareSettingsPage({
       sandboxMode={sandboxMode}
       flashConnected={connected}
       flashError={errorParam}
+      locations={locations}
+      locationsError={locationsError}
     />
   )
 }

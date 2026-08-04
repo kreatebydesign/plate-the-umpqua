@@ -100,6 +100,15 @@ export function assertAuthorizeUrlSafe(url: string): {
   if (env.environment === 'sandbox' && !clientId.startsWith('sandbox-sq0id')) {
     throw new Error('Square Sandbox OAuth requires a sandbox-sq0id Application ID')
   }
+  if (env.environment === 'production' && clientId.startsWith('sandbox-sq0id')) {
+    throw new Error('Square Production OAuth rejects Sandbox Application IDs')
+  }
+  if (env.environment === 'production' && !clientId.startsWith('sq0idp-')) {
+    throw new Error('Square Production OAuth requires a Production Application ID (sq0idp-)')
+  }
+  if (env.environment === 'production' && sessionParam !== 'false') {
+    throw new Error('Square Production OAuth must set session=false')
+  }
   if (redirectUri !== expectedRedirect) {
     throw new Error('Square OAuth redirect_uri does not match SQUARE_OAUTH_REDIRECT_URL')
   }

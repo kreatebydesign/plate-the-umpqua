@@ -62,6 +62,11 @@ function assertApplicationIdFormat(environment: 'sandbox' | 'production', applic
       'SQUARE_APPLICATION_ID looks like a Sandbox ID, but SQUARE_ENVIRONMENT is production.',
     )
   }
+  if (!applicationId.startsWith('sq0idp-')) {
+    throw new Error(
+      'SQUARE_APPLICATION_ID must be a Square Production Application ID (starts with sq0idp-). Sandbox IDs cannot be used in Production.',
+    )
+  }
 }
 
 export function getSquareEnv(): SquareEnvConfig {
@@ -72,10 +77,15 @@ export function getSquareEnv(): SquareEnvConfig {
   const applicationId = requireTrimmedEnv('SQUARE_APPLICATION_ID')
   const applicationSecret = requireTrimmedEnv('SQUARE_APPLICATION_SECRET')
   const oauthRedirectUrl = requireTrimmedEnv('SQUARE_OAUTH_REDIRECT_URL')
-  // Webhook key is optional until webhook verification is needed; keep reading trimmed.
+  // Sandbox may omit the webhook key; Production must always verify signatures.
   const webhookSignatureKey = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY?.trim() ?? ''
   if (webhookSignatureKey) {
     rejectUnresolvedPlaceholder('SQUARE_WEBHOOK_SIGNATURE_KEY', webhookSignatureKey)
+  }
+  if (environment === 'production' && !webhookSignatureKey) {
+    throw new Error(
+      'SQUARE_WEBHOOK_SIGNATURE_KEY is required when SQUARE_ENVIRONMENT=production. Use the Production webhook subscription signature key from Square Developer Dashboard.',
+    )
   }
 
   assertApplicationIdFormat(environment, applicationId)
