@@ -5,7 +5,10 @@
 import assert from 'node:assert/strict'
 import { calculateInvoice, lineTotalCents } from '../lib/os/invoices/invoiceCalc'
 import { deriveInvoiceStatus } from '../lib/os/invoices/invoiceStatus'
-import { formatInvoiceNumber } from '../lib/os/invoices/invoiceNumber'
+import {
+  buildInvoiceSequenceAtomicUpdate,
+  formatInvoiceNumber,
+} from '../lib/os/invoices/invoiceNumber'
 import {
   generateInvoiceToken,
   hashInvoiceToken,
@@ -138,6 +141,34 @@ function main() {
   assert.equal(formatInvoiceNumber(2026, 1), 'PTU-2026-001')
   assert.equal(formatInvoiceNumber(2026, 42), 'PTU-2026-042')
 
+  // Atomic sequence update must not conflict on updatedAt
+  const fixedNow = new Date('2026-08-03T12:00:00.000Z')
+  const atomicUpdate = buildInvoiceSequenceAtomicUpdate(2026, fixedNow)
+  assert.equal(atomicUpdate.$inc.lastSequence, 1)
+  assert.equal(atomicUpdate.$setOnInsert.year, 2026)
+  assert.equal(atomicUpdate.$setOnInsert.createdAt.toISOString(), fixedNow.toISOString())
+  assert.equal(atomicUpdate.$set.updatedAt.toISOString(), fixedNow.toISOString())
+  assert.equal(
+    'updatedAt' in atomicUpdate.$setOnInsert,
+    false,
+    'updatedAt must not appear in both $set and $setOnInsert',
+  )
+  const setPaths = new Set([
+    ...Object.keys(atomicUpdate.$set),
+    ...Object.keys(atomicUpdate.$setOnInsert),
+  ])
+  assert.equal(setPaths.has('updatedAt'), true)
+  assert.equal(setPaths.has('createdAt'), true)
+  assert.equal(setPaths.has('year'), true)
+  // No overlapping keys across $set / $setOnInsert
+  for (const key of Object.keys(atomicUpdate.$set)) {
+    assert.equal(
+      key in atomicUpdate.$setOnInsert,
+      false,
+      `path conflict on ${key}`,
+    )
+  }
+
   // Tokens
   const token = generateInvoiceToken()
   const hash = hashInvoiceToken(token)
@@ -175,6 +206,7 @@ function main() {
           'overdue',
           'void-lock',
           'invoice-number-format',
+          'invoice-sequence-atomic-update',
           'token-privacy',
           'public-projection',
           'square-not-connected',

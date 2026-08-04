@@ -21,6 +21,29 @@ export function formatInvoiceNumber(year: number, sequence: number): string {
 }
 
 /**
+ * Atomic Mongo update for yearly invoice sequences.
+ * Each field must be owned by only one compatible operator — Mongo rejects
+ * the same path in both $set and $setOnInsert (ConflictingUpdateOperators).
+ */
+export function buildInvoiceSequenceAtomicUpdate(
+  year: number,
+  now = new Date(),
+): {
+  $inc: { lastSequence: number }
+  $setOnInsert: { year: number; createdAt: Date }
+  $set: { updatedAt: Date }
+} {
+  return {
+    $inc: { lastSequence: 1 },
+    $setOnInsert: {
+      year,
+      createdAt: now,
+    },
+    $set: { updatedAt: now },
+  }
+}
+
+/**
  * Concurrency-safe sequence allocation using Mongo findOneAndUpdate $inc.
  * Does not use count+1.
  */
@@ -36,15 +59,7 @@ export async function allocateInvoiceNumber(now = new Date()): Promise<string> {
     if (nativeDb?.collection) {
       const result = await nativeDb.collection('invoice-sequences').findOneAndUpdate(
         { year },
-        {
-          $inc: { lastSequence: 1 },
-          $setOnInsert: {
-            year,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-          $set: { updatedAt: new Date() },
-        },
+        buildInvoiceSequenceAtomicUpdate(year, now),
         { upsert: true, returnDocument: 'after' },
       )
       const doc = result?.value ?? result
