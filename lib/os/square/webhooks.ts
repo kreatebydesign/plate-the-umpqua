@@ -113,6 +113,31 @@ async function findPlateInvoiceBySquareId(squareInvoiceId: string): Promise<stri
   return doc ? String(doc.id) : null
 }
 
+/** Find a Plate invoice by Square order ID (payment.* events). */
+async function findPlateInvoiceBySquareOrderId(orderId: string): Promise<string | null> {
+  const payload = await getPayload({ config })
+  const result = await payload.find({
+    collection: 'invoices',
+    overrideAccess: true,
+    depth: 0,
+    limit: 1,
+    where: { 'square.orderId': { equals: orderId } },
+  })
+  const doc = result.docs[0]
+  return doc ? String(doc.id) : null
+}
+
+function extractSquareOrderIdFromPaymentEvent(event: SquareWebhookEvent): string | null {
+  const object = event.data?.object
+  if (!object || typeof object !== 'object') return null
+  const payment =
+    (object as any).payment && typeof (object as any).payment === 'object'
+      ? (object as any).payment
+      : object
+  const orderId = payment?.order_id ?? payment?.orderId
+  return typeof orderId === 'string' && orderId.trim() ? orderId.trim() : null
+}
+
 /**
  * Process an incoming Square webhook event.
  * Deduplicates, reconciles payments, and returns a summary.
@@ -136,19 +161,31 @@ export async function processSquareWebhookEvent(event: SquareWebhookEvent): Prom
   let plateInvoiceId: string | undefined
 
   try {
-    if (type.startsWith('invoice.') || type.startsWith('payment.')) {
+    if (type.startsWith('invoice.')) {
       const objectId = event.data?.id
       if (objectId) {
-        if (type.startsWith('invoice.')) {
-          const found = await findPlateInvoiceBySquareId(objectId)
-          if (found) {
-            plateInvoiceId = found
-            const result = await syncSquareInvoice(found)
-            summary = `Synced ${type}: ${result.newPaymentsRecorded} new payments, status=${result.squareStatus}`
-          } else {
-            summary = `No Plate invoice found for Square invoice ${objectId}`
-          }
+        const found = await findPlateInvoiceBySquareId(objectId)
+        if (found) {
+          plateInvoiceId = found
+          const result = await syncSquareInvoice(found, { webhookEventId: eventId })
+          summary = `Synced ${type}: ${result.newPaymentsRecorded} new payments, status=${result.squareStatus}`
+        } else {
+          summary = `No Plate invoice found for Square invoice ${objectId}`
         }
+      }
+    } else if (type.startsWith('payment.')) {
+      const orderId = extractSquareOrderIdFromPaymentEvent(event)
+      if (orderId) {
+        const found = await findPlateInvoiceBySquareOrderId(orderId)
+        if (found) {
+          plateInvoiceId = found
+          const result = await syncSquareInvoice(found, { webhookEventId: eventId })
+          summary = `Synced ${type} via order: ${result.newPaymentsRecorded} new payments, status=${result.squareStatus}`
+        } else {
+          summary = `No Plate invoice found for Square order ${orderId}`
+        }
+      } else {
+        summary = `Event ${type} missing order_id — recorded without invoice sync`
       }
     }
   } catch (err) {

@@ -75,17 +75,21 @@ export const InvoicePayments: CollectionConfig = {
     {
       name: 'squarePaymentId',
       type: 'text',
+      unique: true,
+      index: true,
       admin: {
-        description: 'Future Square payment ID (unused until Square is connected).',
+        description:
+          'Square payment-request UID used for ledger idempotency. Unique when set.',
         position: 'sidebar',
       },
     },
     {
       name: 'squareWebhookEventId',
       type: 'text',
-      unique: true,
+      index: true,
       admin: {
-        description: 'Webhook event ID for deduplication (future).',
+        description:
+          'Optional Square webhook event_id for audit. Not unique — webhook events are deduped in square-webhook-events.',
         position: 'sidebar',
       },
     },
