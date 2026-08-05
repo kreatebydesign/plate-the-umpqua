@@ -212,13 +212,21 @@ function extractTokens(response: ObtainTokenResponse): OAuthTokens {
 
   const refreshToken = response.refreshToken ?? ''
 
+  const rawScopes = (response as { scopes?: string[] | string | null }).scopes
+  let scopes: string[] = []
+  if (Array.isArray(rawScopes)) {
+    scopes = rawScopes.map(String).filter(Boolean)
+  } else if (typeof rawScopes === 'string' && rawScopes.trim()) {
+    scopes = rawScopes.split(/[+\s,]/).map((s) => s.trim()).filter(Boolean)
+  }
+
   return {
     accessToken: response.accessToken,
     refreshToken,
     expiresAt,
     merchantId: response.merchantId,
     tokenType: response.tokenType ?? 'bearer',
-    scopes: [],
+    scopes,
   }
 }
 
