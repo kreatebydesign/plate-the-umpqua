@@ -44,12 +44,12 @@ export default async function InvoiceDetailPage({ params }: { params: Params }) 
           <Link href="/os/invoices" className={`${styles.button} ${styles.buttonQuiet}`}>
             Back to invoices
           </Link>
-          {invoice.canManage ? (
+          {invoice.canEdit ? (
             <Link
-              href={invoice.adminHref}
+              href={`/os/invoices/${invoice.id}/edit`}
               className={`${styles.button} ${styles.buttonQuiet}`}
             >
-              Open in Admin
+              Edit in Plate OS
             </Link>
           ) : null}
         </div>

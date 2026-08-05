@@ -151,7 +151,10 @@ export default function InvoiceActions({
       </div>
 
       <div className={styles.opsForm} style={{ marginTop: '1rem' }}>
-        <h3 className={styles.panelTitle}>Send email</h3>
+        <h3 className={styles.panelTitle}>Step 3 — Send invoice</h3>
+        <p className={styles.fieldHint}>
+          Separate from Save Draft and Create Square. Confirm before sending.
+        </p>
         <label className={styles.fieldLabel}>
           Recipient
           <input
@@ -165,9 +168,17 @@ export default function InvoiceActions({
           type="button"
           className={styles.button}
           disabled={pending}
-          onClick={() =>
+          style={{ minHeight: 48 }}
+          onClick={() => {
+            if (
+              !window.confirm(
+                `Send this invoice email to ${recipient || 'the recipient'}?\n\nThis emails the client. It does not charge a card.`,
+              )
+            ) {
+              return
+            }
             run(() => sendInvoiceEmail(invoiceId, recipient), 'Invoice email sent.')
-          }
+          }}
         >
           Send invoice email
         </button>

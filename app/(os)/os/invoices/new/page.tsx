@@ -33,11 +33,11 @@ export default async function NewInvoicePage() {
   return (
     <div>
       <section className={styles.hero} aria-label="Create invoice">
-        <p className={styles.heroDate}>New draft</p>
+        <p className={styles.heroDate}>Plate OS · New draft</p>
         <h2 className={styles.heroGreeting}>Create invoice</h2>
         <p className={styles.heroLine}>
-          Select a client, add hospitality line items, and save a draft. Send when
-          ready.
+          Enter dollar amounts (example 1.00), then Save Draft. Square pay link and
+          email send are separate steps on the next screen.
         </p>
         <div className={styles.actions}>
           <Link href="/os/invoices" className={`${styles.button} ${styles.buttonQuiet}`}>

@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { createSquarePaymentInvoiceAction, syncSquareInvoiceAction } from '@/lib/os/square/actions'
 import styles from '@/app/(os)/os.module.css'
@@ -27,25 +28,52 @@ export default function SquareInvoiceActions({
   canManage,
   status,
 }: Props) {
+  const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [feedback, setFeedback] = useState<{ type: 'ok' | 'error'; message: string } | null>(null)
   const [currentUrl, setCurrentUrl] = useState(squarePublicUrl)
   const [currentStatus, setCurrentStatus] = useState(squareStatus)
+  const [hasSquareInvoice, setHasSquareInvoice] = useState(Boolean(squareInvoiceId))
 
   const isVoided = status === 'voided'
-  const hasSquareInvoice = Boolean(squareInvoiceId)
   const isConnected = squareState === 'connected'
 
   function handleCreate() {
     if (!canManage || !isConnected || isVoided) return
+    const confirmed = window.confirm(
+      'Create a Square payment invoice for this Plate draft?\n\nThis does not email the client and does not charge a card. You will get a pay link to share or send next.',
+    )
+    if (!confirmed) return
+
     startTransition(async () => {
       setFeedback(null)
       const result = await createSquarePaymentInvoiceAction(invoiceId)
       if (result.ok) {
         setCurrentUrl(result.squarePublicUrl)
-        setFeedback({ type: 'ok', message: 'Square payment invoice created. Share the pay link with the client.' })
+        setHasSquareInvoice(true)
+        setFeedback({
+          type: 'ok',
+          message: 'Square payment invoice created. Next: copy the pay link or send the Plate invoice email.',
+        })
+        router.refresh()
       } else {
         setFeedback({ type: 'error', message: result.message })
+      }
+    })
+  }
+
+  function handleCopyPayLink() {
+    if (!currentUrl) return
+    startTransition(async () => {
+      setFeedback(null)
+      try {
+        await navigator.clipboard.writeText(currentUrl)
+        setFeedback({ type: 'ok', message: 'Square pay link copied.' })
+      } catch {
+        setFeedback({
+          type: 'error',
+          message: 'Could not copy automatically. Long-press the pay link below to copy.',
+        })
       }
     })
   }
@@ -59,10 +87,12 @@ export default function SquareInvoiceActions({
         setCurrentStatus(result.squareStatus)
         setFeedback({
           type: 'ok',
-          message: result.newPayments > 0
-            ? `Synced. ${result.newPayments} new payment(s) recorded.`
-            : 'Synced. No new payments.',
+          message:
+            result.newPayments > 0
+              ? `Synced. ${result.newPayments} new payment(s) recorded.`
+              : 'Synced. No new payments.',
         })
+        router.refresh()
       } else {
         setFeedback({ type: 'error', message: result.message })
       }
@@ -75,7 +105,7 @@ export default function SquareInvoiceActions({
     return (
       <p className={styles.fieldHint}>
         Square is not connected.{' '}
-        <a href="/os/settings/square" className={styles.inlineLink ?? ''}>
+        <a href="/os/settings/square" className={styles.inlineLink}>
           Connect Square
         </a>{' '}
         to enable hosted payment invoices.
@@ -85,69 +115,86 @@ export default function SquareInvoiceActions({
 
   return (
     <div>
+      <p className={styles.workflowBanner}>
+        <strong>Step 2 — Create Square payment invoice</strong>
+        <span className={styles.workflowNext}>
+          Separate from Save Draft and Send Email. Creates a hosted Square pay link only.
+        </span>
+      </p>
+
       {feedback && (
         <div
           role="alert"
-          style={{
-            padding: '10px 14px',
-            marginBottom: '14px',
-            borderRadius: '4px',
-            fontSize: '0.875rem',
-            background: feedback.type === 'ok' ? '#e8f5e9' : '#fce4ec',
-            color: feedback.type === 'ok' ? '#1b5e20' : '#880e4f',
-            borderLeft: `3px solid ${feedback.type === 'ok' ? '#43a047' : '#e91e63'}`,
-          }}
+          className={feedback.type === 'ok' ? styles.formSuccess : styles.sectionError}
+          style={{ marginBottom: '0.85rem' }}
         >
           {feedback.message}
         </div>
       )}
 
       {squareLastError && (
-        <p style={{ fontSize: '0.8125rem', color: '#dc2626', marginBottom: '12px' }}>
-          Last error: {squareLastError}
+        <p className={styles.sectionError} style={{ marginBottom: '0.75rem' }}>
+          Last Square error: {squareLastError}
         </p>
       )}
 
       {currentUrl && (
-        <div style={{ marginBottom: '14px' }}>
-          <p style={{ fontSize: '0.8125rem', fontWeight: 600, marginBottom: '4px' }}>
+        <div style={{ marginBottom: '0.9rem' }}>
+          <p className={styles.fieldHint} style={{ marginBottom: '0.35rem' }}>
             Square pay link
           </p>
           <a
             href={currentUrl}
             target="_blank"
             rel="noopener noreferrer"
-            style={{ fontSize: '0.8125rem', wordBreak: 'break-all', color: 'var(--color-accent)' }}
+            className={styles.inlineLink}
+            style={{ display: 'block', wordBreak: 'break-all', fontSize: '0.9rem' }}
           >
             {currentUrl}
           </a>
           {currentStatus && (
-            <p style={{ fontSize: '0.75rem', color: '#555', marginTop: '4px' }}>
+            <p className={styles.fieldHint} style={{ marginTop: '0.35rem' }}>
               Square status: {currentStatus}
-              {squareLastSyncedAt && ` · Last synced ${new Date(squareLastSyncedAt).toLocaleDateString()}`}
+              {squareLastSyncedAt
+                ? ` · Last synced ${new Date(squareLastSyncedAt).toLocaleDateString()}`
+                : ''}
             </p>
           )}
         </div>
       )}
 
-      <div className={styles.actions} style={{ flexWrap: 'wrap', gap: '8px' }}>
+      <div className={styles.actions} style={{ flexWrap: 'wrap', gap: '0.65rem' }}>
         {!hasSquareInvoice && !isVoided && (
           <button
             type="button"
             className={styles.button}
             onClick={handleCreate}
             disabled={isPending}
+            style={{ minHeight: 48 }}
           >
-            {isPending ? 'Creating…' : 'Create Square payment invoice'}
+            {isPending ? 'Creating Square invoice…' : 'Create Square payment invoice'}
+          </button>
+        )}
+
+        {currentUrl && (
+          <button
+            type="button"
+            className={`${styles.button} ${styles.buttonQuiet}`}
+            onClick={handleCopyPayLink}
+            disabled={isPending}
+            style={{ minHeight: 48 }}
+          >
+            Copy payment link
           </button>
         )}
 
         {hasSquareInvoice && (
           <button
             type="button"
-            className={styles.buttonQuiet}
+            className={`${styles.button} ${styles.buttonQuiet}`}
             onClick={handleSync}
             disabled={isPending}
+            style={{ minHeight: 48 }}
           >
             {isPending ? 'Syncing…' : 'Sync Square payments'}
           </button>

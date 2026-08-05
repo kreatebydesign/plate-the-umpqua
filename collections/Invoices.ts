@@ -17,7 +17,10 @@ export const Invoices: CollectionConfig = {
       'balanceDueCents',
     ],
     description:
-      'Hospitality invoices. Prefer Plate OS (/os/invoices) for day-to-day billing. Void instead of deleting.',
+      'Hospitality invoices. Create and send from Plate OS (/os/invoices) — not this Admin form. Void instead of deleting.',
+    components: {
+      beforeList: ['@/components/admin/InvoicesOsWorkflowNotice'],
+    },
   },
   fields: [
     {
@@ -163,8 +166,11 @@ export const Invoices: CollectionConfig = {
           type: 'number',
           required: true,
           defaultValue: 0,
+          label: 'Unit price (cents storage)',
           admin: {
-            description: 'Unit price in integer cents (always non-negative).',
+            description:
+              'Internal storage in integer cents. Create invoices in Plate OS (/os/invoices/new) with a normal dollar amount.',
+            readOnly: true,
           },
         },
         {

@@ -154,6 +154,12 @@ export async function createInvoice(rawInput: unknown): Promise<ActionResult<{ i
     const taxRateBps = Math.max(0, Math.min(10000, Math.floor(Number(input.taxRateBps || 0))))
     const depositRequiredCents = Math.max(0, Math.floor(Number(input.depositRequiredCents || 0)))
     const totals = buildTotals(lines, discountType, discountValue, taxRateBps, 0)
+    if (totals.totalCents <= 0) {
+      return {
+        ok: false,
+        message: 'Invoice total must be greater than $0.00. Enter a unit price like 1.00.',
+      }
+    }
 
     const paymentTerms = isPaymentTerms(String(input.paymentTerms || 'net14'))
       ? (input.paymentTerms as PaymentTermsValue)

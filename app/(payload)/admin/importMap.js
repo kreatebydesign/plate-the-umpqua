@@ -27,6 +27,7 @@ import { default as default_2f87d5ffb27b3b776f96c445e1a61929 } from '@/component
 import { default as default_65a82131453b53af1e7486d49186e5b2 } from '@/components/admin/KXDHospitalityDashboard'
 import { default as default_3b13d75565116913f23de261a80a142a } from '@/components/admin/login/BeforeLogin'
 import { default as default_44ae5abc9085a4b8d7aa9a6041039559 } from '@/components/admin/PartnerConciergeDashboard'
+import { default as default_invoicesOsWorkflowNotice } from '@/components/admin/InvoicesOsWorkflowNotice'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -60,5 +61,6 @@ export const importMap = {
   "@/components/admin/KXDHospitalityDashboard#default": default_65a82131453b53af1e7486d49186e5b2,
   "@/components/admin/login/BeforeLogin#default": default_3b13d75565116913f23de261a80a142a,
   "@/components/admin/PartnerConciergeDashboard#default": default_44ae5abc9085a4b8d7aa9a6041039559,
+  "@/components/admin/InvoicesOsWorkflowNotice#default": default_invoicesOsWorkflowNotice,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

@@ -1,6 +1,7 @@
 'use client'
 
-import { useMemo, useState, useTransition } from 'react'
+import { useMemo, useRef, useState, useTransition } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import styles from '@/app/(os)/os.module.css'
 import { createInvoice, updateInvoice } from '@/lib/os/invoices/mutateInvoice'
@@ -22,6 +23,8 @@ import type {
 } from '@/lib/os/invoices/editorTypes'
 
 export type { EditorClientOption, EditorEventOption, EditorLine }
+
+type LineDraft = EditorLine & { unitPriceDollars: string }
 
 type Props = {
   mode: 'create' | 'edit'
@@ -54,21 +57,44 @@ function todayInputValue() {
   return d.toISOString().slice(0, 10)
 }
 
-function newLine(partial?: Partial<EditorLine>): EditorLine {
+function dollarsFromCents(cents: number): string {
+  return (Number(cents || 0) / 100).toFixed(2)
+}
+
+function centsFromDollars(raw: string): number {
+  const n = Number(String(raw || '').replace(/[^0-9.-]/g, ''))
+  if (!Number.isFinite(n) || n < 0) return 0
+  return Math.round(n * 100)
+}
+
+function newLine(partial?: Partial<LineDraft>): LineDraft {
+  const unitPriceDollars =
+    partial?.unitPriceDollars ??
+    (partial?.unitPriceCents != null ? dollarsFromCents(partial.unitPriceCents) : '')
+  const unitPriceCents =
+    partial?.unitPriceCents ?? (unitPriceDollars ? centsFromDollars(unitPriceDollars) : 0)
   return {
-    itemKey: `line-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-    description: '',
-    detail: '',
-    billingType: 'flat',
-    quantity: 1,
-    unitPriceCents: 0,
-    isCredit: false,
-    ...partial,
+    itemKey: partial?.itemKey || `line-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    description: partial?.description ?? '',
+    detail: partial?.detail ?? '',
+    billingType: partial?.billingType ?? 'flat',
+    quantity: partial?.quantity ?? 1,
+    isCredit: partial?.isCredit ?? false,
+    unitPriceCents,
+    unitPriceDollars,
   }
 }
 
-function centsInput(cents: number): string {
-  return (cents / 100).toFixed(2)
+function toEditorLines(lines: LineDraft[]): EditorLine[] {
+  return lines.map((line) => ({
+    itemKey: line.itemKey,
+    description: line.description,
+    detail: line.detail,
+    billingType: line.billingType,
+    quantity: line.quantity,
+    isCredit: line.isCredit,
+    unitPriceCents: centsFromDollars(line.unitPriceDollars || dollarsFromCents(line.unitPriceCents)),
+  }))
 }
 
 export default function InvoiceEditorForm({
@@ -81,6 +107,12 @@ export default function InvoiceEditorForm({
   const router = useRouter()
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+
+  const clientRef = useRef<HTMLSelectElement>(null)
+  const descriptionRefs = useRef<Array<HTMLInputElement | null>>([])
+  const priceRefs = useRef<Array<HTMLInputElement | null>>([])
+  const errorRef = useRef<HTMLParagraphElement>(null)
 
   const [clientId, setClientId] = useState(initial?.clientId || '')
   const [eventId, setEventId] = useState(initial?.eventId || '')
@@ -94,16 +126,21 @@ export default function InvoiceEditorForm({
   const [billToEmail, setBillToEmail] = useState(initial?.billToEmail || '')
   const [billToPhone, setBillToPhone] = useState(initial?.billToPhone || '')
   const [billToCompany, setBillToCompany] = useState(initial?.billToCompany || '')
-  const [lines, setLines] = useState<EditorLine[]>(
+  const [lines, setLines] = useState<LineDraft[]>(
     initial?.lineItems?.length
-      ? initial.lineItems
-      : [newLine({ description: 'Event catering', billingType: 'perEvent' })],
+      ? initial.lineItems.map((line) =>
+          newLine({
+            ...line,
+            unitPriceDollars: dollarsFromCents(line.unitPriceCents),
+          }),
+        )
+      : [newLine({ description: '', billingType: 'flat', quantity: 1, unitPriceDollars: '' })],
   )
   const [discountType, setDiscountType] = useState(initial?.discountType || 'none')
   const [discountValue, setDiscountValue] = useState(initial?.discountValue || 0)
   const [taxRateBps, setTaxRateBps] = useState(initial?.taxRateBps || 0)
-  const [depositRequiredCents, setDepositRequiredCents] = useState(
-    initial?.depositRequiredCents || 0,
+  const [depositDollars, setDepositDollars] = useState(
+    dollarsFromCents(initial?.depositRequiredCents || 0),
   )
   const [clientMemo, setClientMemo] = useState(initial?.clientMemo || '')
   const [internalNotes, setInternalNotes] = useState(initial?.internalNotes || '')
@@ -113,10 +150,12 @@ export default function InvoiceEditorForm({
     [events, clientId],
   )
 
+  const editorLines = useMemo(() => toEditorLines(lines), [lines])
+
   const totals = useMemo(() => {
     try {
       return calculateInvoice({
-        lines,
+        lines: editorLines,
         discountType: discountType as 'none' | 'fixed' | 'percent',
         discountValue,
         taxRateBps,
@@ -125,10 +164,15 @@ export default function InvoiceEditorForm({
     } catch {
       return null
     }
-  }, [lines, discountType, discountValue, taxRateBps])
+  }, [editorLines, discountType, discountValue, taxRateBps])
 
   function onClientChange(nextId: string) {
     setClientId(nextId)
+    setFieldErrors((prev) => {
+      const next = { ...prev }
+      delete next.clientId
+      return next
+    })
     const client = clients.find((c) => c.id === nextId)
     if (client) {
       setBillToName(client.name)
@@ -147,12 +191,14 @@ export default function InvoiceEditorForm({
     if (!event) return
     if (event.clientId) onClientChange(event.clientId)
     setLines((prev) => {
-      if (prev.length === 1 && !prev[0].description) {
+      if (prev.length === 1 && !prev[0].description.trim()) {
         return [
           newLine({
             description: event.name,
             billingType: 'perEvent',
-            quantity: event.guestCount && event.guestCount > 0 ? 1 : 1,
+            quantity: 1,
+            unitPriceDollars: prev[0].unitPriceDollars,
+            unitPriceCents: centsFromDollars(prev[0].unitPriceDollars),
           }),
         ]
       }
@@ -160,8 +206,15 @@ export default function InvoiceEditorForm({
     })
   }
 
-  function updateLine(index: number, patch: Partial<EditorLine>) {
+  function updateLine(index: number, patch: Partial<LineDraft>) {
     setLines((prev) => prev.map((line, i) => (i === index ? { ...line, ...patch } : line)))
+    setFieldErrors((prev) => {
+      const next = { ...prev }
+      delete next[`line-${index}-description`]
+      delete next[`line-${index}-price`]
+      delete next.total
+      return next
+    })
   }
 
   function moveLine(index: number, direction: -1 | 1) {
@@ -174,10 +227,85 @@ export default function InvoiceEditorForm({
     })
   }
 
+  function validate(): { ok: true } | { ok: false; message: string; focus: () => void } {
+    const nextErrors: Record<string, string> = {}
+    if (!clientId) {
+      nextErrors.clientId = 'Select a client.'
+    }
+    if (!billToName.trim() || !billToEmail.trim()) {
+      nextErrors.billing = 'Billing name and email are required.'
+    }
+
+    lines.forEach((line, index) => {
+      if (!line.description.trim()) {
+        nextErrors[`line-${index}-description`] = 'Enter a description.'
+      }
+      const cents = centsFromDollars(line.unitPriceDollars)
+      if (!line.isCredit && cents <= 0) {
+        nextErrors[`line-${index}-price`] = 'Enter a unit price in dollars (for example 1.00).'
+      }
+    })
+
+    const prepared = toEditorLines(lines)
+    let computedTotal = 0
+    try {
+      computedTotal = calculateInvoice({
+        lines: prepared,
+        discountType: discountType as 'none' | 'fixed' | 'percent',
+        discountValue,
+        taxRateBps,
+        amountPaidCents: 0,
+      }).totalCents
+    } catch {
+      nextErrors.total = 'Line items are invalid.'
+    }
+    if (!nextErrors.total && computedTotal <= 0) {
+      nextErrors.total = 'Invoice total must be greater than $0.00.'
+    }
+
+    setFieldErrors(nextErrors)
+    const keys = Object.keys(nextErrors)
+    if (keys.length === 0) return { ok: true }
+
+    const message = nextErrors[keys[0]]
+    return {
+      ok: false,
+      message,
+      focus: () => {
+        if (nextErrors.clientId) {
+          clientRef.current?.focus()
+          clientRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          return
+        }
+        for (let i = 0; i < lines.length; i++) {
+          if (nextErrors[`line-${i}-description`]) {
+            descriptionRefs.current[i]?.focus()
+            descriptionRefs.current[i]?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            return
+          }
+          if (nextErrors[`line-${i}-price`]) {
+            priceRefs.current[i]?.focus()
+            priceRefs.current[i]?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            return
+          }
+        }
+        errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      },
+    }
+  }
+
   function onSubmit(event: React.FormEvent) {
     event.preventDefault()
     if (pending) return
     setError(null)
+
+    const check = validate()
+    if (!check.ok) {
+      setError(check.message)
+      // Defer focus until error text paints
+      requestAnimationFrame(() => check.focus())
+      return
+    }
 
     const payload = {
       clientId,
@@ -190,11 +318,11 @@ export default function InvoiceEditorForm({
       billToEmail,
       billToPhone,
       billToCompany,
-      lineItems: lines,
+      lineItems: toEditorLines(lines),
       discountType,
       discountValue,
       taxRateBps,
-      depositRequiredCents,
+      depositRequiredCents: centsFromDollars(depositDollars),
       clientMemo,
       internalNotes,
     }
@@ -206,6 +334,9 @@ export default function InvoiceEditorForm({
           : await updateInvoice(invoiceId, payload)
       if (!result.ok) {
         setError(result.message)
+        requestAnimationFrame(() => {
+          errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        })
         return
       }
       router.push(`/os/invoices/${result.id}`)
@@ -213,8 +344,16 @@ export default function InvoiceEditorForm({
     })
   }
 
+  const selectClass = `${styles.fieldControl} ${styles.selectControl}`
+
   return (
-    <form className={styles.opsForm} onSubmit={onSubmit} aria-busy={pending}>
+    <form className={styles.opsForm} onSubmit={onSubmit} aria-busy={pending} noValidate>
+      <p className={styles.workflowBanner}>
+        <strong>Step 1 — Save draft only.</strong> This does not email the client, create a
+        Square invoice, or charge a card. After saving, you can create a Square payment link,
+        then send or copy it separately.
+      </p>
+
       <section className={styles.panel}>
         <h2 className={styles.panelTitle}>Client & event</h2>
         <div className={styles.opsFields}>
@@ -222,7 +361,8 @@ export default function InvoiceEditorForm({
             Client
             <select
               id="clientId"
-              className={styles.fieldControl}
+              ref={clientRef}
+              className={`${selectClass}${fieldErrors.clientId ? ` ${styles.fieldInvalid}` : ''}`}
               value={clientId}
               required
               onChange={(e) => onClientChange(e.target.value)}
@@ -234,12 +374,15 @@ export default function InvoiceEditorForm({
                 </option>
               ))}
             </select>
+            {fieldErrors.clientId ? (
+              <span className={styles.fieldErrorText}>{fieldErrors.clientId}</span>
+            ) : null}
           </label>
           <label className={styles.fieldLabel} htmlFor="eventId">
             Related event
             <select
               id="eventId"
-              className={styles.fieldControl}
+              className={selectClass}
               value={eventId}
               onChange={(e) => onEventChange(e.target.value)}
             >
@@ -252,6 +395,15 @@ export default function InvoiceEditorForm({
             </select>
           </label>
         </div>
+        {clients.length === 0 ? (
+          <p className={styles.fieldHint}>
+            No clients yet.{' '}
+            <Link href="/os/clients" className={styles.inlineLink}>
+              Add a client in Plate OS
+            </Link>{' '}
+            first, then return here.
+          </p>
+        ) : null}
       </section>
 
       <section className={styles.panel}>
@@ -322,7 +474,7 @@ export default function InvoiceEditorForm({
             Payment terms
             <select
               id="paymentTerms"
-              className={styles.fieldControl}
+              className={selectClass}
               value={paymentTerms}
               onChange={(e) => setPaymentTerms(e.target.value)}
             >
@@ -345,6 +497,9 @@ export default function InvoiceEditorForm({
             </label>
           ) : null}
         </div>
+        {fieldErrors.billing ? (
+          <p className={styles.fieldErrorText}>{fieldErrors.billing}</p>
+        ) : null}
       </section>
 
       <section className={styles.panel}>
@@ -353,13 +508,14 @@ export default function InvoiceEditorForm({
           <button
             type="button"
             className={styles.textButton}
-            onClick={() => setLines((prev) => [...prev, newLine()])}
+            onClick={() => setLines((prev) => [...prev, newLine({ unitPriceDollars: '0.00' })])}
           >
             Add line
           </button>
         </div>
         <p className={styles.fieldHint}>
-          Presets: {BILLING_PRESET_DESCRIPTIONS.join(' · ')}
+          Enter prices in dollars (example: 1.00). Presets:{' '}
+          {BILLING_PRESET_DESCRIPTIONS.join(' · ')}
         </p>
         <div className={styles.invoiceLines}>
           {lines.map((line, index) => (
@@ -368,17 +524,27 @@ export default function InvoiceEditorForm({
                 <label className={styles.fieldLabel}>
                   Description
                   <input
-                    className={styles.fieldControl}
+                    ref={(el) => {
+                      descriptionRefs.current[index] = el
+                    }}
+                    className={`${styles.fieldControl}${
+                      fieldErrors[`line-${index}-description`] ? ` ${styles.fieldInvalid}` : ''
+                    }`}
                     list="billing-presets"
                     value={line.description}
                     required
                     onChange={(e) => updateLine(index, { description: e.target.value })}
                   />
+                  {fieldErrors[`line-${index}-description`] ? (
+                    <span className={styles.fieldErrorText}>
+                      {fieldErrors[`line-${index}-description`]}
+                    </span>
+                  ) : null}
                 </label>
                 <label className={styles.fieldLabel}>
                   Billing type
                   <select
-                    className={styles.fieldControl}
+                    className={selectClass}
                     value={line.billingType}
                     onChange={(e) =>
                       updateLine(index, {
@@ -399,6 +565,7 @@ export default function InvoiceEditorForm({
                     type="number"
                     min="0"
                     step="0.25"
+                    inputMode="decimal"
                     className={styles.fieldControl}
                     value={line.quantity}
                     onChange={(e) =>
@@ -407,19 +574,39 @@ export default function InvoiceEditorForm({
                   />
                 </label>
                 <label className={styles.fieldLabel}>
-                  Unit price (USD)
+                  Unit price ($)
                   <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    className={styles.fieldControl}
-                    value={centsInput(line.unitPriceCents)}
+                    ref={(el) => {
+                      priceRefs.current[index] = el
+                    }}
+                    type="text"
+                    inputMode="decimal"
+                    autoComplete="off"
+                    placeholder="1.00"
+                    className={`${styles.fieldControl}${
+                      fieldErrors[`line-${index}-price`] ? ` ${styles.fieldInvalid}` : ''
+                    }`}
+                    value={line.unitPriceDollars}
                     onChange={(e) =>
                       updateLine(index, {
-                        unitPriceCents: Math.round(Number(e.target.value || 0) * 100),
+                        unitPriceDollars: e.target.value,
+                        unitPriceCents: centsFromDollars(e.target.value),
+                      })
+                    }
+                    onBlur={() =>
+                      updateLine(index, {
+                        unitPriceDollars: dollarsFromCents(
+                          centsFromDollars(line.unitPriceDollars),
+                        ),
+                        unitPriceCents: centsFromDollars(line.unitPriceDollars),
                       })
                     }
                   />
+                  {fieldErrors[`line-${index}-price`] ? (
+                    <span className={styles.fieldErrorText}>
+                      {fieldErrors[`line-${index}-price`]}
+                    </span>
+                  ) : null}
                 </label>
               </div>
               <label className={styles.fieldLabel}>
@@ -486,7 +673,7 @@ export default function InvoiceEditorForm({
           <label className={styles.fieldLabel}>
             Discount type
             <select
-              className={styles.fieldControl}
+              className={selectClass}
               value={discountType}
               onChange={(e) => setDiscountType(e.target.value)}
             >
@@ -501,17 +688,16 @@ export default function InvoiceEditorForm({
               type="number"
               min="0"
               step="0.01"
+              inputMode="decimal"
               className={styles.fieldControl}
               value={
                 discountType === 'percent'
                   ? (discountValue / 100).toFixed(2)
-                  : centsInput(discountValue)
+                  : dollarsFromCents(discountValue)
               }
               onChange={(e) => {
                 const n = Number(e.target.value || 0)
-                setDiscountValue(
-                  discountType === 'percent' ? Math.round(n * 100) : Math.round(n * 100),
-                )
+                setDiscountValue(Math.round(n * 100))
               }}
               disabled={discountType === 'none'}
             />
@@ -523,22 +709,21 @@ export default function InvoiceEditorForm({
               min="0"
               max="100"
               step="0.01"
+              inputMode="decimal"
               className={styles.fieldControl}
               value={(taxRateBps / 100).toFixed(2)}
               onChange={(e) => setTaxRateBps(Math.round(Number(e.target.value || 0) * 100))}
             />
           </label>
           <label className={styles.fieldLabel}>
-            Deposit required (USD)
+            Deposit required ($)
             <input
-              type="number"
-              min="0"
-              step="0.01"
+              type="text"
+              inputMode="decimal"
               className={styles.fieldControl}
-              value={centsInput(depositRequiredCents)}
-              onChange={(e) =>
-                setDepositRequiredCents(Math.round(Number(e.target.value || 0) * 100))
-              }
+              value={depositDollars}
+              onChange={(e) => setDepositDollars(e.target.value)}
+              onBlur={() => setDepositDollars(dollarsFromCents(centsFromDollars(depositDollars)))}
             />
           </label>
         </div>
@@ -566,6 +751,9 @@ export default function InvoiceEditorForm({
             </div>
           </dl>
         ) : null}
+        {fieldErrors.total ? (
+          <p className={styles.fieldErrorText}>{fieldErrors.total}</p>
+        ) : null}
       </section>
 
       <section className={styles.panel}>
@@ -590,17 +778,22 @@ export default function InvoiceEditorForm({
         </label>
       </section>
 
-      <div className={styles.actions}>
+      <div className={styles.stickyFormActions} aria-live="polite">
         <button type="submit" className={styles.button} disabled={pending}>
           {pending
-            ? 'Saving…'
+            ? 'Saving draft…'
             : mode === 'create'
-              ? 'Save draft invoice'
-              : 'Save invoice'}
+              ? 'Save draft'
+              : 'Save draft changes'}
         </button>
-      </div>
-      <div aria-live="polite">
-        {error ? <p className={styles.sectionError}>{error}</p> : null}
+        <p className={styles.fieldHint}>
+          Save draft only — no email, no Square publish, no charge.
+        </p>
+        {error ? (
+          <p ref={errorRef} className={styles.sectionError} role="alert">
+            {error}
+          </p>
+        ) : null}
       </div>
     </form>
   )
