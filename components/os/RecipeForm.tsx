@@ -776,13 +776,10 @@ export default function RecipeForm({
         </div>
       </section>
 
-      <div className={styles.formActions}>
+      <div className={styles.stickyFormActions} aria-live="polite">
         <button type="submit" className={styles.button} disabled={pending}>
           {pending ? 'Saving…' : mode === 'create' ? 'Save recipe' : 'Save changes'}
         </button>
-      </div>
-
-      <div className={styles.formStatus} aria-live="polite">
         {message ? <p className={styles.formSuccess}>{message}</p> : null}
         {error ? <p className={styles.sectionError}>{error}</p> : null}
       </div>

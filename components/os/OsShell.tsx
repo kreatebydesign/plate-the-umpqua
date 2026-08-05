@@ -60,8 +60,20 @@ export default function OsShell({
     if (pathname.startsWith('/os/events/') && pathname !== '/os/events') {
       return { title: 'Event detail', eyebrow: 'Hospitality date' }
     }
+    if (pathname === '/os/clients/new') {
+      return { title: 'Add client', eyebrow: 'Relationships' }
+    }
     if (pathname.startsWith('/os/clients/') && pathname !== '/os/clients') {
+      if (pathname.endsWith('/edit')) {
+        return { title: 'Edit client', eyebrow: 'Relationships' }
+      }
       return { title: 'Client detail', eyebrow: 'Relationship' }
+    }
+    if (pathname.startsWith('/os/settings/square')) {
+      return { title: 'Square settings', eyebrow: 'Payments' }
+    }
+    if (pathname.startsWith('/os/mobile-qa')) {
+      return { title: 'Mobile QA', eyebrow: 'Director checklist' }
     }
     if (pathname.startsWith('/os/invoices/') && pathname !== '/os/invoices') {
       if (pathname.endsWith('/new')) {

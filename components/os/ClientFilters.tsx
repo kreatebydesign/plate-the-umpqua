@@ -25,7 +25,7 @@ export default function ClientFilters({ result }: Props) {
         <select
           id="view"
           name="view"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.view}
         >
           {CLIENT_VIEW_OPTIONS.map((option) => (
@@ -41,7 +41,7 @@ export default function ClientFilters({ result }: Props) {
         <select
           id="type"
           name="type"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.type || ''}
         >
           <option value="">All types</option>
@@ -54,11 +54,11 @@ export default function ClientFilters({ result }: Props) {
       </label>
 
       <label className={styles.fieldLabel} htmlFor="vip">
-        Relationship
+        Client tier
         <select
           id="vip"
           name="vip"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.vip || ''}
         >
           <option value="">All levels</option>
@@ -75,7 +75,7 @@ export default function ClientFilters({ result }: Props) {
         <select
           id="sort"
           name="sort"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.sort}
         >
           {CLIENT_SORT_OPTIONS.map((option) => (

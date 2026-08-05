@@ -562,14 +562,15 @@ export default function InvoiceEditorForm({
                 <label className={styles.fieldLabel}>
                   Quantity
                   <input
-                    type="number"
-                    min="0"
-                    step="0.25"
+                    type="text"
                     inputMode="decimal"
+                    autoComplete="off"
                     className={styles.fieldControl}
-                    value={line.quantity}
+                    value={String(line.quantity)}
                     onChange={(e) =>
-                      updateLine(index, { quantity: Number(e.target.value) || 0 })
+                      updateLine(index, {
+                        quantity: Math.max(0, Number(e.target.value) || 0),
+                      })
                     }
                   />
                 </label>
@@ -683,12 +684,15 @@ export default function InvoiceEditorForm({
             </select>
           </label>
           <label className={styles.fieldLabel}>
-            Discount value
+            {discountType === 'percent'
+              ? 'Discount (%)'
+              : discountType === 'fixed'
+                ? 'Discount ($)'
+                : 'Discount amount'}
             <input
-              type="number"
-              min="0"
-              step="0.01"
+              type="text"
               inputMode="decimal"
+              autoComplete="off"
               className={styles.fieldControl}
               value={
                 discountType === 'percent'
@@ -705,11 +709,9 @@ export default function InvoiceEditorForm({
           <label className={styles.fieldLabel}>
             Tax rate (%)
             <input
-              type="number"
-              min="0"
-              max="100"
-              step="0.01"
+              type="text"
               inputMode="decimal"
+              autoComplete="off"
               className={styles.fieldControl}
               value={(taxRateBps / 100).toFixed(2)}
               onChange={(e) => setTaxRateBps(Math.round(Number(e.target.value || 0) * 100))}

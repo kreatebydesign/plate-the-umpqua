@@ -5,6 +5,7 @@ import type { ConnectionRecord } from '@/lib/os/square/connection'
 import { selectSquareLocation, disconnectSquare, getSquareOAuthStartUrl } from '@/lib/os/square/actions'
 import styles from '../../../os.module.css'
 import squareStyles from './square.module.css'
+import ConfirmAction from '@/components/os/ConfirmAction'
 
 type LocationOption = {
   id: string
@@ -44,10 +45,12 @@ export default function SquareSettingsClient({
         : null,
   )
   const [selectedLocationId, setSelectedLocationId] = useState('')
+  const [confirmDisconnect, setConfirmDisconnect] = useState(false)
 
   const isConnected = connection?.status === 'connected'
   const activeLocations = locations.filter((l) => String(l.status).toUpperCase() === 'ACTIVE')
   const choices = activeLocations.length > 0 ? activeLocations : locations
+  const envLabel = sandboxMode ? 'Sandbox' : 'Production / Live'
 
   function handleConnect() {
     startTransition(async () => {
@@ -62,14 +65,7 @@ export default function SquareSettingsClient({
   }
 
   function handleDisconnect() {
-    const label = sandboxMode ? 'Sandbox' : 'Production / Live'
-    if (
-      !confirm(
-        `Disconnect Square (${label})? This will revoke OAuth tokens for the current environment and stop payment collection.`,
-      )
-    ) {
-      return
-    }
+    setConfirmDisconnect(false)
     startTransition(async () => {
       setFeedback(null)
       const result = await disconnectSquare()
@@ -220,14 +216,25 @@ export default function SquareSettingsClient({
             >
               {isPending ? 'Redirecting…' : 'Connect Square'}
             </button>
+          ) : confirmDisconnect ? (
+            <ConfirmAction
+              open
+              title={`Disconnect Square (${envLabel})?`}
+              body="This revokes OAuth tokens for the current environment and stops payment collection until you reconnect."
+              confirmLabel="Disconnect Square"
+              tone="danger"
+              pending={isPending}
+              onCancel={() => setConfirmDisconnect(false)}
+              onConfirm={handleDisconnect}
+            />
           ) : (
             <button
               type="button"
-              className={styles.textButtonDanger}
-              onClick={handleDisconnect}
+              className={`${styles.textButton} ${styles.textButtonDanger}`}
+              onClick={() => setConfirmDisconnect(true)}
               disabled={isPending}
             >
-              {isPending ? 'Disconnecting…' : 'Disconnect Square'}
+              Disconnect Square
             </button>
           )}
         </div>

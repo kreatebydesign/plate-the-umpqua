@@ -63,7 +63,7 @@ export default function InquiryOperationalForm({
           Status
           <select
             id="inquiry-status"
-            className={styles.fieldControl}
+            className={`${styles.fieldControl} ${styles.selectControl}`}
             value={status}
             disabled={pending}
             onChange={(e) => setStatus(e.target.value)}
@@ -80,7 +80,7 @@ export default function InquiryOperationalForm({
           Priority
           <select
             id="inquiry-priority"
-            className={styles.fieldControl}
+            className={`${styles.fieldControl} ${styles.selectControl}`}
             value={priority}
             disabled={pending}
             onChange={(e) => setPriority(e.target.value)}
@@ -96,13 +96,10 @@ export default function InquiryOperationalForm({
 
       <p className={styles.fieldHint}>{statusHookNote}</p>
 
-      <div className={styles.actions}>
+      <div className={styles.stickyFormActions} aria-live="polite">
         <button type="submit" className={styles.button} disabled={pending}>
           {pending ? 'Saving…' : 'Save operational details'}
         </button>
-      </div>
-
-      <div aria-live="polite">
         {message ? <p className={styles.formSuccess}>{message}</p> : null}
         {error ? <p className={styles.sectionError}>{error}</p> : null}
       </div>

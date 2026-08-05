@@ -55,6 +55,9 @@ export default async function ClientsWorkspacePage({
           Payload Admin.
         </p>
         <div className={styles.actions}>
+          <Link href="/os/clients/new" className={styles.button}>
+            Add client
+          </Link>
           <Link href="/os" className={`${styles.button} ${styles.buttonQuiet}`}>
             Today at Plate The Umpqua
           </Link>

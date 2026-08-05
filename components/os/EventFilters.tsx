@@ -23,7 +23,7 @@ export default function EventFilters({ result }: Props) {
         <select
           id="pipeline"
           name="pipeline"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.pipeline}
         >
           {EVENT_PIPELINE_OPTIONS.map((option) => (
@@ -39,7 +39,7 @@ export default function EventFilters({ result }: Props) {
         <select
           id="status"
           name="status"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.status || ''}
         >
           <option value="">All statuses</option>
@@ -56,7 +56,7 @@ export default function EventFilters({ result }: Props) {
         <select
           id="sort"
           name="sort"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.sort}
         >
           {EVENT_SORT_OPTIONS.map((option) => (

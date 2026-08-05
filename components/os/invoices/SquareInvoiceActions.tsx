@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { createSquarePaymentInvoiceAction, syncSquareInvoiceAction } from '@/lib/os/square/actions'
 import styles from '@/app/(os)/os.module.css'
+import ConfirmAction from '@/components/os/ConfirmAction'
 
 type Props = {
   invoiceId: string
@@ -34,17 +35,14 @@ export default function SquareInvoiceActions({
   const [currentUrl, setCurrentUrl] = useState(squarePublicUrl)
   const [currentStatus, setCurrentStatus] = useState(squareStatus)
   const [hasSquareInvoice, setHasSquareInvoice] = useState(Boolean(squareInvoiceId))
+  const [confirmCreate, setConfirmCreate] = useState(false)
 
   const isVoided = status === 'voided'
   const isConnected = squareState === 'connected'
 
   function handleCreate() {
     if (!canManage || !isConnected || isVoided) return
-    const confirmed = window.confirm(
-      'Create a Square payment invoice for this Plate draft?\n\nThis does not email the client and does not charge a card. You will get a pay link to share or send next.',
-    )
-    if (!confirmed) return
-
+    setConfirmCreate(false)
     startTransition(async () => {
       setFeedback(null)
       const result = await createSquarePaymentInvoiceAction(invoiceId)
@@ -163,26 +161,38 @@ export default function SquareInvoiceActions({
         </div>
       )}
 
-      <div className={styles.actions} style={{ flexWrap: 'wrap', gap: '0.65rem' }}>
-        {!hasSquareInvoice && !isVoided && (
-          <button
-            type="button"
-            className={styles.button}
-            onClick={handleCreate}
-            disabled={isPending}
-            style={{ minHeight: 48 }}
-          >
-            {isPending ? 'Creating Square invoice…' : 'Create Square payment invoice'}
-          </button>
-        )}
+      {!hasSquareInvoice && !isVoided ? (
+        confirmCreate ? (
+          <ConfirmAction
+            open
+            title="Create Square payment invoice?"
+            body="This creates a hosted Square pay link for this Plate draft. It does not email the client and does not charge a card."
+            confirmLabel="Create Square invoice"
+            pending={isPending}
+            onCancel={() => setConfirmCreate(false)}
+            onConfirm={handleCreate}
+          />
+        ) : (
+          <div className={styles.actions} style={{ flexWrap: 'wrap', gap: '0.65rem' }}>
+            <button
+              type="button"
+              className={styles.button}
+              onClick={() => setConfirmCreate(true)}
+              disabled={isPending}
+            >
+              Create Square payment invoice
+            </button>
+          </div>
+        )
+      ) : null}
 
+      <div className={styles.actions} style={{ flexWrap: 'wrap', gap: '0.65rem', marginTop: '0.65rem' }}>
         {currentUrl && (
           <button
             type="button"
             className={`${styles.button} ${styles.buttonQuiet}`}
             onClick={handleCopyPayLink}
             disabled={isPending}
-            style={{ minHeight: 48 }}
           >
             Copy payment link
           </button>
@@ -194,7 +204,6 @@ export default function SquareInvoiceActions({
             className={`${styles.button} ${styles.buttonQuiet}`}
             onClick={handleSync}
             disabled={isPending}
-            style={{ minHeight: 48 }}
           >
             {isPending ? 'Syncing…' : 'Sync Square payments'}
           </button>

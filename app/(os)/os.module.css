@@ -23,6 +23,7 @@
   font-family: var(--os-font-body);
   -webkit-font-smoothing: antialiased;
   overflow-x: clip;
+  scroll-padding-bottom: calc(7.5rem + env(safe-area-inset-bottom));
 }
 
 .shell {
@@ -144,7 +145,7 @@
 .metaLink {
   display: flex;
   align-items: center;
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 0.85rem;
   border-radius: var(--os-radius);
   color: rgba(239, 230, 212, 0.5);
@@ -303,6 +304,7 @@
   flex: 1;
   width: 100%;
   max-width: 1120px;
+  min-width: 0;
   margin: 0 auto;
   padding:
     1.75rem
@@ -345,9 +347,11 @@
 .heroLine {
   margin: 0;
   max-width: 38rem;
+  min-width: 0;
   color: rgba(239, 230, 212, 0.68);
   font-size: 1rem;
   line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
 .metrics {
@@ -509,16 +513,20 @@
   align-items: center;
   justify-content: center;
   min-height: 44px;
-  padding: 0 1.1rem;
+  padding: 0.65rem 1.1rem;
   border: 1px solid var(--os-gold);
   border-radius: var(--os-radius);
   background: transparent;
   color: var(--os-ivory);
   font-size: 0.78rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
+  line-height: 1.25;
+  text-align: center;
   text-transform: uppercase;
   text-decoration: none;
+  white-space: normal;
+  overflow-wrap: anywhere;
   cursor: pointer;
 }
 
@@ -781,6 +789,62 @@ select.fieldControl::-ms-expand,
   width: 100%;
 }
 
+.confirmPanel {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0.75rem 0 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--os-line-strong);
+  border-radius: var(--os-radius);
+  background: rgba(196, 164, 101, 0.08);
+}
+
+.confirmTitle {
+  margin: 0;
+  color: var(--os-ivory);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.confirmBody {
+  margin: 0;
+  color: rgba(239, 230, 212, 0.72);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.confirmActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.confirmActions .button {
+  flex: 1 1 calc(50% - 0.35rem);
+  min-width: min(100%, 9rem);
+  min-height: 48px;
+}
+
+.buttonDanger {
+  background: #8b2e2e;
+  color: #fff7f7;
+}
+
+.buttonDanger:hover {
+  background: #a33838;
+}
+
+.relationshipPicker {
+  display: grid;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.relationshipPicker .fieldControl {
+  max-width: 100%;
+}
+
 .fieldHint {
   margin: 0.35rem 0 0;
   color: rgba(239, 230, 212, 0.48);
@@ -829,6 +893,7 @@ select.fieldControl::-ms-expand,
 
 .statusChip {
   flex-shrink: 0;
+  max-width: min(100%, 12rem);
   padding: 0.35rem 0.55rem;
   border: 1px solid var(--os-line-strong);
   border-radius: var(--os-radius);
@@ -837,7 +902,9 @@ select.fieldControl::-ms-expand,
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: right;
 }
 
 .statusChipAlert {
@@ -1473,6 +1540,12 @@ select.fieldControl::-ms-expand,
 
   .metricValue {
     font-size: 1.5rem;
+  }
+
+  .button {
+    letter-spacing: 0.06em;
+    font-size: 0.72rem;
+    padding-inline: 0.85rem;
   }
 
   .repeatActions .textButton,

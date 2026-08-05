@@ -35,7 +35,7 @@ export default function MenuFilters({ result }: Props) {
         <select
           id="menu-view"
           name="view"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.view}
         >
           {MENU_VIEW_OPTIONS.map((option) => (
@@ -51,7 +51,7 @@ export default function MenuFilters({ result }: Props) {
         <select
           id="menu-status"
           name="status"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.status || ''}
         >
           <option value="">All statuses</option>
@@ -68,7 +68,7 @@ export default function MenuFilters({ result }: Props) {
         <select
           id="menu-sort"
           name="sort"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.sort}
         >
           {MENU_SORT_OPTIONS.map((option) => (

@@ -842,7 +842,7 @@ export default function MenuBuilderForm({
         </div>
       </section>
 
-      <div className={styles.formActions}>
+      <div className={styles.stickyFormActions} aria-live="polite">
         <button type="submit" className={styles.button} disabled={pending}>
           {pending
             ? 'Saving…'
@@ -851,30 +851,20 @@ export default function MenuBuilderForm({
               : 'Save changes'}
         </button>
         {mode === 'edit' && menuId ? (
-          <a
-            href={`/os/menus/${menuId}/print`}
-            className={`${styles.button} ${styles.buttonQuiet}`}
-            onClick={(event) => {
-              if (!dirty) return
-              const ok = window.confirm(
-                'You have unsaved changes. Print preview shows the last saved version only. Continue without saving?',
-              )
-              if (!ok) event.preventDefault()
-            }}
-          >
-            Print / PDF
-          </a>
+          dirty ? (
+            <p className={styles.builderHint} role="note">
+              Save changes before Print / PDF if you want the preview to include
+              your latest edits. Print always uses the last saved menu.
+            </p>
+          ) : (
+            <a
+              href={`/os/menus/${menuId}/print`}
+              className={`${styles.button} ${styles.buttonQuiet}`}
+            >
+              Print / PDF
+            </a>
+          )
         ) : null}
-      </div>
-
-      {mode === 'edit' && dirty ? (
-        <p className={styles.builderHint} role="note">
-          Print / PDF always uses the last saved menu. Save changes first if you
-          want the preview to include your latest edits.
-        </p>
-      ) : null}
-
-      <div className={styles.formStatus} aria-live="polite">
         {message ? <p className={styles.formSuccess}>{message}</p> : null}
         {error ? <p className={styles.sectionError}>{error}</p> : null}
       </div>

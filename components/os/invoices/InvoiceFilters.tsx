@@ -17,7 +17,7 @@ export default function InvoiceFilters({ result }: { result: InvoiceListResult }
         <select
           id="status"
           name="status"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.status}
         >
           <option value="all">All statuses</option>
@@ -33,7 +33,7 @@ export default function InvoiceFilters({ result }: { result: InvoiceListResult }
         <select
           id="sort"
           name="sort"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.sort}
         >
           {INVOICE_SORT_OPTIONS.map((option) => (

@@ -63,11 +63,26 @@ export default function RelationshipSelect({
 
   return (
     <div className={styles.relationshipPicker}>
+      <label className={styles.fieldLabel} htmlFor={`${id}-filter`}>
+        Filter {label}
+        <input
+          id={`${id}-filter`}
+          type="search"
+          className={styles.fieldControl}
+          value={filter}
+          disabled={disabled}
+          placeholder={searchPlaceholder}
+          maxLength={80}
+          autoComplete="off"
+          onChange={(event) => setFilter(event.target.value.slice(0, 80))}
+        />
+      </label>
+
       <label className={styles.fieldLabel} htmlFor={id}>
         {label}
         <select
           id={id}
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           value={value}
           required={required}
           disabled={disabled}
@@ -84,20 +99,9 @@ export default function RelationshipSelect({
         </select>
       </label>
 
-      <label className={styles.fieldLabel} htmlFor={`${id}-filter`}>
-        <span className={styles.visuallyHidden}>Filter {label}</span>
-        <input
-          id={`${id}-filter`}
-          type="search"
-          className={styles.fieldControl}
-          value={filter}
-          disabled={disabled}
-          placeholder={searchPlaceholder}
-          maxLength={80}
-          autoComplete="off"
-          onChange={(event) => setFilter(event.target.value.slice(0, 80))}
-        />
-      </label>
+      <p className={styles.builderHint}>
+        Type to filter, then choose from the list.
+      </p>
 
       {filtered.length === 0 ? (
         <p className={styles.builderHint} role="status">

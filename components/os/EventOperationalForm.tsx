@@ -54,7 +54,7 @@ export default function EventOperationalForm({
           Status
           <select
             id="event-status"
-            className={styles.fieldControl}
+            className={`${styles.fieldControl} ${styles.selectControl}`}
             value={status}
             disabled={pending}
             onChange={(e) => setStatus(e.target.value)}
@@ -73,13 +73,10 @@ export default function EventOperationalForm({
         email or calendar sync from Plate The Umpqua OS.
       </p>
 
-      <div className={styles.actions}>
+      <div className={styles.stickyFormActions} aria-live="polite">
         <button type="submit" className={styles.button} disabled={pending}>
           {pending ? 'Saving…' : 'Save status'}
         </button>
-      </div>
-
-      <div aria-live="polite">
         {message ? <p className={styles.formSuccess}>{message}</p> : null}
         {error ? <p className={styles.sectionError}>{error}</p> : null}
       </div>

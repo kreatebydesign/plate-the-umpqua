@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import styles from '@/app/(os)/os.module.css'
+import ConfirmAction from '@/components/os/ConfirmAction'
 import {
   duplicateInvoice,
   ensureInvoicePublicLink,
@@ -24,6 +25,8 @@ type Props = {
   canManage: boolean
 }
 
+type ConfirmKind = 'send' | 'void' | 'payment' | null
+
 export default function InvoiceActions({
   invoiceId,
   status,
@@ -43,6 +46,7 @@ export default function InvoiceActions({
   const [payMethod, setPayMethod] = useState('card')
   const [payRef, setPayRef] = useState('')
   const [voidReason, setVoidReason] = useState('')
+  const [confirmKind, setConfirmKind] = useState<ConfirmKind>(null)
 
   function run(action: () => Promise<{ ok: true } | { ok: false; message: string }>, success: string) {
     if (pending) return
@@ -54,6 +58,7 @@ export default function InvoiceActions({
         setError(result.message)
         return
       }
+      setConfirmKind(null)
       setMessage(success)
       router.refresh()
     })
@@ -160,28 +165,34 @@ export default function InvoiceActions({
           <input
             className={styles.fieldControl}
             type="email"
+            inputMode="email"
+            autoComplete="email"
             value={recipient}
             onChange={(e) => setRecipient(e.target.value)}
           />
         </label>
-        <button
-          type="button"
-          className={styles.button}
-          disabled={pending}
-          style={{ minHeight: 48 }}
-          onClick={() => {
-            if (
-              !window.confirm(
-                `Send this invoice email to ${recipient || 'the recipient'}?\n\nThis emails the client. It does not charge a card.`,
-              )
-            ) {
-              return
+        {confirmKind === 'send' ? (
+          <ConfirmAction
+            open
+            title="Send invoice email?"
+            body={`This emails ${recipient || 'the recipient'} with the invoice. It does not charge a card.`}
+            confirmLabel="Send email"
+            pending={pending}
+            onCancel={() => setConfirmKind(null)}
+            onConfirm={() =>
+              run(() => sendInvoiceEmail(invoiceId, recipient), 'Invoice email sent.')
             }
-            run(() => sendInvoiceEmail(invoiceId, recipient), 'Invoice email sent.')
-          }}
-        >
-          Send invoice email
-        </button>
+          />
+        ) : (
+          <button
+            type="button"
+            className={styles.button}
+            disabled={pending}
+            onClick={() => setConfirmKind('send')}
+          >
+            Send invoice email
+          </button>
+        )}
       </div>
 
       {canRecordPayment ? (
@@ -192,17 +203,18 @@ export default function InvoiceActions({
               Amount (USD)
               <input
                 className={styles.fieldControl}
-                type="number"
-                min="0.01"
-                step="0.01"
+                type="text"
+                inputMode="decimal"
+                autoComplete="off"
                 value={payAmount}
                 onChange={(e) => setPayAmount(e.target.value)}
+                placeholder="0.00"
               />
             </label>
             <label className={styles.fieldLabel}>
               Method
               <select
-                className={styles.fieldControl}
+                className={`${styles.fieldControl} ${styles.selectControl}`}
                 value={payMethod}
                 onChange={(e) => setPayMethod(e.target.value)}
               >
@@ -222,25 +234,37 @@ export default function InvoiceActions({
               />
             </label>
           </div>
-          <button
-            type="button"
-            className={styles.button}
-            disabled={pending}
-            onClick={() =>
-              run(
-                () =>
-                  recordInvoicePayment(invoiceId, {
-                    amountCents: Math.round(Number(payAmount || 0) * 100),
-                    method: payMethod,
-                    reference: payRef,
-                    paidAt: new Date().toISOString(),
-                  }),
-                'Payment recorded.',
-              )
-            }
-          >
-            Save payment
-          </button>
+          {confirmKind === 'payment' ? (
+            <ConfirmAction
+              open
+              title="Record this payment?"
+              body={`Record $${payAmount || '0.00'} as received. This updates the invoice balance in Plate OS.`}
+              confirmLabel="Save payment"
+              pending={pending}
+              onCancel={() => setConfirmKind(null)}
+              onConfirm={() =>
+                run(
+                  () =>
+                    recordInvoicePayment(invoiceId, {
+                      amountCents: Math.round(Number(payAmount || 0) * 100),
+                      method: payMethod,
+                      reference: payRef,
+                      paidAt: new Date().toISOString(),
+                    }),
+                  'Payment recorded.',
+                )
+              }
+            />
+          ) : (
+            <button
+              type="button"
+              className={styles.button}
+              disabled={pending}
+              onClick={() => setConfirmKind('payment')}
+            >
+              Save payment
+            </button>
+          )}
         </div>
       ) : null}
 
@@ -255,16 +279,29 @@ export default function InvoiceActions({
               onChange={(e) => setVoidReason(e.target.value)}
             />
           </label>
-          <button
-            type="button"
-            className={`${styles.button} ${styles.buttonQuiet}`}
-            disabled={pending}
-            onClick={() =>
-              run(() => voidInvoice(invoiceId, voidReason || 'Voided'), 'Invoice voided.')
-            }
-          >
-            Void invoice
-          </button>
+          {confirmKind === 'void' ? (
+            <ConfirmAction
+              open
+              title="Void this invoice?"
+              body="Voiding cannot be undone from this screen. The invoice will no longer be collectible in Plate OS."
+              confirmLabel="Void invoice"
+              tone="danger"
+              pending={pending}
+              onCancel={() => setConfirmKind(null)}
+              onConfirm={() =>
+                run(() => voidInvoice(invoiceId, voidReason || 'Voided'), 'Invoice voided.')
+              }
+            />
+          ) : (
+            <button
+              type="button"
+              className={`${styles.button} ${styles.buttonQuiet}`}
+              disabled={pending}
+              onClick={() => setConfirmKind('void')}
+            >
+              Void invoice
+            </button>
+          )}
         </div>
       ) : null}
 

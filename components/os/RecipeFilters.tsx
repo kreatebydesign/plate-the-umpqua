@@ -38,7 +38,7 @@ export default function RecipeFilters({ result }: Props) {
         <select
           id="recipe-view"
           name="view"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.view}
         >
           {RECIPE_VIEW_OPTIONS.map((option) => (
@@ -54,7 +54,7 @@ export default function RecipeFilters({ result }: Props) {
         <select
           id="recipe-status"
           name="status"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.status || ''}
         >
           <option value="">All statuses</option>
@@ -71,7 +71,7 @@ export default function RecipeFilters({ result }: Props) {
         <select
           id="recipe-category"
           name="category"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.category || ''}
         >
           <option value="">All categories</option>
@@ -88,7 +88,7 @@ export default function RecipeFilters({ result }: Props) {
         <select
           id="recipe-sort"
           name="sort"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.sort}
         >
           {RECIPE_SORT_OPTIONS.map((option) => (

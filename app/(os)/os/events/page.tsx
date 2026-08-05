@@ -49,7 +49,8 @@ export default async function EventsWorkspacePage({
         <h2 className={styles.heroGreeting}>Events</h2>
         <p className={styles.heroLine}>
           Confirmed private dinners and hospitality dates—status, guests, venues,
-          and day-of readiness. Advanced editing remains in Payload Admin.
+          and day-of readiness. Create or fully edit events in Admin for now;
+          update status from each event detail in Plate OS.
         </p>
         <div className={styles.actions}>
           <Link href="/os" className={`${styles.button} ${styles.buttonQuiet}`}>

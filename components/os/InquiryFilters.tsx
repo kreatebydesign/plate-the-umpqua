@@ -25,7 +25,7 @@ export default function InquiryFilters({ result }: Props) {
         <select
           id="pipeline"
           name="pipeline"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.pipeline}
         >
           {INQUIRY_PIPELINE_OPTIONS.map((option) => (
@@ -41,7 +41,7 @@ export default function InquiryFilters({ result }: Props) {
         <select
           id="source"
           name="source"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.source || ''}
         >
           <option value="">All sources</option>
@@ -58,7 +58,7 @@ export default function InquiryFilters({ result }: Props) {
         <select
           id="occasion"
           name="occasion"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.occasion || ''}
         >
           <option value="">All occasions</option>
@@ -75,7 +75,7 @@ export default function InquiryFilters({ result }: Props) {
         <select
           id="sort"
           name="sort"
-          className={styles.fieldControl}
+          className={`${styles.fieldControl} ${styles.selectControl}`}
           defaultValue={filters.sort}
         >
           {INQUIRY_SORT_OPTIONS.map((option) => (

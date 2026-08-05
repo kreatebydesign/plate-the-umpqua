@@ -51,8 +51,8 @@ export default async function InquiriesWorkspacePage({
         <h2 className={styles.heroGreeting}>Inquiries</h2>
         <p className={styles.heroLine}>
           Review private dining requests, partner concierge leads, and community
-          partnership conversations. Update operational status here; advanced
-          administration remains in Payload Admin.
+          partnership conversations. Update status and priority from each inquiry
+          detail; create or fully edit records in Admin for now.
         </p>
         <div className={styles.actions}>
           <Link href="/os" className={`${styles.button} ${styles.buttonQuiet}`}>

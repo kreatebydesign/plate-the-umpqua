@@ -44,6 +44,12 @@ export default async function ClientDetailPage({ params }: { params: Params }) {
           <p className={styles.followHint}>{client.attentionReason}</p>
         ) : null}
         <div className={styles.actions}>
+          <Link
+            href={`/os/clients/${id}/edit`}
+            className={styles.button}
+          >
+            Edit client
+          </Link>
           <Link href="/os/clients" className={`${styles.button} ${styles.buttonQuiet}`}>
             Back to clients
           </Link>
