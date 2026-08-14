@@ -11,8 +11,21 @@ export const LEAD_SOURCES = [
 
 export type LeadSource = (typeof LEAD_SOURCES)[number]
 
-export const BUDGET_VALUES = ['425-750', '750-1500', '2000+'] as const
-export const PACKAGE_VALUES = ['Private Table', 'Estate', 'Concierge', 'Wine'] as const
+export const BUDGET_VALUES = [
+  '425-750',
+  '750-1500',
+  '2000+',
+  'partner-1500',
+  'partner-2800',
+] as const
+export const PACKAGE_VALUES = [
+  'Private Table',
+  'Estate',
+  'Concierge',
+  'Wine',
+  'Realtor Concierge',
+  'Preferred Access',
+] as const
 export const URGENCY_VALUES = ['this-week', 'this-month', 'future'] as const
 export const GUEST_VALUES = [
   '2-4 Guests',

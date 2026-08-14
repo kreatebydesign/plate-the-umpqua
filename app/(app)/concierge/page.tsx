@@ -199,6 +199,23 @@ export default function ConciergePage() {
               </div>
             ))}
           </div>
+
+          <div className="mt-14 border border-[#c4a465]/16 bg-[#14120e]/35 p-6 text-center md:p-8">
+            <p className="text-[10px] uppercase tracking-[0.32em] text-[#c4a465]/85">
+              Prepaid Partner Packages
+            </p>
+
+            <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-[#e9decb]/80 md:text-base md:leading-8">
+              Qualified professionals can reserve limited prepaid partner packages — five tables at $1,500 or ten tables at $2,800, purchased upfront with priority scheduling for client appreciation, closing gifts, and relationship hospitality.
+            </p>
+
+            <Link
+              href="/partner-concierge"
+              className="mt-8 inline-block text-[11px] uppercase tracking-[0.24em] text-[#c4a465] transition hover:text-[#efe6d4] md:text-xs"
+            >
+              View Partner Concierge Packages
+            </Link>
+          </div>
         </motion.div>
       </section>
 

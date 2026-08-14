@@ -5,6 +5,8 @@ import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Cormorant_Garamond, Work_Sans } from "next/font/google";
+import { PACKAGE_VALUES } from "@/lib/inquiry/validatePublicInquiry";
+import { PREPAID_PARTNER_PACKAGES } from "@/lib/site/partnerConciergePricing";
 
 const work = Work_Sans({
   subsets: ["latin"],
@@ -38,6 +40,22 @@ const VALID_SOURCES = new Set([
   "referral",
 ]);
 
+const VALID_PACKAGE_PREFILLS = new Set<string>(PACKAGE_VALUES);
+
+function normalizePackagePrefill(value: string | null) {
+  if (value && VALID_PACKAGE_PREFILLS.has(value)) {
+    return value;
+  }
+
+  return "";
+}
+
+function getPartnerPackagePrefill(packageValue: string) {
+  return PREPAID_PARTNER_PACKAGES.find(
+    (pkg) => pkg.inquiryPackageValue === packageValue,
+  );
+}
+
 const SOURCE_LABELS: Record<string, string> = {
   website: "Website",
   concierge: "Concierge",
@@ -63,11 +81,29 @@ function InquiryForm() {
     () => normalizeSource(searchParams.get("source")),
     [searchParams],
   );
+  const packagePrefill = useMemo(
+    () => normalizePackagePrefill(searchParams.get("package")),
+    [searchParams],
+  );
+  const partnerPackagePrefill = useMemo(
+    () => getPartnerPackagePrefill(packagePrefill),
+    [packagePrefill],
+  );
 
   const isPartnerConcierge = source === "partner-concierge";
   const isCommunityPartnership = source === "community-partnership";
   const isConciergePrefill = isPartnerConcierge || isCommunityPartnership;
   const showSourceBanner = isConciergePrefill;
+  const defaultPackageInterest = partnerPackagePrefill
+    ? partnerPackagePrefill.inquiryPackageValue
+    : isConciergePrefill
+      ? "Concierge"
+      : "";
+  const defaultBudget = partnerPackagePrefill
+    ? partnerPackagePrefill.inquiryBudgetValue
+    : isConciergePrefill
+      ? "2000+"
+      : "";
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -269,26 +305,46 @@ function InquiryForm() {
 
             <select
               name="budget"
-              defaultValue={isConciergePrefill ? "2000+" : ""}
+              defaultValue={defaultBudget}
               className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition focus:border-[#c4a465]/55"
             >
               <option value="">Estimated Budget</option>
               <option value="425-750">$425-$750</option>
               <option value="750-1500">$750-$1,500</option>
               <option value="2000+">$2,000+</option>
+              {isPartnerConcierge ? (
+                <>
+                  <option value="partner-1500">
+                    $1,500 — Realtor Concierge (5-table)
+                  </option>
+                  <option value="partner-2800">
+                    $2,800 — Preferred Access (10-table)
+                  </option>
+                </>
+              ) : null}
             </select>
           </div>
 
           <div className="grid gap-5 md:grid-cols-2 md:gap-6">
             <select
               name="packageInterest"
-              defaultValue={isConciergePrefill ? "Concierge" : ""}
+              defaultValue={defaultPackageInterest}
               className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition focus:border-[#c4a465]/55"
             >
               <option value="">Experience Type</option>
               <option value="Private Table">Private Table</option>
               <option value="Estate">Estate / Winery</option>
               <option value="Concierge">Concierge Partner</option>
+              {isPartnerConcierge ? (
+                <>
+                  <option value="Realtor Concierge">
+                    Realtor Concierge (5-table package)
+                  </option>
+                  <option value="Preferred Access">
+                    Preferred Access (10-table package)
+                  </option>
+                </>
+              ) : null}
             </select>
 
             <select

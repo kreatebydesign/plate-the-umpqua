@@ -3,6 +3,12 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Cormorant_Garamond, Work_Sans } from "next/font/google";
+import {
+  PARTNER_INQUIRY_HREF,
+  PREPAID_PARTNER_COMMITMENT_POINTS,
+  PREPAID_PARTNER_PACKAGES,
+  partnerPackageInquiryHref,
+} from "@/lib/site/partnerConciergePricing";
 
 const work = Work_Sans({
   subsets: ["latin"],
@@ -31,18 +37,25 @@ const packages = [
     price: "Starting at $425",
     desc: "An intimate chef-led dining experience shaped around your home, your guests, and the tone of the evening.",
     features: ["In-home chef service", "Custom seasonal menu", "Small private gatherings"],
+    inquiryHref: "/inquiry",
   },
   {
     title: "Estate & Winery Experience",
     price: "Starting at $750–$1,500",
     desc: "Elevated hospitality for vineyards, estates, retreats, and private wine country gatherings.",
     features: ["Multi-course dining", "Wine-focused pacing", "Estate and vineyard settings"],
+    inquiryHref: "/inquiry",
   },
   {
-    title: "Concierge Partner Program",
-    price: "$2,000–$5,000+",
-    desc: "A premium hospitality layer for realtors, luxury hosts, corporate gifting, and closing experiences.",
-    features: ["Realtor gifting", "Client hospitality", "Priority scheduling"],
+    title: "Executive Concierge Experience",
+    price: "Starting at $2,000+",
+    desc: "The full concierge layer — priority access, white-glove coordination, and hospitality for high-value professional relationships.",
+    features: [
+      "Priority scheduling access",
+      "White-glove coordination",
+      "Custom occasion design",
+    ],
+    inquiryHref: PARTNER_INQUIRY_HREF,
   },
 ];
 
@@ -113,7 +126,7 @@ export default function PackagesPage() {
               </ul>
 
               <Link
-                href="/inquiry"
+                href={item.inquiryHref}
                 className="mt-9 inline-block w-full border border-[#c4a465]/45 px-5 py-4 text-center text-[11px] uppercase tracking-[0.22em] text-[#efe6d4] transition duration-300 hover:bg-[#c4a465] hover:text-[#14120e] md:w-auto md:py-3"
               >
                 Check Availability
@@ -121,6 +134,94 @@ export default function PackagesPage() {
             </motion.article>
           ))}
         </div>
+      </section>
+
+      <section className="relative border-t border-[#c4a465]/16 px-5 py-20 md:px-6 md:py-28">
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="mx-auto max-w-6xl"
+        >
+          <p className="text-center text-[10px] uppercase tracking-[0.34em] text-[#c4a465] md:tracking-[0.38em]">
+            Partner Concierge
+          </p>
+
+          <h2
+            className="mx-auto mt-5 max-w-4xl text-center text-[clamp(2.6rem,12vw,4rem)] leading-[0.96] tracking-[-0.04em] md:text-6xl md:leading-tight"
+            style={{ fontFamily: "var(--font-cormorant)" }}
+          >
+            Prepaid partner packages for professional relationships.
+          </h2>
+
+          <p className="mx-auto mt-6 max-w-3xl text-center text-sm leading-7 text-[#e9decb]/76 md:text-base md:leading-8">
+            For realtors, advisors, medical practices, attorneys, wineries, and executive teams — limited prepaid packages purchased upfront, with priority scheduling and defined service parameters.
+          </p>
+
+          <div className="mt-14 grid gap-5 md:grid-cols-2 md:gap-6">
+            {PREPAID_PARTNER_PACKAGES.map((pkg, index) => (
+              <motion.article
+                key={pkg.title}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ delay: index * 0.08 }}
+                className="border border-[#c4a465]/20 bg-[#0d0b08]/55 p-6 backdrop-blur-sm md:p-8"
+              >
+                <p className="text-[10px] uppercase tracking-[0.3em] text-[#c4a465]/80">
+                  {pkg.tableCount}-Table Partner Package
+                </p>
+
+                <h3
+                  className="mt-5 text-[2rem] leading-[0.96] tracking-[-0.03em] md:text-3xl"
+                  style={{ fontFamily: "var(--font-cormorant)" }}
+                >
+                  {pkg.title}
+                </h3>
+
+                <p className="mt-4 text-sm text-[#c4a465]">{pkg.price} prepaid</p>
+
+                <p className="mt-6 text-sm leading-7 text-[#e9decb]/80">
+                  {pkg.desc}
+                </p>
+
+                <ul className="mt-7 space-y-3 border-t border-[#c4a465]/14 pt-6 text-sm leading-6 text-[#bfb39f]">
+                  {pkg.features.map((feature) => (
+                    <li key={feature}>• {feature}</li>
+                  ))}
+                </ul>
+
+                <Link
+                  href={partnerPackageInquiryHref(pkg.inquiryPackageValue)}
+                  className="mt-9 inline-block w-full border border-[#c4a465]/45 px-5 py-4 text-center text-[11px] uppercase tracking-[0.22em] text-[#efe6d4] transition duration-300 hover:bg-[#c4a465] hover:text-[#14120e] md:w-auto md:py-3"
+                >
+                  Request Package Access
+                </Link>
+              </motion.article>
+            ))}
+          </div>
+
+          <div className="mt-12 border border-[#c4a465]/14 bg-[#14120e]/35 p-6 md:p-7">
+            <ul className="space-y-3 text-sm leading-7 text-[#e9decb]/74 md:columns-2 md:gap-10">
+              {PREPAID_PARTNER_COMMITMENT_POINTS.map((point) => (
+                <li key={point} className="break-inside-avoid pb-2">
+                  • {point}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="mt-10 text-center">
+            <Link
+              href={PARTNER_INQUIRY_HREF}
+              className="text-[11px] uppercase tracking-[0.24em] text-[#c4a465] transition hover:text-[#efe6d4] md:text-xs"
+            >
+              Explore The Full Partner Concierge Program
+            </Link>
+          </div>
+        </motion.div>
       </section>
 
       <section className="relative border-t border-[#c4a465]/16 px-5 py-24 text-center md:px-6 md:py-28">
