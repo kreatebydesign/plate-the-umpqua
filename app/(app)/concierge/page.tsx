@@ -206,7 +206,7 @@ export default function ConciergePage() {
             </p>
 
             <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-[#e9decb]/80 md:text-base md:leading-8">
-              Qualified professionals can reserve limited prepaid partner packages — five tables at $1,500 or ten tables at $2,800, purchased upfront with priority scheduling for client appreciation, closing gifts, and relationship hospitality.
+              Qualified professionals can reserve Partner Concierge packages — Single Experience at $425, Professional 5-Pack at $1,750, or Professional 10-Pack at $3,400 — purchased upfront with priority scheduling for client appreciation, closing gifts, and relationship hospitality.
             </p>
 
             <Link

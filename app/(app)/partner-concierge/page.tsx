@@ -4,8 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Cormorant_Garamond, Work_Sans } from "next/font/google";
+import { PARTNER_INDUSTRIES } from "@/lib/site/partnerConciergeIndustries";
 import {
   EXPERIENCE_TIERS,
+  PARTNER_GUEST_RULES,
   PARTNER_INQUIRY_HREF,
   PREPAID_PARTNER_COMMITMENT_POINTS,
   PREPAID_PARTNER_PACKAGES,
@@ -34,13 +36,13 @@ const fadeUp = {
 };
 
 const audiences = [
-  "Realtors & luxury real estate teams",
+  "Real estate agents & brokerages",
+  "Doctors & medical practices",
+  "Attorneys & law firms",
+  "Builders, contractors & remodelers",
+  "Sales professionals & sales teams",
   "Financial advisors & wealth managers",
-  "Doctors, dentists & medical practices",
-  "Attorneys & legal practices",
-  "CPAs & accounting firms",
   "Insurance agencies",
-  "Wineries & estate partners",
   "Business owners & executive teams",
 ];
 
@@ -277,7 +279,7 @@ export default function PartnerConciergePage() {
             </div>
           </div>
 
-          <div className="mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:gap-4">
+          <div className="mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4">
             {audiences.map((audience) => (
               <div
                 key={audience}
@@ -285,6 +287,82 @@ export default function PartnerConciergePage() {
               >
                 {audience}
               </div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Explore by Profession */}
+      <section className="relative px-5 py-20 md:px-6 md:py-28">
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="mx-auto max-w-6xl"
+        >
+          <p className="text-center text-[10px] uppercase tracking-[0.34em] text-[#c4a465] md:tracking-[0.38em]">
+            Explore By Profession
+          </p>
+
+          <h2
+            className="mx-auto mt-5 max-w-4xl text-center text-[clamp(2.6rem,12vw,4rem)] leading-[0.96] tracking-[-0.04em] md:text-6xl md:leading-tight"
+            style={{ fontFamily: "var(--font-cormorant)" }}
+          >
+            Professional gifting, shaped by your industry.
+          </h2>
+
+          <p className="mx-auto mt-6 max-w-2xl text-center text-sm leading-7 text-[#e9decb]/76 md:text-base">
+            Start with the vertical that matches how you build relationships — then choose a Single Experience, Professional 5-Pack, or Professional 10-Pack.
+          </p>
+
+          <div className="mt-14 grid gap-5 md:mt-16 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
+            {PARTNER_INDUSTRIES.map((industry, index) => (
+              <motion.article
+                key={industry.slug}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ delay: index * 0.05 }}
+                className={`border bg-[#0d0b08]/55 p-6 backdrop-blur-sm transition duration-500 hover:border-[#c4a465]/42 md:p-7 ${
+                  industry.featured
+                    ? "border-[#c4a465]/40 md:col-span-1 lg:row-span-1"
+                    : "border-[#c4a465]/16"
+                } ${industry.slug === "real-estate" ? "lg:col-span-2" : ""}`}
+              >
+                {industry.featuredLabel ? (
+                  <p className="text-[10px] uppercase tracking-[0.3em] text-[#c4a465]">
+                    {industry.featuredLabel}
+                  </p>
+                ) : (
+                  <p className="text-[10px] uppercase tracking-[0.3em] text-[#c4a465]/70">
+                    Partner Vertical
+                  </p>
+                )}
+
+                <h3
+                  className={`mt-4 tracking-[-0.03em] text-[#efe6d4] ${
+                    industry.slug === "real-estate"
+                      ? "text-[2.15rem] leading-[0.96] md:text-4xl"
+                      : "text-[1.75rem] leading-[1.02] md:text-2xl"
+                  }`}
+                  style={{ fontFamily: "var(--font-cormorant)" }}
+                >
+                  {industry.navLabel}
+                </h3>
+
+                <p className="mt-4 text-sm leading-7 text-[#e9decb]/78">
+                  {industry.cardSummary}
+                </p>
+
+                <Link
+                  href={industry.href}
+                  className="mt-7 inline-block text-[11px] uppercase tracking-[0.24em] text-[#c4a465] transition hover:text-[#efe6d4]"
+                >
+                  Explore {industry.navLabel}
+                </Link>
+              </motion.article>
             ))}
           </div>
         </motion.div>
@@ -617,14 +695,14 @@ export default function PartnerConciergePage() {
             className="mx-auto mt-5 max-w-4xl text-center text-[clamp(2.6rem,12vw,4rem)] leading-[0.96] tracking-[-0.04em] md:text-6xl md:leading-tight"
             style={{ fontFamily: "var(--font-cormorant)" }}
           >
-            Preferred partner pricing through upfront volume commitment.
+            Prepaid professional gifting packages.
           </h2>
 
           <p className="mx-auto mt-6 max-w-3xl text-center text-sm leading-7 text-[#e9decb]/76 md:text-base md:leading-8">
-            Limited prepaid packages for qualified professionals — not discounted public dining. Each package reserves a defined number of private table experiences, purchased and paid upfront, with priority scheduling for the relationships that carry your practice forward.
+            Single Experience, Professional 5-Pack, or Professional 10-Pack — purchased upfront for client appreciation, closing gifts, and relationship hospitality. Each experience includes {PARTNER_GUEST_RULES.includedSummary}.
           </p>
 
-          <div className="mt-14 grid gap-5 md:mt-16 md:grid-cols-2 md:gap-6">
+          <div className="mt-14 grid gap-5 md:mt-16 md:grid-cols-3 md:gap-6">
             {PREPAID_PARTNER_PACKAGES.map((pkg, index) => (
               <motion.article
                 key={pkg.title}
@@ -636,19 +714,32 @@ export default function PartnerConciergePage() {
                 className="border border-[#c4a465]/22 bg-[#100e0b]/65 p-6 backdrop-blur-sm md:p-8"
               >
                 <p className="text-[10px] uppercase tracking-[0.3em] text-[#c4a465]/80">
-                  {pkg.tableCount}-Table Partner Package
+                  {pkg.tableCount === 1
+                    ? "Single Experience"
+                    : `${pkg.tableCount}-Experience Pack`}
                 </p>
 
                 <h3
-                  className="mt-5 text-[2rem] leading-[0.96] tracking-[-0.03em] md:text-3xl"
+                  className="mt-5 text-[1.85rem] leading-[0.96] tracking-[-0.03em] md:text-[2rem]"
                   style={{ fontFamily: "var(--font-cormorant)" }}
                 >
                   {pkg.title}
                 </h3>
 
                 <p className="mt-4 text-sm text-[#c4a465]">
-                  {pkg.price} prepaid
+                  {pkg.price}
+                  {pkg.savingsLabel ? (
+                    <span className="ml-2 text-[#e9decb]/55">
+                      · {pkg.savingsLabel}
+                    </span>
+                  ) : null}
                 </p>
+
+                {pkg.tableCount > 1 ? (
+                  <p className="mt-2 text-xs tracking-[0.04em] text-[#bfb39f]">
+                    {pkg.perExperiencePrice} per experience
+                  </p>
+                ) : null}
 
                 <p className="mt-6 text-sm leading-7 text-[#e9decb]/80">
                   {pkg.desc}

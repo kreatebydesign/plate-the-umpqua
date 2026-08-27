@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Cormorant_Garamond, Work_Sans } from "next/font/google";
 import {
+  PARTNER_GUEST_RULES,
   PARTNER_INQUIRY_HREF,
   PREPAID_PARTNER_COMMITMENT_POINTS,
   PREPAID_PARTNER_PACKAGES,
@@ -156,10 +157,10 @@ export default function PackagesPage() {
           </h2>
 
           <p className="mx-auto mt-6 max-w-3xl text-center text-sm leading-7 text-[#e9decb]/76 md:text-base md:leading-8">
-            For realtors, advisors, medical practices, attorneys, wineries, and executive teams — limited prepaid packages purchased upfront, with priority scheduling and defined service parameters.
+            For real estate, medical, legal, builders, and sales teams — Single Experience, Professional 5-Pack, and Professional 10-Pack. Each experience includes {PARTNER_GUEST_RULES.includedSummary}.
           </p>
 
-          <div className="mt-14 grid gap-5 md:grid-cols-2 md:gap-6">
+          <div className="mt-14 grid gap-5 md:grid-cols-3 md:gap-6">
             {PREPAID_PARTNER_PACKAGES.map((pkg, index) => (
               <motion.article
                 key={pkg.title}
@@ -171,17 +172,32 @@ export default function PackagesPage() {
                 className="border border-[#c4a465]/20 bg-[#0d0b08]/55 p-6 backdrop-blur-sm md:p-8"
               >
                 <p className="text-[10px] uppercase tracking-[0.3em] text-[#c4a465]/80">
-                  {pkg.tableCount}-Table Partner Package
+                  {pkg.tableCount === 1
+                    ? "Single Experience"
+                    : `${pkg.tableCount}-Experience Pack`}
                 </p>
 
                 <h3
-                  className="mt-5 text-[2rem] leading-[0.96] tracking-[-0.03em] md:text-3xl"
+                  className="mt-5 text-[1.85rem] leading-[0.96] tracking-[-0.03em] md:text-[2rem]"
                   style={{ fontFamily: "var(--font-cormorant)" }}
                 >
                   {pkg.title}
                 </h3>
 
-                <p className="mt-4 text-sm text-[#c4a465]">{pkg.price} prepaid</p>
+                <p className="mt-4 text-sm text-[#c4a465]">
+                  {pkg.price}
+                  {pkg.savingsLabel ? (
+                    <span className="ml-2 text-[#e9decb]/55">
+                      · {pkg.savingsLabel}
+                    </span>
+                  ) : null}
+                </p>
+
+                {pkg.tableCount > 1 ? (
+                  <p className="mt-2 text-xs tracking-[0.04em] text-[#bfb39f]">
+                    {pkg.perExperiencePrice} per experience
+                  </p>
+                ) : null}
 
                 <p className="mt-6 text-sm leading-7 text-[#e9decb]/80">
                   {pkg.desc}

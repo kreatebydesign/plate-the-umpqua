@@ -15,16 +15,18 @@ export const BUDGET_VALUES = [
   '425-750',
   '750-1500',
   '2000+',
-  'partner-1500',
-  'partner-2800',
+  'partner-425',
+  'partner-1750',
+  'partner-3400',
 ] as const
 export const PACKAGE_VALUES = [
   'Private Table',
   'Estate',
   'Concierge',
   'Wine',
-  'Realtor Concierge',
-  'Preferred Access',
+  'Single Experience',
+  'Professional 5-Pack',
+  'Professional 10-Pack',
 ] as const
 export const URGENCY_VALUES = ['this-week', 'this-month', 'future'] as const
 export const GUEST_VALUES = [

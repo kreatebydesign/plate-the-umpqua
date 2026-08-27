@@ -1,5 +1,5 @@
 /**
- * Public Partner Concierge pricing — individual experience tiers and prepaid bulk packages.
+ * Public Partner Concierge pricing — single experiences and prepaid professional packs.
  * Single source of truth for marketing pages, inquiry flows, and structured data.
  */
 
@@ -15,22 +15,39 @@ export type PrepaidPartnerPackage = {
   tableCount: number
   price: string
   priceCents: number
+  perExperiencePrice: string
+  savingsLabel: string | null
   inquiryPackageValue: string
   inquiryBudgetValue: string
   desc: string
   features: string[]
 }
 
+/** Household guest rules for every Partner Concierge experience. */
+export const PARTNER_GUEST_RULES = {
+  includedAdults: 2,
+  includedChildren: 3,
+  includedSummary: "up to 2 adults + 3 children from the recipient household",
+  additionalPersonPrice: "$100",
+  additionalPersonPriceCents: 10000,
+  additionalHouseholdNote:
+    "Additional household members are $100 per person and should be prepaid by the gifting professional.",
+  optionalGuestNote:
+    "If the recipient later invites optional guests beyond their household, those guests are $100 per person.",
+  prepaidFraming:
+    "The professional gifts a fully prepaid household experience within the included limits — the recipient should never feel like they received a partially paid gift.",
+} as const
+
 /** Individual private dining tiers — standard per-experience pricing. */
 export const EXPERIENCE_TIERS: ExperienceTier[] = [
   {
     title: "Signature Dinner",
     price: "Starting at $425",
-    desc: "An intimate chef-led dinner for two to six guests — ideal for closing gifts, referral thank-yous, and one-to-one client appreciation.",
+    desc: "An intimate chef-led dinner for the recipient household — ideal for closing gifts, referral thank-yous, and one-to-one professional appreciation.",
     features: [
       "In-home or private venue service",
       "Seasonal multi-course menu",
-      "Concierge coordination",
+      "Up to 2 adults + 3 children included",
       "Gift-ready presentation",
     ],
   },
@@ -69,66 +86,97 @@ export const EXPERIENCE_TIERS: ExperienceTier[] = [
   },
 ]
 
-/** Limited prepaid bulk packages for qualified professional partners. */
+/**
+ * Partner gifting packages — prepaid professional offerings.
+ * Single Experience + volume packs for relationship-driven industries.
+ */
 export const PREPAID_PARTNER_PACKAGES: PrepaidPartnerPackage[] = [
   {
-    title: "Realtor Concierge",
-    tableCount: 5,
-    price: "$1,500",
-    priceCents: 150000,
-    inquiryPackageValue: "Realtor Concierge",
-    inquiryBudgetValue: "partner-1500",
-    desc: "A prepaid five-table partner package for professionals who want closing gifts, referral thank-yous, and client appreciation handled with one upfront volume commitment.",
+    title: "Single Experience",
+    tableCount: 1,
+    price: "$425",
+    priceCents: 42500,
+    perExperiencePrice: "$425",
+    savingsLabel: null,
+    inquiryPackageValue: "Single Experience",
+    inquiryBudgetValue: "partner-425",
+    desc: "One fully prepaid private dining experience for a recipient household — presented by you, executed by Plate The Umpqua.",
     features: [
-      "Five prepaid private table experiences",
-      "Priority scheduling for partner bookings",
-      "Defined guest limits and service parameters",
-      "Concierge coordination for each occasion",
+      "One prepaid chef-led experience",
+      "Up to 2 adults + 3 children included",
+      "Fully prepaid within household limits",
+      "Concierge coordination for the occasion",
     ],
   },
   {
-    title: "Preferred Access",
-    tableCount: 10,
-    price: "$2,800",
-    priceCents: 280000,
-    inquiryPackageValue: "Preferred Access",
-    inquiryBudgetValue: "partner-2800",
-    desc: "A prepaid ten-table partner package for teams and practices that need a reserved hospitality layer — client appreciation, staff recognition, and relationship-building across the year.",
+    title: "Professional 5-Pack",
+    tableCount: 5,
+    price: "$1,750",
+    priceCents: 175000,
+    perExperiencePrice: "$350",
+    savingsLabel: "Save $375",
+    inquiryPackageValue: "Professional 5-Pack",
+    inquiryBudgetValue: "partner-1750",
+    desc: "Five prepaid private dining experiences at preferred partner pricing — for professionals who gift relationship hospitality throughout the year.",
     features: [
-      "Ten prepaid private table experiences",
+      "Five prepaid experiences at $350 each",
+      "Up to 2 adults + 3 children per experience",
+      "Priority scheduling for partner bookings",
+      "Fully prepaid household experiences within included limits",
+    ],
+  },
+  {
+    title: "Professional 10-Pack",
+    tableCount: 10,
+    price: "$3,400",
+    priceCents: 340000,
+    perExperiencePrice: "$340",
+    savingsLabel: "Save $850",
+    inquiryPackageValue: "Professional 10-Pack",
+    inquiryBudgetValue: "partner-3400",
+    desc: "Ten prepaid private dining experiences for teams and practices that need a reserved hospitality layer across closings, milestones, and recognition moments.",
+    features: [
+      "Ten prepaid experiences at $340 each",
+      "Up to 2 adults + 3 children per experience",
       "Priority scheduling and partner coordination",
-      "Defined guest limits and service parameters",
       "Reserved capacity for high-value relationships",
     ],
   },
 ]
 
 export const PREPAID_PARTNER_QUALIFIED_INDUSTRIES = [
-  "Realtors & luxury real estate teams",
+  "Real estate agents & brokerages",
+  "Doctors & medical practices",
+  "Attorneys & law firms",
+  "Builders, contractors & remodelers",
+  "Sales professionals & sales teams",
   "Financial advisors & wealth managers",
-  "Doctors, dentists & medical practices",
-  "Attorneys & legal practices",
-  "CPAs & accounting firms",
   "Insurance agencies",
-  "Wineries & estate partners",
   "Business owners & executive teams",
 ] as const
 
 export const PREPAID_PARTNER_COMMITMENT_POINTS = [
   "Purchased and paid upfront before experiences are scheduled",
+  "Each experience includes up to 2 adults + 3 children from the recipient household",
+  "Additional household members are $100 per person and should be prepaid by the gifting professional",
+  "Optional guests beyond the household are $100 per person — so the recipient never feels the gift was partially paid",
   "Designed for client appreciation, closing gifts, referral thank-yous, staff recognition, and professional relationship-building",
-  "Priority scheduling within defined partner parameters",
-  "Clear guest limits and service scope for each prepaid table",
   "Travel beyond the standard service radius, alcohol, rentals, gratuity, specialty ingredients, and major customizations are quoted separately",
   "Availability is limited — partner packages are offered selectively, not as public dining",
 ] as const
 
 export const PARTNER_INQUIRY_HREF = "/inquiry?source=partner-concierge"
 
-export function partnerPackageInquiryHref(packageValue: string) {
+export function partnerPackageInquiryHref(
+  packageValue: string,
+  industrySlug?: string,
+) {
   const params = new URLSearchParams({
     source: "partner-concierge",
     package: packageValue,
   })
+  if (industrySlug) {
+    params.set("industry", industrySlug)
+  }
   return `/inquiry?${params.toString()}`
 }

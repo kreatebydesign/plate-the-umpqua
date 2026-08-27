@@ -46,11 +46,13 @@ function getLeadType(data: PublicInquiryInput, leadSource: LeadSource) {
     isConciergeChannelLead(leadSource) ||
     leadSource === 'realtor' ||
     pkg === 'Concierge' ||
-    pkg === 'Realtor Concierge' ||
-    pkg === 'Preferred Access' ||
+    pkg === 'Single Experience' ||
+    pkg === 'Professional 5-Pack' ||
+    pkg === 'Professional 10-Pack' ||
     budget === '2000+' ||
-    budget === 'partner-1500' ||
-    budget === 'partner-2800'
+    budget === 'partner-425' ||
+    budget === 'partner-1750' ||
+    budget === 'partner-3400'
   ) {
     return 'REALTOR / PARTNER LEAD'
   }

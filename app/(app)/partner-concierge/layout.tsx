@@ -5,7 +5,7 @@ import {
 } from "@/lib/site/partnerConciergePricing";
 
 const description =
-  "Partner Concierge prepaid packages and chef-led private dining for realtors, advisors, medical practices, attorneys, and executive teams across Roseburg and the Umpqua Valley.";
+  "Professional gifting packages and chef-led private dining for real estate, medical, legal, builders, and sales teams across Roseburg and the Umpqua Valley.";
 
 const partnerOffersSchema = {
   "@context": "https://schema.org",
@@ -32,7 +32,7 @@ const partnerOffersSchema = {
       position: EXPERIENCE_TIERS.length + index + 1,
       item: {
         "@type": "Offer",
-        name: `${pkg.title} — ${pkg.tableCount}-table partner package`,
+        name: `${pkg.title}${pkg.tableCount > 1 ? ` — ${pkg.tableCount}-experience pack` : ""}`,
         description: pkg.desc,
         price: String(pkg.priceCents / 100),
         priceCurrency: "USD",

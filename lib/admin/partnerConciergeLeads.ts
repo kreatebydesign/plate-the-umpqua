@@ -61,8 +61,12 @@ const BUDGET_LABELS: Record<string, string> = {
   '425-750': '$425–$750',
   '750-1500': '$750–$1,500',
   '2000+': '$2,000+',
-  'partner-1500': '$1,500 — Realtor Concierge (5-table)',
-  'partner-2800': '$2,800 — Preferred Access (10-table)',
+  'partner-425': '$425 — Single Experience',
+  'partner-1750': '$1,750 — Professional 5-Pack',
+  'partner-3400': '$3,400 — Professional 10-Pack',
+  // Legacy inquiry budget labels (pre-2026 partner pricing)
+  'partner-1500': '$1,500 — legacy 5-table',
+  'partner-2800': '$2,800 — legacy 10-table',
 }
 
 const NEW_STATUSES = new Set<NonNullable<Inquiry['status']>>([

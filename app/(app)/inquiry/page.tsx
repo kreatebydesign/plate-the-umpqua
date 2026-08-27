@@ -174,13 +174,13 @@ function InquiryForm() {
   const headline = isCommunityPartnership
     ? "Community Partnership Inquiry"
     : isPartnerConcierge
-      ? "Request Partner Concierge access."
+      ? "Start Your Partner Package."
       : "Request a private hospitality experience.";
 
   const supportingCopy = isCommunityPartnership
     ? "Tell us about your community, resident profile, and the hospitality amenity you want to bring on-property. We will follow up directly to design a partnership."
     : isPartnerConcierge
-      ? "Share the occasion, your client relationship, and the tone you want the evening to carry. We will follow up directly to shape the experience."
+      ? "Choose a Single Experience, Professional 5-Pack, or Professional 10-Pack. Share your industry and how you plan to gift — we will follow up to complete your Partner Concierge package."
       : "Private dining, estate gatherings, concierge hospitality, and elevated evenings across Roseburg and the Umpqua Valley.";
 
   const detailsPlaceholder = isCommunityPartnership
@@ -192,7 +192,7 @@ function InquiryForm() {
   const submitLabel = isCommunityPartnership
     ? "Request Community Partnership"
     : isPartnerConcierge
-      ? "Request Partner Access"
+      ? "Request Your Gift Package"
       : "Request Availability";
 
   return (
@@ -296,7 +296,11 @@ function InquiryForm() {
               name="guests"
               className="h-[58px] border border-[#c4a465]/18 bg-[#14120e] px-5 text-sm outline-none transition focus:border-[#c4a465]/55"
             >
-              <option value="">Guest Count</option>
+              <option value="">
+                {isPartnerConcierge
+                  ? "Recipient Household Size (if known)"
+                  : "Guest Count"}
+              </option>
               <option>2-4 Guests</option>
               <option>5-10 Guests</option>
               <option>10-20 Guests</option>
@@ -314,11 +318,14 @@ function InquiryForm() {
               <option value="2000+">$2,000+</option>
               {isPartnerConcierge ? (
                 <>
-                  <option value="partner-1500">
-                    $1,500 — Realtor Concierge (5-table)
+                  <option value="partner-425">
+                    $425 — Single Experience
                   </option>
-                  <option value="partner-2800">
-                    $2,800 — Preferred Access (10-table)
+                  <option value="partner-1750">
+                    $1,750 — Professional 5-Pack
+                  </option>
+                  <option value="partner-3400">
+                    $3,400 — Professional 10-Pack
                   </option>
                 </>
               ) : null}
@@ -337,11 +344,12 @@ function InquiryForm() {
               <option value="Concierge">Concierge Partner</option>
               {isPartnerConcierge ? (
                 <>
-                  <option value="Realtor Concierge">
-                    Realtor Concierge (5-table package)
+                  <option value="Single Experience">Single Experience</option>
+                  <option value="Professional 5-Pack">
+                    Professional 5-Pack
                   </option>
-                  <option value="Preferred Access">
-                    Preferred Access (10-table package)
+                  <option value="Professional 10-Pack">
+                    Professional 10-Pack
                   </option>
                 </>
               ) : null}
