@@ -1,10 +1,6 @@
 import type { ReactNode } from 'react'
-import type {
-  PartnerCertificateSampleData,
-  PartnerCertificateVariant,
-} from '@/lib/site/partnerCertificateConfig'
+import type { PartnerCertificateVariant } from '@/lib/site/partnerCertificateConfig'
 import {
-  CERTIFICATE_SAMPLE_DATA,
   CERTIFICATE_SHARED_COPY,
   CERTIFICATE_PRINT,
   isLongCertificateTitle,
@@ -13,10 +9,6 @@ import styles from './partner-certificate.module.css'
 
 type Props = {
   variant: PartnerCertificateVariant
-  /** Design QA sample data. Omit recipient for unassigned certificates. */
-  data?: PartnerCertificateSampleData
-  /** When false, hide recipient block even if sample data includes a name. */
-  showRecipient?: boolean
 }
 
 function CertificateShell({ children }: { children: ReactNode }) {
@@ -34,13 +26,16 @@ function CertificateShell({ children }: { children: ReactNode }) {
   )
 }
 
-export default function PartnerCertificate({
-  variant,
-  data = CERTIFICATE_SAMPLE_DATA,
-  showRecipient = true,
-}: Props) {
-  const recipient =
-    showRecipient && data.recipientName?.trim() ? data.recipientName.trim() : null
+/**
+ * Bulk-print certificate for preprinted inventory.
+ * Presented To / Presented By are blank write-in fields for the
+ * gifting professional. Certificate ID is reserved for Plate control.
+ *
+ * Future architecture (not implemented here):
+ * A) unique certificate ID + common redemption QR, or
+ * B) unique QR bound to each certificate.
+ */
+export default function PartnerCertificate({ variant }: Props) {
   const titleClassName = isLongCertificateTitle(variant.title)
     ? `${styles.title} ${styles.titleLong}`
     : styles.title
@@ -53,7 +48,8 @@ export default function PartnerCertificate({
         </p>
         <p className={styles.previewSpec}>
           {CERTIFICATE_PRINT.label} · View at 100% / Actual Size · Do not use Fit to
-          Page · Safe area {CERTIFICATE_PRINT.safeAreaIn}″
+          Page · Safe area {CERTIFICATE_PRINT.safeAreaIn}″ · Handwritten Presented To /
+          By
         </p>
       </header>
 
@@ -78,25 +74,35 @@ export default function PartnerCertificate({
                 <p className={styles.occasionCopy}>{variant.occasionCopy}</p>
               </div>
 
-              <div className={styles.metaRow}>
-                <div className={styles.metaBlock}>
-                  <p className={styles.metaLabel}>
-                    {CERTIFICATE_SHARED_COPY.presentedLabel}
-                  </p>
-                  <p className={styles.metaValueScript}>{data.presentedByName}</p>
-                  <p className={styles.metaSub}>{data.presentedByCompany}</p>
-                </div>
-
-                {recipient ? (
-                  <div className={`${styles.metaBlock} ${styles.metaBlockEnd}`}>
-                    <p className={styles.metaLabel}>
-                      {CERTIFICATE_SHARED_COPY.recipientLabel}
+              {/*
+                Warm ivory personalization panel — ordinary black/blue pen.
+                Luxury stationery inset; not a web form. No ornament under lines.
+              */}
+              <div className={styles.personalizationPanel}>
+                <div className={styles.writeFields}>
+                  <div className={styles.writeField}>
+                    <p className={styles.writeLabel}>
+                      {CERTIFICATE_SHARED_COPY.presentedToLabel}
                     </p>
-                    <p className={styles.metaValueScript}>{recipient}</p>
+                    <div
+                      className={styles.writeLane}
+                      aria-label="Handwriting line for Presented To"
+                    >
+                      <span className={styles.writeRule} aria-hidden="true" />
+                    </div>
                   </div>
-                ) : (
-                  <div className={styles.metaBlock} aria-hidden="true" />
-                )}
+                  <div className={styles.writeField}>
+                    <p className={styles.writeLabel}>
+                      {CERTIFICATE_SHARED_COPY.presentedByLabel}
+                    </p>
+                    <div
+                      className={styles.writeLane}
+                      aria-label="Handwriting line for Presented By"
+                    >
+                      <span className={styles.writeRule} aria-hidden="true" />
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className={styles.entitlement}>
@@ -107,11 +113,6 @@ export default function PartnerCertificate({
                   {CERTIFICATE_SHARED_COPY.includedGuestsLine2}
                 </p>
               </div>
-
-              <p className={styles.certNumber}>
-                {CERTIFICATE_SHARED_COPY.certificateLabel}{' '}
-                <strong>{data.certificateNumber}</strong>
-              </p>
             </div>
           </CertificateShell>
         </section>
@@ -147,17 +148,27 @@ export default function PartnerCertificate({
                   {/*
                     FUTURE QR BINDING:
                     Replace this placeholder with a generated QR that encodes
-                    the certificate redemption URL / token. Do not implement
-                    redemption, activation, or scanning backends in this design pass.
+                    the certificate redemption URL / token. Prefer unique QR
+                    per certificate, or unique ID + common QR. Do not implement
+                    redemption, activation, or scanning backends here.
                   */}
                   <div className={styles.qrPlaceholder} aria-label="QR placeholder">
                     <div className={styles.qrMark} aria-hidden="true" />
                   </div>
-                  <p className={styles.asideNumber}>
-                    {CERTIFICATE_SHARED_COPY.certificateLabel}
-                    <strong>{data.certificateNumber}</strong>
+                  {/*
+                    Reserved for Plate-controlled unique certificate ID
+                    (variable-data print, label, or handwriting). Ivory inset
+                    supports ordinary black/blue ink and clean VDP.
+                  */}
+                  <div className={styles.certificateIdPanel}>
+                    <p className={styles.certificateIdLabel}>
+                      {CERTIFICATE_SHARED_COPY.certificateIdLabel}
+                    </p>
+                    <span className={styles.certificateIdRule} aria-hidden="true" />
+                  </div>
+                  <p className={styles.asideUrl}>
+                    {CERTIFICATE_SHARED_COPY.redemptionUrlPlaceholder}
                   </p>
-                  <p className={styles.asideUrl}>{data.redemptionUrlPlaceholder}</p>
                 </section>
 
                 <section className={styles.zone}>

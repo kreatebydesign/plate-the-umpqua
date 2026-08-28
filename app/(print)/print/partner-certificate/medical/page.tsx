@@ -6,15 +6,5 @@ import PartnerCertificatePrintPage, {
 export const metadata: Metadata = buildPartnerCertificateMetadata('medical')
 
 export default function MedicalCertificatePrintRoute() {
-  return (
-    <PartnerCertificatePrintPage
-      slug="medical"
-      sampleOverrides={{
-        certificateNumber: 'PTU-MD-000091',
-        presentedByName: 'Dr. Elena Vargas',
-        presentedByCompany: 'Umpqua Valley Medical Group',
-        recipientName: 'The Rivera Family',
-      }}
-    />
-  )
+  return <PartnerCertificatePrintPage slug="medical" />
 }

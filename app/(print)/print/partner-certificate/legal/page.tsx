@@ -6,15 +6,5 @@ import PartnerCertificatePrintPage, {
 export const metadata: Metadata = buildPartnerCertificateMetadata('legal')
 
 export default function LegalCertificatePrintRoute() {
-  return (
-    <PartnerCertificatePrintPage
-      slug="legal"
-      sampleOverrides={{
-        certificateNumber: 'PTU-LG-000056',
-        presentedByName: 'Michael Chen',
-        presentedByCompany: 'Chen & Associates LLP',
-        recipientName: undefined,
-      }}
-    />
-  )
+  return <PartnerCertificatePrintPage slug="legal" />
 }

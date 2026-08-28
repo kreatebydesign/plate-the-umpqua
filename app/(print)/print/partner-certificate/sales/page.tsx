@@ -6,15 +6,5 @@ import PartnerCertificatePrintPage, {
 export const metadata: Metadata = buildPartnerCertificateMetadata('sales')
 
 export default function SalesCertificatePrintRoute() {
-  return (
-    <PartnerCertificatePrintPage
-      slug="sales"
-      sampleOverrides={{
-        certificateNumber: 'PTU-PF-000203',
-        presentedByName: 'Leadership Team',
-        presentedByCompany: 'Cascade Performance Group',
-        recipientName: 'Alex Morgan',
-      }}
-    />
-  )
+  return <PartnerCertificatePrintPage slug="sales" />
 }

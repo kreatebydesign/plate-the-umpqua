@@ -1,6 +1,10 @@
 /**
  * Partner Concierge physical gift certificate — design/print config only.
  * One visual system; industry variants differ by occasion language only.
+ *
+ * Bulk-print inventory model: cards print unassigned. The gifting
+ * professional handwrites Presented To / Presented By when gifting.
+ * Certificate ID is reserved for Plate The Umpqua (variable-data later).
  * No QR generation, redemption, or fulfillment logic.
  */
 
@@ -25,20 +29,13 @@ export type PartnerCertificateVariant = {
   seoTitle: string
 }
 
-export type PartnerCertificateSampleData = {
-  certificateNumber: string
-  presentedByName: string
-  presentedByCompany: string
-  /** Leave empty / omit when certificate is unassigned */
-  recipientName?: string
-  /** Future: bound QR target. Design uses a visual placeholder only. */
-  redemptionUrlPlaceholder: string
-}
-
-/** Shared copy for every certificate face. */
+/** Shared copy for every bulk-print certificate face. */
 export const CERTIFICATE_SHARED_COPY = {
   brand: 'Plate The Umpqua',
   brandTag: 'Private Dining Experiences',
+  /** Handwritten by the gifting professional at presentation */
+  presentedToLabel: 'Presented To',
+  presentedByLabel: 'Presented By',
   includedGuestsLine1: 'Includes up to 2 adults + 3 children',
   includedGuestsLine2: 'from the household',
   guestInfoHeading: 'Guest Information',
@@ -54,6 +51,11 @@ export const CERTIFICATE_SHARED_COPY = {
     'We coordinate your private evening.',
   ],
   scanHeading: 'Scan to Redeem',
+  /**
+   * Reserved for Plate-controlled unique ID (variable-data print / label).
+   * Not created by the gifting professional. Not a form control.
+   */
+  certificateIdLabel: 'Certificate ID',
   questionsHeading: 'Questions',
   termsHeading: 'Terms',
   terms: [
@@ -63,9 +65,8 @@ export const CERTIFICATE_SHARED_COPY = {
   ],
   contactSite: 'PlateTheUmpqua.com',
   contactEmail: 'hello@platetheumpqua.com',
-  presentedLabel: 'Presented By',
-  recipientLabel: 'Prepared For',
-  certificateLabel: 'Certificate',
+  /** Shared redemption path placeholder — not certificate-specific. */
+  redemptionUrlPlaceholder: 'platetheumpqua.com/experience',
 } as const
 
 export const PARTNER_CERTIFICATE_VARIANTS: Record<
@@ -79,7 +80,7 @@ export const PARTNER_CERTIFICATE_VARIANTS: Record<
     supportingLine: 'An evening at home, prepared for you.',
     occasionCopy:
       'Presented to celebrate the beginning of life in your new home.',
-    previewLabel: 'Real Estate · Closing Gift',
+    previewLabel: 'Real Estate · Bulk Print Inventory',
     seoTitle: 'Welcome Home Gift Certificate | Print Preview',
   },
   builders: {
@@ -89,7 +90,7 @@ export const PARTNER_CERTIFICATE_VARIANTS: Record<
     supportingLine: 'An evening at home, prepared for you.',
     occasionCopy:
       'Presented to celebrate the completion of your new space.',
-    previewLabel: 'Builders · Completion Gift',
+    previewLabel: 'Builders · Bulk Print Inventory',
     seoTitle: 'Home Completion Gift Certificate | Print Preview',
   },
   medical: {
@@ -99,7 +100,7 @@ export const PARTNER_CERTIFICATE_VARIANTS: Record<
     supportingLine: 'An evening at home, prepared for you.',
     occasionCopy:
       'Presented to celebrate your care, dedication, and impact.',
-    previewLabel: 'Medical · Appreciation Gift',
+    previewLabel: 'Medical · Bulk Print Inventory',
     seoTitle: 'Medical Appreciation Gift Certificate | Print Preview',
   },
   legal: {
@@ -109,7 +110,7 @@ export const PARTNER_CERTIFICATE_VARIANTS: Record<
     supportingLine: 'An evening at home, prepared for you.',
     occasionCopy:
       'Presented to celebrate partnership, trust, and results.',
-    previewLabel: 'Legal · Appreciation Gift',
+    previewLabel: 'Legal · Bulk Print Inventory',
     seoTitle: 'Legal Appreciation Gift Certificate | Print Preview',
   },
   sales: {
@@ -119,19 +120,9 @@ export const PARTNER_CERTIFICATE_VARIANTS: Record<
     supportingLine: 'An evening at home, prepared for you.',
     occasionCopy:
       'Presented to celebrate outstanding performance and achievement.',
-    previewLabel: 'Sales · Performance Gift',
+    previewLabel: 'Sales · Bulk Print Inventory',
     seoTitle: 'Sales Performance Gift Certificate | Print Preview',
   },
-}
-
-/** Tasteful sample data for design QA only — not production issuance. */
-export const CERTIFICATE_SAMPLE_DATA: PartnerCertificateSampleData = {
-  certificateNumber: 'PTU-WH-000184',
-  presentedByName: 'Jane Smith',
-  presentedByCompany: 'Premier Realty Group',
-  recipientName: 'The Williams Family',
-  // Future QR binding target — visual placeholder only in this design pass.
-  redemptionUrlPlaceholder: 'platetheumpqua.com/experience',
 }
 
 export const CERTIFICATE_PRINT = {
@@ -139,9 +130,13 @@ export const CERTIFICATE_PRINT = {
   heightIn: 5,
   label: '7″ × 5″ landscape',
   /** Minimum distance from trim for essential typography */
-  safeAreaIn: 0.25,
+  safeAreaIn: 0.32,
   /** Character count (including spaces) at which headline uses the long-title print class */
   longTitleThreshold: 17,
+  /** Physical width of each front handwriting line (inside ivory panel) */
+  handwritingLineWidthIn: 4.75,
+  /** Clear vertical lane above each writing baseline (black/blue pen) */
+  handwritingLaneHeightIn: 0.34,
 } as const
 
 export function isLongCertificateTitle(title: string) {

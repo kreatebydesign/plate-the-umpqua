@@ -6,15 +6,5 @@ import PartnerCertificatePrintPage, {
 export const metadata: Metadata = buildPartnerCertificateMetadata('real-estate')
 
 export default function RealEstateCertificatePrintRoute() {
-  return (
-    <PartnerCertificatePrintPage
-      slug="real-estate"
-      sampleOverrides={{
-        certificateNumber: 'PTU-WH-000184',
-        presentedByName: 'Jane Smith',
-        presentedByCompany: 'Premier Realty Group',
-        recipientName: 'The Williams Family',
-      }}
-    />
-  )
+  return <PartnerCertificatePrintPage slug="real-estate" />
 }

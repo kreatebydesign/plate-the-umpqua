@@ -6,15 +6,5 @@ import PartnerCertificatePrintPage, {
 export const metadata: Metadata = buildPartnerCertificateMetadata('builders')
 
 export default function BuildersCertificatePrintRoute() {
-  return (
-    <PartnerCertificatePrintPage
-      slug="builders"
-      sampleOverrides={{
-        certificateNumber: 'PTU-HC-000127',
-        presentedByName: 'Marcus Hale',
-        presentedByCompany: 'Hale Custom Homes',
-        recipientName: 'The Anderson Family',
-      }}
-    />
-  )
+  return <PartnerCertificatePrintPage slug="builders" />
 }
