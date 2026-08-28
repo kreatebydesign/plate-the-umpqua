@@ -75,6 +75,9 @@ export default function OsShell({
     if (pathname.startsWith('/os/mobile-qa')) {
       return { title: 'Mobile QA', eyebrow: 'Director checklist' }
     }
+    if (pathname.startsWith('/os/partner-concierge')) {
+      return { title: 'Sales Materials', eyebrow: 'Partner Concierge' }
+    }
     if (pathname.startsWith('/os/invoices/') && pathname !== '/os/invoices') {
       if (pathname.endsWith('/new')) {
         return { title: 'Create invoice', eyebrow: 'Hospitality billing' }

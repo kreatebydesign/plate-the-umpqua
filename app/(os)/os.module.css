@@ -1558,6 +1558,87 @@ select.fieldControl::-ms-expand,
   margin-bottom: 1.1rem;
 }
 
+/* Partner Concierge */
+
+.materialGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.materialCard {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1.15rem 1.2rem 1.25rem;
+  border: 1px solid var(--os-line);
+  border-radius: var(--os-radius);
+  background: rgba(246, 243, 236, 0.028);
+}
+
+.materialCardHeader {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.materialIndustry {
+  margin: 0;
+  color: rgba(196, 164, 101, 0.92);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.materialProgram {
+  margin: 0;
+  color: var(--os-ivory);
+  font-family: var(--os-font-display);
+  font-size: 1.2rem;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.materialUrl {
+  margin: 0;
+  color: rgba(239, 230, 212, 0.45);
+  font-size: 0.76rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.instructionList {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.instructionItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin: 0;
+  color: rgba(239, 230, 212, 0.72);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.instructionStep {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid var(--os-line-strong);
+  border-radius: 999px;
+  color: rgba(196, 164, 101, 0.95);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
 /* Invoices */
 
 .invoiceLines {
