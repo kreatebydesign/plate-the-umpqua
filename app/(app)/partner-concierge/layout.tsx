@@ -3,6 +3,7 @@ import {
   EXPERIENCE_TIERS,
   PREPAID_PARTNER_PACKAGES,
 } from "@/lib/site/partnerConciergePricing";
+import { absoluteSiteUrl, SITE_ORIGIN } from "@/lib/site/siteUrl";
 
 const description =
   "Professional gifting packages and chef-led private dining for real estate, medical, legal, builders, and sales teams across Roseburg and the Umpqua Valley.";
@@ -23,7 +24,7 @@ const partnerOffersSchema = {
         provider: {
           "@type": "FoodEstablishment",
           name: "Plate The Umpqua",
-          url: "https://platetheumpqua.com",
+          url: SITE_ORIGIN,
         },
       },
     })),
@@ -40,7 +41,7 @@ const partnerOffersSchema = {
         seller: {
           "@type": "FoodEstablishment",
           name: "Plate The Umpqua",
-          url: "https://platetheumpqua.com",
+          url: SITE_ORIGIN,
         },
       },
     })),
@@ -53,10 +54,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Partner Concierge Program | Plate The Umpqua",
     description,
-    url: "https://platetheumpqua.com/partner-concierge",
+    url: absoluteSiteUrl("/partner-concierge"),
   },
   alternates: {
-    canonical: "https://platetheumpqua.com/partner-concierge",
+    canonical: absoluteSiteUrl("/partner-concierge"),
   },
 };
 

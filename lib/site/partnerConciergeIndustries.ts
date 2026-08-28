@@ -3,6 +3,9 @@
  * Shared template consumes this config — keep pages thin.
  */
 
+import type { Metadata } from 'next'
+import { absoluteSiteUrl } from '@/lib/site/siteUrl'
+
 export type PartnerIndustrySlug =
   | "real-estate"
   | "medical"
@@ -528,6 +531,22 @@ export function getPartnerIndustry(
   slug: string,
 ): PartnerIndustryConfig | undefined {
   return PARTNER_INDUSTRIES.find((industry) => industry.slug === slug)
+}
+
+export function partnerIndustryMetadata(slug: PartnerIndustrySlug): Metadata {
+  const industry = getPartnerIndustry(slug)!
+  return {
+    title: industry.seo.title,
+    description: industry.seo.description,
+    openGraph: {
+      title: `${industry.seo.title} | Plate The Umpqua`,
+      description: industry.seo.description,
+      url: absoluteSiteUrl(industry.href),
+    },
+    alternates: {
+      canonical: absoluteSiteUrl(industry.href),
+    },
+  }
 }
 
 export function partnerIndustryInquiryHref(slug: PartnerIndustrySlug) {

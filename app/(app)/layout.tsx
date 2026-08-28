@@ -1,13 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import SiteShell from "./components/SiteShell";
+import { SITE_ORIGIN } from "@/lib/site/siteUrl";
 import "./globals.css";
 
 const businessSchema = {
   "@context": "https://schema.org",
   "@type": "FoodEstablishment",
   name: "Plate The Umpqua",
-  url: "https://platetheumpqua.com",
+  url: SITE_ORIGIN,
   description:
     "Chef-led private dining, estate dinners, realtor concierge hospitality, and wine country experiences rooted in Roseburg and the Umpqua Valley.",
   areaServed: ["Roseburg, Oregon", "Umpqua Valley", "Southern Oregon"],
@@ -26,7 +27,7 @@ const businessSchema = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://platetheumpqua.com"),
+  metadataBase: new URL(SITE_ORIGIN),
 
   title: {
     default: "Plate The Umpqua | Private Hospitality in Roseburg, Oregon",
@@ -66,7 +67,7 @@ export const metadata: Metadata = {
     title: "Plate The Umpqua | Private Hospitality in Roseburg, Oregon",
     description:
       "Private hospitality, chef-led dinners, estate gatherings, and concierge table experiences across Roseburg, the Umpqua Valley, and Southern Oregon.",
-    url: "https://platetheumpqua.com",
+    url: SITE_ORIGIN,
     siteName: "Plate The Umpqua",
     locale: "en_US",
     type: "website",
@@ -89,7 +90,7 @@ export const metadata: Metadata = {
   },
 
   alternates: {
-    canonical: "https://platetheumpqua.com",
+    canonical: SITE_ORIGIN,
   },
 
   robots: {
