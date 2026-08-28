@@ -14,7 +14,7 @@ type Props = {
 /**
  * Front face only — for sell-sheet and collateral embedding.
  * Uses the approved certificate design at physical 7×5 dimensions;
- * parent applies scale for composition.
+ * parent applies scale for composition. No sample purchaser/recipient names.
  */
 export default function PartnerCertificateFrontPreview({
   variant,
@@ -60,24 +60,19 @@ export default function PartnerCertificateFrontPreview({
             <p className={certStyles.supporting}>{variant.supportingLine}</p>
             <p className={certStyles.occasionCopy}>{variant.occasionCopy}</p>
           </div>
-          <div className={certStyles.personalizationPanel}>
-            <div className={certStyles.writeFields}>
-              <div className={certStyles.writeField}>
-                <p className={certStyles.writeLabel}>
-                  {CERTIFICATE_SHARED_COPY.presentedToLabel}
-                </p>
-                <div className={certStyles.writeLane}>
-                  <span className={certStyles.writeRule} aria-hidden="true" />
-                </div>
-              </div>
-              <div className={certStyles.writeField}>
-                <p className={certStyles.writeLabel}>
-                  {CERTIFICATE_SHARED_COPY.presentedByLabel}
-                </p>
-                <div className={certStyles.writeLane}>
-                  <span className={certStyles.writeRule} aria-hidden="true" />
-                </div>
-              </div>
+          <div className={certStyles.metaRow}>
+            <div className={certStyles.metaBlock}>
+              <p className={certStyles.metaLabel}>
+                {CERTIFICATE_SHARED_COPY.presentedLabel}
+              </p>
+              <p className={certStyles.metaValueScript}>{'\u00A0'}</p>
+              <p className={certStyles.metaSub}>{'\u00A0'}</p>
+            </div>
+            <div className={`${certStyles.metaBlock} ${certStyles.metaBlockEnd}`}>
+              <p className={certStyles.metaLabel}>
+                {CERTIFICATE_SHARED_COPY.recipientLabel}
+              </p>
+              <p className={certStyles.metaValueScript}>{'\u00A0'}</p>
             </div>
           </div>
           <div className={certStyles.entitlement}>
