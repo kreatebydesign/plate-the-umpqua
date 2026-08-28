@@ -1,0 +1,587 @@
+/* Partner Concierge B2B sell sheet — 8.5″ × 11″ portrait
+   Premium hospitality collateral. Physical pt units. Shared design system. */
+
+.preview {
+  --bg: #0c0b09;
+  --bg-lift: #0e0d0a;
+  --ivory: #efe6d4;
+  --ivory-warm: #e9e1d1;
+  --champagne: #c8b99d;
+  --champagne-mute: rgba(200, 185, 157, 0.58);
+  --gold: #c09a52;
+  --gold-deep: #b89555;
+  --gold-soft: rgba(192, 154, 82, 0.65);
+  --gold-line: rgba(192, 154, 82, 0.4);
+  --rule: rgba(192, 154, 82, 0.26);
+  --safe: 0.32in;
+
+  min-height: 100vh;
+  background: #16140f;
+  color: var(--ivory);
+  font-family: var(--font-work), "Work Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.previewChrome {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 1.75rem 1.25rem 0.5rem;
+  text-align: center;
+}
+
+.previewLabel {
+  margin: 0;
+  font-size: 10pt;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.previewSpec {
+  margin: 0.65rem 0 0;
+  font-size: 9pt;
+  letter-spacing: 0.04em;
+  color: var(--champagne-mute);
+}
+
+/* ─── Sheet shell ─── */
+
+.sheet {
+  box-sizing: border-box;
+  width: 8.5in;
+  height: 11in;
+  margin: 1.5rem auto 3.5rem;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--ivory);
+  box-shadow: 0 28px 64px rgba(0, 0, 0, 0.55);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Top photography band ─── */
+
+.topBand {
+  position: relative;
+  flex-shrink: 0;
+  height: 1.85in;
+}
+
+.heroPhotoWrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.heroPhoto {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+}
+
+.heroPhotoOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(12, 11, 9, 0.15) 0%,
+    rgba(12, 11, 9, 0.55) 68%,
+    var(--bg) 100%
+  );
+}
+
+.topBrand {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  padding-bottom: 0.22in;
+  text-align: center;
+}
+
+.brandName {
+  margin: 0;
+  font-size: 11pt;
+  font-weight: 500;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: var(--gold);
+  line-height: 1.15;
+}
+
+.brandProgram {
+  margin: 0.2rem 0 0;
+  font-size: 8.5pt;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--champagne);
+  line-height: 1.2;
+}
+
+/* ─── Body content ─── */
+
+.body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 var(--safe) var(--safe);
+}
+
+.sectionEyebrow {
+  margin: 0 0 0.1in;
+  font-size: 8pt;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  line-height: 1.2;
+}
+
+/* ─── Hero ─── */
+
+.hero {
+  flex-shrink: 0;
+  padding-bottom: 0.14in;
+  border-bottom: 1px solid var(--rule);
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 8.5pt;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--champagne);
+  line-height: 1.2;
+}
+
+.heroHeadline {
+  margin: 0.12in 0 0;
+  font-family: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  font-size: 26pt;
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--ivory);
+  max-width: 7.2in;
+}
+
+.heroHeadlineLong {
+  font-size: 21pt;
+  letter-spacing: -0.015em;
+  line-height: 1.08;
+}
+
+.heroSupporting {
+  margin: 0.14in 0 0;
+  max-width: 6.8in;
+  font-family: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  font-size: 12pt;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.35;
+  color: var(--ivory-warm);
+}
+
+.storyLead {
+  margin: 0.1in 0 0;
+  max-width: 7in;
+  font-size: 9.5pt;
+  line-height: 1.42;
+  color: var(--champagne);
+}
+
+/* ─── Steps ─── */
+
+.stepsSection {
+  flex-shrink: 0;
+  padding: 0.14in 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.stepsList {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.22in;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stepItem {
+  display: grid;
+  grid-template-columns: 1.35rem 1fr;
+  gap: 0.28rem;
+  align-items: start;
+}
+
+.stepNum {
+  font-size: 8.5pt;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+  padding-top: 0.06rem;
+}
+
+.stepTitle {
+  margin: 0;
+  font-size: 9.5pt;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ivory);
+  line-height: 1.25;
+}
+
+.stepDesc {
+  margin: 0.2rem 0 0;
+  font-size: 9.5pt;
+  line-height: 1.35;
+  color: var(--champagne);
+}
+
+/* ─── Editorial: Why It Matters + Certificate ─── */
+
+.editorialRow {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.3in;
+  align-items: start;
+  padding: 0.16in 0 0.18in;
+  border-bottom: 1px solid var(--rule);
+}
+
+.whyBlock {
+  min-width: 0;
+  padding-right: 0.04in;
+}
+
+.whyHeadline {
+  margin: 0;
+  font-family: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  font-size: 14pt;
+  font-weight: 400;
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+  color: var(--ivory);
+}
+
+.whyLead {
+  margin: 0.1in 0 0;
+  font-size: 9.5pt;
+  line-height: 1.38;
+  color: var(--champagne);
+}
+
+.benefitsList {
+  margin: 0.1in 0 0;
+  padding: 0 0 0 0.16in;
+  font-size: 9.5pt;
+  line-height: 1.4;
+  color: var(--champagne);
+  list-style: disc;
+}
+
+.benefitsList li {
+  margin: 0 0 0.1rem;
+}
+
+.benefitsList li:last-child {
+  margin-bottom: 0;
+}
+
+.certBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.certCaption {
+  margin: 0 0 0.08in;
+  font-size: 8pt;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-align: center;
+  line-height: 1.2;
+}
+
+.certFrame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.06in;
+  border: 1px solid var(--rule);
+  background: rgba(14, 13, 10, 0.45);
+}
+
+/* Scale approved 7×5 certificate — tighter frame, ~6% larger cert */
+.certScale {
+  position: relative;
+  width: 3.01in;
+  height: 2.15in;
+  overflow: hidden;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+}
+
+.certScale > article {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: scale(0.43);
+  transform-origin: top left;
+}
+
+/* ─── Packages ─── */
+
+.packagesSection {
+  flex-shrink: 0;
+  padding: 0.16in 0 0.1in;
+}
+
+.packagesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.16in;
+}
+
+.packageCard {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 1.22in;
+  padding: 0.11in 0.1in 0.1in;
+  text-align: center;
+  border: 1px solid var(--gold-line);
+  background: var(--bg-lift);
+}
+
+.packageTier {
+  margin: 0;
+  font-size: 9pt;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  line-height: 1.2;
+}
+
+.packagePrice {
+  margin: 0.08rem 0 0;
+  font-family: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  font-size: 22pt;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ivory);
+}
+
+.packageMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 0.38in;
+  margin-top: 0.04rem;
+}
+
+.packageMetaSpacer {
+  display: block;
+  height: 0.14rem;
+}
+
+.packagePer {
+  margin: 0;
+  font-size: 9pt;
+  letter-spacing: 0.04em;
+  color: var(--champagne);
+  line-height: 1.3;
+}
+
+.packageSave {
+  margin: 0.08rem 0 0;
+  font-size: 8pt;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--gold-soft);
+  line-height: 1.2;
+}
+
+.inclusionBlock {
+  margin-top: 0.1in;
+  padding-top: 0.1in;
+  border-top: 1px solid var(--rule);
+  text-align: center;
+}
+
+.inclusionLine {
+  margin: 0;
+  font-size: 9.5pt;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  line-height: 1.4;
+}
+
+.inclusionLineStrong {
+  margin: 0.04rem 0 0;
+  font-size: 9.5pt;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ivory);
+  line-height: 1.35;
+}
+
+.inclusionFine {
+  margin: 0.1rem 0 0;
+  font-size: 8pt;
+  letter-spacing: 0.02em;
+  color: var(--champagne-mute);
+  line-height: 1.35;
+}
+
+/* ─── CTA footer ─── */
+
+.ctaFooter {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.28in;
+  margin-top: auto;
+  padding-top: 0.12in;
+  border-top: 1px solid var(--rule);
+}
+
+.ctaMain {
+  min-width: 0;
+  flex: 1;
+}
+
+.ctaHeadline {
+  margin: 0;
+  font-family: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  font-size: 15pt;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--ivory);
+}
+
+.ctaLabel {
+  margin: 0.1rem 0 0;
+  font-size: 9.5pt;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  line-height: 1.25;
+}
+
+.ctaUrl {
+  margin: 0.06rem 0 0;
+  font-size: 10pt;
+  letter-spacing: 0.02em;
+  color: var(--champagne);
+  line-height: 1.3;
+}
+
+.ctaAside {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 0.04in;
+}
+
+.qrPlaceholder {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 0.72in;
+  height: 0.72in;
+  border: 1px solid var(--gold-line);
+  background: rgba(12, 11, 9, 0.65);
+}
+
+.qrMark {
+  width: 0.46in;
+  height: 0.46in;
+  border: 1px dashed rgba(192, 154, 82, 0.42);
+  background:
+    linear-gradient(
+      90deg,
+      transparent 46%,
+      rgba(192, 154, 82, 0.14) 46%,
+      rgba(192, 154, 82, 0.14) 54%,
+      transparent 54%
+    ),
+    linear-gradient(
+      0deg,
+      transparent 46%,
+      rgba(192, 154, 82, 0.14) 46%,
+      rgba(192, 154, 82, 0.14) 54%,
+      transparent 54%
+    );
+}
+
+.contactLine {
+  margin: 0.1rem 0 0;
+  font-size: 8pt;
+  letter-spacing: 0.02em;
+  color: var(--champagne-mute);
+  line-height: 1.35;
+}
+
+/* ─── Responsive preview scroll ─── */
+
+@media (max-width: 759px) {
+  .preview {
+    overflow-x: auto;
+    padding-inline: 0.75rem;
+  }
+}
+
+/* ─── Print ─── */
+
+@media print {
+  @page {
+    size: 8.5in 11in portrait;
+    margin: 0;
+  }
+
+  .preview {
+    background: #fff;
+  }
+
+  .previewChrome {
+    display: none !important;
+  }
+
+  .sheet {
+    margin: 0;
+    box-shadow: none;
+    width: 8.5in;
+    height: 11in;
+    page-break-after: avoid;
+  }
+}
