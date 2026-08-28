@@ -10,7 +10,9 @@ import {
   PARTNER_GUEST_RULES,
   PREPAID_PARTNER_COMMITMENT_POINTS,
   PREPAID_PARTNER_PACKAGES,
+  partnerPackageIdForTitle,
   partnerPackageInquiryHref,
+  partnerPackagePurchaseHref,
 } from "@/lib/site/partnerConciergePricing";
 
 const work = Work_Sans({
@@ -81,17 +83,17 @@ export default function IndustryLandingPage({ industry }: Props) {
 
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
-              href={inquiryHref}
+              href="#packages"
               className="w-full max-w-xs border border-[#c4a465] px-7 py-4 text-center text-[11px] uppercase tracking-[0.23em] transition duration-300 hover:bg-[#c4a465] hover:text-[#14120e] sm:w-auto sm:max-w-none sm:px-8 sm:text-xs"
             >
-              {industry.primaryCta}
+              Purchase Package
             </Link>
 
             <Link
-              href="#packages"
+              href={inquiryHref}
               className="w-full max-w-xs px-7 py-4 text-center text-[11px] uppercase tracking-[0.23em] text-[#efe6d4]/82 transition hover:text-[#c4a465] sm:w-auto sm:max-w-none sm:px-8 sm:text-xs"
             >
-              {industry.secondaryCta}
+              Request Information
             </Link>
           </div>
         </motion.div>
@@ -243,15 +245,29 @@ export default function IndustryLandingPage({ industry }: Props) {
                   ))}
                 </ul>
 
-                <Link
-                  href={partnerPackageInquiryHref(
-                    pkg.inquiryPackageValue,
-                    industry.slug,
-                  )}
-                  className="mt-8 inline-block w-full border border-[#c4a465]/45 px-5 py-4 text-center text-[11px] uppercase tracking-[0.22em] text-[#efe6d4] transition duration-300 hover:bg-[#c4a465] hover:text-[#14120e]"
-                >
-                  Request This Package
-                </Link>
+                <div className="mt-8 grid gap-3">
+                  {(() => {
+                    const packageId = partnerPackageIdForTitle(pkg.title)
+                    return packageId ? (
+                      <Link
+                        href={partnerPackagePurchaseHref(packageId, industry.slug)}
+                        className="inline-block w-full border border-[#c4a465] px-5 py-4 text-center text-[11px] uppercase tracking-[0.22em] text-[#efe6d4] transition duration-300 hover:bg-[#c4a465] hover:text-[#14120e]"
+                      >
+                        Purchase Package
+                      </Link>
+                    ) : null
+                  })()}
+
+                  <Link
+                    href={partnerPackageInquiryHref(
+                      pkg.inquiryPackageValue,
+                      industry.slug,
+                    )}
+                    className="inline-block w-full border border-[#c4a465]/45 px-5 py-4 text-center text-[11px] uppercase tracking-[0.22em] text-[#efe6d4] transition duration-300 hover:bg-[#c4a465] hover:text-[#14120e]"
+                  >
+                    Request Information
+                  </Link>
+                </div>
               </motion.article>
             ))}
           </div>

@@ -20,6 +20,10 @@ import {
 } from './invoiceConstants'
 import { getSquareConnectionState } from './squareAdapter'
 import { publicInvoiceUrl } from './invoiceToken'
+import {
+  partnerIndustryLabel,
+  isPartnerIndustrySlug,
+} from '@/lib/os/partnerConcierge/packages'
 
 export type InvoiceListParams = {
   status?: string | null
@@ -41,6 +45,7 @@ export type InvoiceListRow = {
   balanceDueLabel: string
   status: string
   statusLabel: string
+  partnerConciergeLabel: string | null
   href: string
 }
 
@@ -140,6 +145,13 @@ export type InvoiceDetail = {
   firstViewedAtLabel: string | null
   voidedAtLabel: string | null
   voidReason: string | null
+  partnerConcierge: {
+    isPartnerPurchase: boolean
+    industryLabel: string | null
+    packageTitle: string | null
+    experienceCount: number | null
+    summaryLabel: string | null
+  } | null
 }
 
 function asId(value: unknown): string {
@@ -148,6 +160,22 @@ function asId(value: unknown): string {
     return String((value as { id: string | number }).id)
   }
   return ''
+}
+
+function partnerConciergeListLabel(doc: {
+  partnerConcierge?: {
+    isPartnerPurchase?: boolean | null
+    industrySlug?: string | null
+    packageTitle?: string | null
+  } | null
+}): string | null {
+  const partner = doc.partnerConcierge
+  if (!partner?.isPartnerPurchase) return null
+  const industry = isPartnerIndustrySlug(partner.industrySlug)
+    ? partnerIndustryLabel(partner.industrySlug)
+    : null
+  const parts = ['Partner Concierge', industry, partner.packageTitle].filter(Boolean)
+  return parts.length > 1 ? parts.join(' · ') : 'Partner Concierge'
 }
 
 function relName(value: unknown, field: string): string | null {
@@ -307,6 +335,7 @@ export async function listInvoices(
         client: true,
         event: true,
         billing: true,
+        partnerConcierge: true,
       },
     })
 
@@ -336,6 +365,15 @@ export async function listInvoices(
         balanceDueLabel: formatUsdFromCents(Number(doc.balanceDueCents || 0)),
         status: derived,
         statusLabel: INVOICE_STATUS_LABELS[derived],
+        partnerConciergeLabel: partnerConciergeListLabel(
+          doc as {
+            partnerConcierge?: {
+              isPartnerPurchase?: boolean | null
+              industrySlug?: string | null
+              packageTitle?: string | null
+            } | null
+          },
+        ),
         href: `/os/invoices/${doc.id}`,
       }
     })
@@ -484,6 +522,28 @@ export async function getInvoiceDetail(
       firstViewedAtLabel: doc.firstViewedAt ? formatShortDate(doc.firstViewedAt) : null,
       voidedAtLabel: doc.voidedAt ? formatShortDate(doc.voidedAt) : null,
       voidReason: doc.voidReason || null,
+      partnerConcierge: (() => {
+        const partner = (doc as {
+          partnerConcierge?: {
+            isPartnerPurchase?: boolean | null
+            industrySlug?: string | null
+            packageTitle?: string | null
+            experienceCount?: number | null
+          } | null
+        }).partnerConcierge
+        if (!partner?.isPartnerPurchase) return null
+        const industryLabel = isPartnerIndustrySlug(partner.industrySlug)
+          ? partnerIndustryLabel(partner.industrySlug)
+          : null
+        const summaryLabel = partnerConciergeListLabel({ partnerConcierge: partner })
+        return {
+          isPartnerPurchase: true,
+          industryLabel,
+          packageTitle: partner.packageTitle ?? null,
+          experienceCount: partner.experienceCount ?? null,
+          summaryLabel,
+        }
+      })(),
     }
   } catch (err) {
     const status =

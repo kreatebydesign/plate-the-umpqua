@@ -123,6 +123,7 @@ export default async function InvoicesPage({
                   </div>
                   <p className={styles.listMeta}>
                     {[
+                      row.partnerConciergeLabel,
                       row.eventName,
                       `Issued ${row.issueDateLabel}`,
                       `Due ${row.dueDateLabel}`,

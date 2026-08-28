@@ -296,6 +296,64 @@ export const Invoices: CollectionConfig = {
       },
     },
     {
+      type: 'group',
+      name: 'partnerConcierge',
+      label: 'Partner Concierge',
+      admin: {
+        description:
+          'Set automatically for self-service Partner Concierge package purchases.',
+      },
+      fields: [
+        {
+          name: 'isPartnerPurchase',
+          type: 'checkbox',
+          defaultValue: false,
+          index: true,
+        },
+        {
+          name: 'industrySlug',
+          type: 'select',
+          options: [
+            { label: 'Real Estate', value: 'real-estate' },
+            { label: 'Builders', value: 'builders' },
+            { label: 'Medical', value: 'medical' },
+            { label: 'Legal', value: 'legal' },
+            { label: 'Sales', value: 'sales' },
+          ],
+        },
+        {
+          name: 'packageId',
+          type: 'select',
+          options: [
+            { label: 'Single Experience', value: 'single' },
+            { label: 'Professional 5-Pack', value: 'five-pack' },
+            { label: 'Professional 10-Pack', value: 'ten-pack' },
+          ],
+        },
+        {
+          name: 'packageTitle',
+          type: 'text',
+          admin: { readOnly: true },
+        },
+        {
+          name: 'experienceCount',
+          type: 'number',
+          min: 1,
+          admin: { readOnly: true },
+        },
+        {
+          name: 'checkoutKey',
+          type: 'text',
+          unique: true,
+          index: true,
+          admin: {
+            readOnly: true,
+            description: 'Client checkout idempotency key.',
+          },
+        },
+      ],
+    },
+    {
       name: 'publicTokenHash',
       type: 'text',
       index: true,

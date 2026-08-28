@@ -55,6 +55,44 @@ export default async function InvoiceDetailPage({ params }: { params: Params }) 
         </div>
       </section>
 
+      {invoice.partnerConcierge?.isPartnerPurchase ? (
+        <section className={styles.panel} aria-label="Partner Concierge purchase">
+          <h2 className={styles.panelTitle}>Partner Concierge</h2>
+          <dl className={styles.detailList}>
+            <div>
+              <dt>Program</dt>
+              <dd>{invoice.partnerConcierge.summaryLabel || 'Partner Concierge purchase'}</dd>
+            </div>
+            {invoice.partnerConcierge.industryLabel ? (
+              <div>
+                <dt>Industry</dt>
+                <dd>{invoice.partnerConcierge.industryLabel}</dd>
+              </div>
+            ) : null}
+            {invoice.partnerConcierge.packageTitle ? (
+              <div>
+                <dt>Package</dt>
+                <dd>{invoice.partnerConcierge.packageTitle}</dd>
+              </div>
+            ) : null}
+            {invoice.partnerConcierge.experienceCount ? (
+              <div>
+                <dt>Experiences</dt>
+                <dd>{invoice.partnerConcierge.experienceCount}</dd>
+              </div>
+            ) : null}
+            <div>
+              <dt>Status</dt>
+              <dd>{invoice.statusLabel}</dd>
+            </div>
+            <div>
+              <dt>Total</dt>
+              <dd>{invoice.totalLabel}</dd>
+            </div>
+          </dl>
+        </section>
+      ) : null}
+
       <div className={styles.detailGrid}>
         <section className={styles.panel}>
           <h2 className={styles.panelTitle}>Bill to</h2>

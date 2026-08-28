@@ -167,6 +167,29 @@ export const PREPAID_PARTNER_COMMITMENT_POINTS = [
 
 export const PARTNER_INQUIRY_HREF = "/inquiry?source=partner-concierge"
 
+export type PartnerPackageId = "single" | "five-pack" | "ten-pack"
+
+export const PARTNER_PACKAGE_ID_BY_TITLE: Record<string, PartnerPackageId> = {
+  "Single Experience": "single",
+  "Professional 5-Pack": "five-pack",
+  "Professional 10-Pack": "ten-pack",
+}
+
+export function partnerPackageIdForTitle(title: string): PartnerPackageId | null {
+  return PARTNER_PACKAGE_ID_BY_TITLE[title] ?? null
+}
+
+export function partnerPackagePurchaseHref(
+  packageId: PartnerPackageId,
+  industrySlug?: string,
+) {
+  const params = new URLSearchParams({ package: packageId })
+  if (industrySlug) {
+    params.set("industry", industrySlug)
+  }
+  return `/partner-concierge/purchase?${params.toString()}`
+}
+
 export function partnerPackageInquiryHref(
   packageValue: string,
   industrySlug?: string,

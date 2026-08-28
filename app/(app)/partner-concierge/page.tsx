@@ -11,7 +11,9 @@ import {
   PARTNER_INQUIRY_HREF,
   PREPAID_PARTNER_COMMITMENT_POINTS,
   PREPAID_PARTNER_PACKAGES,
+  partnerPackageIdForTitle,
   partnerPackageInquiryHref,
+  partnerPackagePurchaseHref,
 } from "@/lib/site/partnerConciergePricing";
 
 const work = Work_Sans({
@@ -751,12 +753,26 @@ export default function PartnerConciergePage() {
                   ))}
                 </ul>
 
-                <Link
-                  href={partnerPackageInquiryHref(pkg.inquiryPackageValue)}
-                  className="mt-8 inline-block w-full border border-[#c4a465]/45 px-5 py-4 text-center text-[11px] uppercase tracking-[0.22em] text-[#efe6d4] transition duration-300 hover:bg-[#c4a465] hover:text-[#14120e] md:w-auto md:py-3"
-                >
-                  Request Package Access
-                </Link>
+                <div className="mt-8 grid gap-3">
+                  {(() => {
+                    const packageId = partnerPackageIdForTitle(pkg.title)
+                    return packageId ? (
+                      <Link
+                        href={partnerPackagePurchaseHref(packageId)}
+                        className="inline-block w-full border border-[#c4a465] px-5 py-4 text-center text-[11px] uppercase tracking-[0.22em] text-[#efe6d4] transition duration-300 hover:bg-[#c4a465] hover:text-[#14120e] md:w-auto md:py-3"
+                      >
+                        Purchase Package
+                      </Link>
+                    ) : null
+                  })()}
+
+                  <Link
+                    href={partnerPackageInquiryHref(pkg.inquiryPackageValue)}
+                    className="inline-block w-full border border-[#c4a465]/45 px-5 py-4 text-center text-[11px] uppercase tracking-[0.22em] text-[#efe6d4] transition duration-300 hover:bg-[#c4a465] hover:text-[#14120e] md:w-auto md:py-3"
+                  >
+                    Request Information
+                  </Link>
+                </div>
               </motion.article>
             ))}
           </div>
