@@ -1,6 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Cormorant_Garamond, Work_Sans } from 'next/font/google'
+import PartnerPurchaseCompleteAnalytics from '@/components/partner-concierge/PartnerPurchaseCompleteAnalytics'
+import {
+  industrySlugFromLabel,
+  packageIdFromTitle,
+  packageValueCents,
+} from '@/lib/analytics/partnerConciergeEvents'
 import { loadPartnerPurchaseConfirmation } from '@/lib/os/partnerConcierge/purchaseConfirmation'
 import { normalizeInvoiceTokenParam } from '@/lib/os/invoices/invoiceToken'
 
@@ -44,11 +50,41 @@ export default async function PartnerPurchaseSuccessPage({
   const isPending = confirmation?.status === 'pending'
   const isInvalid = !confirmation || confirmation.status === 'invalid'
 
+  const purchaseAnalytics =
+    isPaid && token && confirmation
+      ? (() => {
+          const packageId = packageIdFromTitle(confirmation.packageTitle)
+          const industrySlug = industrySlugFromLabel(confirmation.industryLabel)
+          const valueCents = packageValueCents(packageId)
+          if (!packageId || !industrySlug || !valueCents || !confirmation.packageTitle) {
+            return null
+          }
+          return {
+            dedupeKey: token,
+            industry: industrySlug,
+            packageId,
+            packageName: confirmation.packageTitle,
+            experienceCount: confirmation.experienceCount ?? 1,
+            value: valueCents / 100,
+          }
+        })()
+      : null
+
   return (
     <main
       className={`${work.variable} ${cormorant.variable} min-h-screen bg-[#14120e] px-5 py-28 text-[#efe6d4] md:px-6`}
     >
       <div className="mx-auto max-w-2xl border border-[#c4a465]/16 bg-[#100e0b] p-8 md:p-10">
+        {purchaseAnalytics ? (
+          <PartnerPurchaseCompleteAnalytics
+            dedupeKey={purchaseAnalytics.dedupeKey}
+            industry={purchaseAnalytics.industry}
+            packageId={purchaseAnalytics.packageId}
+            packageName={purchaseAnalytics.packageName}
+            experienceCount={purchaseAnalytics.experienceCount}
+            value={purchaseAnalytics.value}
+          />
+        ) : null}
         {isInvalid ? (
           <>
             <p className="text-[10px] uppercase tracking-[0.32em] text-[#c4a465]">

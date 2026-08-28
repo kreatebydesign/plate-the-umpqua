@@ -118,6 +118,18 @@ export default function HomePageClient({ memories }: Props) {
               Every detail is shaped around the table: the pacing, the menu, the atmosphere, the guests, and the feeling people remember after the evening ends.
             </p>
 
+            <p>
+              For professionals who gift client appreciation experiences, explore{" "}
+              <Link href="/partner-concierge" className="text-[#c4a465] transition hover:text-[#efe6d4]">
+                Partner Concierge
+              </Link>{" "}
+              — including{" "}
+              <Link href="/partner-concierge/real-estate" className="text-[#c4a465] transition hover:text-[#efe6d4]">
+                private dining gifts for Realtors
+              </Link>
+              .
+            </p>
+
             <Link
               href="/packages"
               className="inline-block pt-3 text-[11px] uppercase tracking-[0.24em] text-[#c4a465] transition hover:text-[#efe6d4] md:text-xs"

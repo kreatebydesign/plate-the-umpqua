@@ -15,6 +15,7 @@ import {
   partnerPackageInquiryHref,
   partnerPackagePurchaseHref,
 } from "@/lib/site/partnerConciergePricing";
+import { trackPartnerPackageSelect } from "@/lib/analytics/partnerConciergeEvents";
 
 const work = Work_Sans({
   subsets: ["latin"],
@@ -759,6 +760,16 @@ export default function PartnerConciergePage() {
                     return packageId ? (
                       <Link
                         href={partnerPackagePurchaseHref(packageId)}
+                        onClick={() =>
+                          trackPartnerPackageSelect({
+                            industry: "real-estate",
+                            package_id: packageId,
+                            package_name: pkg.title,
+                            experience_count: pkg.tableCount,
+                            value: pkg.priceCents / 100,
+                            currency: "USD",
+                          })
+                        }
                         className="inline-block w-full border border-[#c4a465] px-5 py-4 text-center text-[11px] uppercase tracking-[0.22em] text-[#efe6d4] transition duration-300 hover:bg-[#c4a465] hover:text-[#14120e] md:w-auto md:py-3"
                       >
                         Purchase Package

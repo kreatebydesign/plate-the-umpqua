@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import PartnerIndustryJsonLd from "@/components/partner-concierge/PartnerIndustryJsonLd";
 import IndustryLandingPage from "@/components/partner-concierge/IndustryLandingPage";
 import {
   getPartnerIndustry,
@@ -12,5 +13,10 @@ export const metadata = partnerIndustryMetadata(SLUG);
 export default function LegalPartnerPage() {
   const industry = getPartnerIndustry(SLUG);
   if (!industry) notFound();
-  return <IndustryLandingPage industry={industry} />;
+  return (
+    <>
+      <PartnerIndustryJsonLd industry={industry} />
+      <IndustryLandingPage industry={industry} />
+    </>
+  );
 }

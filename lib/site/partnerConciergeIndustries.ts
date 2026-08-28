@@ -62,7 +62,7 @@ export const PARTNER_INDUSTRIES: PartnerIndustryConfig[] = [
     eyebrow: "Realtor Closing Gifts",
     headline: "A closing gift they'll actually remember.",
     supporting:
-      "Turn every closing into a Welcome Home experience — a premium private dining gift you personally present to the homeowner, not another basket left on the counter.",
+      "Turn every closing into a Welcome Home experience for home buyers — a prepaid private chef dining gift you personally present at closing, not another basket left on the counter.",
     heroImage: "/content/images/umpqua-private-dining33.jpg",
     heroImageAlt: "Private dining closing gift for real estate clients",
     primaryCta: "Request Realtor Partner Access",
@@ -76,7 +76,7 @@ export const PARTNER_INDUSTRIES: PartnerIndustryConfig[] = [
     conceptBody: [
       "You purchase a premium private dining experience and personally present the physical gift certificate to the homeowner at closing. Plate The Umpqua does not send the gift for you — the Realtor owns that moment.",
       "The homeowner later redeems a chef-led Welcome Home experience in their own kitchen. You get credit for a gesture that builds retention, referrals, and a reputation for taste.",
-      "Gift baskets, wine, and hardware-store cards disappear into the noise of moving week. A private chef dinner becomes the story they tell their friends.",
+      "Gift baskets, wine, and hardware-store cards disappear into the noise of moving week. A private chef dinner in their new home becomes the story they tell their friends.",
     ],
     useCasesEyebrow: "When Realtors Use It",
     useCasesHeadline: "Luxury closing gifts that earn the referral.",
@@ -131,28 +131,33 @@ export const PARTNER_INDUSTRIES: PartnerIndustryConfig[] = [
     ],
     faqs: [
       {
-        question: "Who presents the gift?",
+        question: "What is included in a Plate The Umpqua closing gift?",
         answer:
-          "You do. The Realtor purchases the experience and personally presents the physical certificate at closing. Plate The Umpqua handles the dining experience after redemption — not the initial gifting moment.",
+          "Each prepaid experience includes a chef-led private dining evening for up to 2 adults and 3 children from the recipient household. You purchase ahead, present a physical gift certificate at closing, and Plate The Umpqua coordinates menu, date, and service when the homeowner is ready to redeem.",
       },
       {
-        question: "Who is included in each experience?",
+        question: "Can Realtors purchase multiple closing gifts in advance?",
         answer:
-          "Each experience includes up to 2 adults and 3 children from the recipient household. Additional household members are $100 per person and should be prepaid by you so the gift feels complete.",
+          "Yes. Single Experience, Professional 5-Pack, and Professional 10-Pack options let you prepay one closing gift or reserve multiple experiences for your book of business — with preferred pricing on volume packs.",
       },
       {
-        question: "What if they invite friends later?",
+        question: "How does the recipient redeem their private dining experience?",
         answer:
-          "Optional guests beyond the household are $100 per person. That keeps the gifted household experience fully prepaid within the included limits — the recipient should never feel the gift was only partially covered.",
+          "After you present the certificate, the homeowner contacts Plate The Umpqua to schedule their Welcome Home evening. Martin coordinates the menu, timing, and in-home service directly with the recipient — no online scheduling portal is required.",
+      },
+      {
+        question: "How many guests are included?",
+        answer:
+          "Each experience includes up to 2 adults and 3 children from the recipient household. Additional household members are $100 per person and should be prepaid by you so the gift feels complete. Optional guests beyond the household are also $100 per person.",
       },
     ],
     finalHeadline: "Ready to turn closings into Welcome Home moments?",
     finalSupporting:
       "Partner packages are reviewed around volume, timing, and service area. Request access and we will shape a Realtor Concierge program around your book of business.",
     seo: {
-      title: "Realtor Closing Gifts | Partner Concierge",
+      title: "Closing Gifts for Realtors",
       description:
-        "Luxury realtor closing gifts and Welcome Home private dining for Roseburg and the Umpqua Valley. Present a chef-led experience at closing — a memorable alternative to gift baskets.",
+        "Prepaid private chef dining for real estate professionals — a luxury closing gift for home buyers and new homeowners. Purchase ahead, present at closing, and Plate The Umpqua handles the Welcome Home evening.",
     },
   },
   {
@@ -428,9 +433,9 @@ export const PARTNER_INDUSTRIES: PartnerIndustryConfig[] = [
     finalSupporting:
       "Tell us about your project volume and service area. We will shape a Partner Concierge package for builders and contractors who want every handoff to earn the next referral.",
     seo: {
-      title: "Builder & Contractor Client Gifts | Partner Concierge",
+      title: "Builder Client Appreciation & Home Completion Gifts",
       description:
-        "Home completion and remodel client appreciation gifts — private chef dining for custom home builders, contractors, and premium trades in the Umpqua Valley.",
+        "Prepaid private dining for builders and contractors — client appreciation and home completion gifts presented at project handoff across the Umpqua Valley.",
     },
   },
   {
@@ -520,9 +525,9 @@ export const PARTNER_INDUSTRIES: PartnerIndustryConfig[] = [
     finalSupporting:
       "Tell us about your team size, contest calendar, and how many experiences you need. We will follow up with Partner Concierge options for sales leaders.",
     seo: {
-      title: "Sales Team Recognition Gifts | Partner Concierge",
+      title: "Sales Achievement & Performance Recognition Gifts",
       description:
-        "Private dining recognition for sales professionals and sales teams — top performer awards, contests, and President’s Club-style hospitality in the Umpqua Valley.",
+        "Private dining recognition for sales teams — top performer rewards, contest prizes, and performance recognition experiences across the Umpqua Valley.",
     },
   },
 ]

@@ -137,7 +137,11 @@ export default function ExperiencesPage() {
 
           <div className="space-y-5 text-sm leading-7 text-[#e9decb]/82 md:text-base md:leading-8">
             <p>
-              Plate The Umpqua is built for the moments where the environment matters as much as the menu. A private home. A vineyard. A long table. A fire. A client closing. A celebration that deserves to feel considered.
+              Plate The Umpqua is built for the moments where the environment matters as much as the menu. A private home. A vineyard. A long table. A fire.{" "}
+              <Link href="/partner-concierge/real-estate" className="text-[#c4a465] transition hover:text-[#efe6d4]">
+                A client closing
+              </Link>
+              . A celebration that deserves to feel considered.
             </p>
 
             <p>

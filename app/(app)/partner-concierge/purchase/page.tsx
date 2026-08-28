@@ -62,6 +62,7 @@ export default async function PartnerPurchasePage({
       id,
       title: pkg.title,
       priceLabel: pkg.price,
+      priceCents: pkg.priceCents,
       tableCount: pkg.tableCount,
       perExperiencePrice: pkg.perExperiencePrice,
       savingsLabel: pkg.savingsLabel,
@@ -71,6 +72,7 @@ export default async function PartnerPurchasePage({
     id: PartnerPackageId
     title: string
     priceLabel: string
+    priceCents: number
     tableCount: number
     perExperiencePrice: string
     savingsLabel: string | null

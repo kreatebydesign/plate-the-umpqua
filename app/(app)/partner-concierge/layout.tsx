@@ -1,52 +1,9 @@
 import type { Metadata } from "next";
-import {
-  EXPERIENCE_TIERS,
-  PREPAID_PARTNER_PACKAGES,
-} from "@/lib/site/partnerConciergePricing";
-import { absoluteSiteUrl, SITE_ORIGIN } from "@/lib/site/siteUrl";
+import { partnerConciergeHubSchema } from "@/lib/site/partnerConciergeSchema";
+import { absoluteSiteUrl } from "@/lib/site/siteUrl";
 
 const description =
   "Professional gifting packages and chef-led private dining for real estate, medical, legal, builders, and sales teams across Roseburg and the Umpqua Valley.";
-
-const partnerOffersSchema = {
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  name: "Plate The Umpqua Partner Concierge Packages",
-  description,
-  itemListElement: [
-    ...EXPERIENCE_TIERS.map((tier, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      item: {
-        "@type": "Service",
-        name: tier.title,
-        description: tier.desc,
-        provider: {
-          "@type": "FoodEstablishment",
-          name: "Plate The Umpqua",
-          url: SITE_ORIGIN,
-        },
-      },
-    })),
-    ...PREPAID_PARTNER_PACKAGES.map((pkg, index) => ({
-      "@type": "ListItem",
-      position: EXPERIENCE_TIERS.length + index + 1,
-      item: {
-        "@type": "Offer",
-        name: `${pkg.title}${pkg.tableCount > 1 ? ` — ${pkg.tableCount}-experience pack` : ""}`,
-        description: pkg.desc,
-        price: String(pkg.priceCents / 100),
-        priceCurrency: "USD",
-        availability: "https://schema.org/LimitedAvailability",
-        seller: {
-          "@type": "FoodEstablishment",
-          name: "Plate The Umpqua",
-          url: SITE_ORIGIN,
-        },
-      },
-    })),
-  ],
-};
 
 export const metadata: Metadata = {
   title: "Partner Concierge Program",
@@ -66,12 +23,14 @@ export default function PartnerConciergeLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const schema = partnerConciergeHubSchema(description);
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(partnerOffersSchema),
+          __html: JSON.stringify(schema),
         }}
       />
       {children}

@@ -231,10 +231,17 @@ export default function PackagesPage() {
 
           <div className="mt-10 text-center">
             <Link
-              href={PARTNER_INQUIRY_HREF}
+              href="/partner-concierge"
               className="text-[11px] uppercase tracking-[0.24em] text-[#c4a465] transition hover:text-[#efe6d4] md:text-xs"
             >
               Explore The Full Partner Concierge Program
+            </Link>
+            <span className="mx-3 text-[#efe6d4]/30">·</span>
+            <Link
+              href="/partner-concierge/real-estate"
+              className="text-[11px] uppercase tracking-[0.24em] text-[#c4a465] transition hover:text-[#efe6d4] md:text-xs"
+            >
+              Realtor Client Appreciation Gifts
             </Link>
           </div>
         </motion.div>

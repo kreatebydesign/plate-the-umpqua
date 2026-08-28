@@ -5,11 +5,13 @@ import Link from 'next/link'
 import type { PartnerIndustrySlug } from '@/lib/site/partnerConciergeIndustries'
 import type { PartnerPackageId } from '@/lib/site/partnerConciergePricing'
 import { partnerPackageInquiryHref } from '@/lib/site/partnerConciergePricing'
+import { trackPartnerCheckoutStart } from '@/lib/analytics/partnerConciergeEvents'
 
 type PackageSummary = {
   id: PartnerPackageId
   title: string
   priceLabel: string
+  priceCents: number
   tableCount: number
   perExperiencePrice: string
   savingsLabel: string | null
@@ -75,6 +77,17 @@ export default function PartnerPurchaseForm({
         setError(data.message || 'Checkout could not be started. Please try again.')
         setSubmitting(false)
         return
+      }
+
+      if (selected) {
+        trackPartnerCheckoutStart({
+          industry: industrySlug,
+          package_id: packageId,
+          package_name: selected.title,
+          experience_count: selected.tableCount,
+          value: selected.priceCents / 100,
+          currency: 'USD',
+        })
       }
 
       sessionStorage.setItem('partnerPurchaseConfirmation', data.confirmationToken)
