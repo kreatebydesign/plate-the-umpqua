@@ -1,0 +1,588 @@
+/* Partner Concierge gift certificate — 7″ × 5″ landscape
+   Print typography uses physical `pt` units for Actual Size readability.
+   Shared visual system. Design / print template only. */
+
+.preview {
+  --bg: #0c0b09;
+  --bg-lift: #0e0d0a;
+  --ivory: #efe6d4;
+  --ivory-warm: #e9e1d1;
+  --champagne: #c8b99d;
+  --champagne-soft: rgba(200, 185, 157, 0.78);
+  --champagne-mute: rgba(200, 185, 157, 0.58);
+  --gold: #c09a52;
+  --gold-deep: #b89555;
+  --gold-soft: rgba(192, 154, 82, 0.65);
+  --gold-line: rgba(192, 154, 82, 0.4);
+  --rule: rgba(192, 154, 82, 0.26);
+  /* Print-safe content inset from trim (≥ 0.25″) */
+  --safe: 0.32in;
+
+  min-height: 100vh;
+  background: #16140f;
+  color: var(--ivory);
+  font-family: var(--font-work), "Work Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.previewChrome {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 1.75rem 1.25rem 0.5rem;
+  text-align: center;
+}
+
+.previewLabel {
+  margin: 0;
+  font-size: 10pt;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.previewSpec {
+  margin: 0.65rem 0 0;
+  font-size: 9pt;
+  letter-spacing: 0.04em;
+  color: var(--champagne-mute);
+}
+
+.previewStage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  padding: 1.5rem 1rem 3.5rem;
+}
+
+.faceLabel {
+  margin: 0 0 0.75rem;
+  text-align: center;
+  font-size: 9pt;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--champagne-mute);
+}
+
+/* ─── Certificate shell — exact physical size ─── */
+
+.certificate {
+  position: relative;
+  box-sizing: border-box;
+  width: 7in;
+  height: 5in;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--ivory);
+  box-shadow: 0 28px 64px rgba(0, 0, 0, 0.55);
+  isolation: isolate;
+  flex-shrink: 0;
+}
+
+.matte {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(55% 42% at 50% 38%, rgba(192, 154, 82, 0.05) 0%, transparent 72%),
+    linear-gradient(180deg, var(--bg-lift) 0%, var(--bg) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.outerFrame {
+  position: absolute;
+  inset: 0.12in;
+  border: 1px solid var(--gold-line);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.innerFrame {
+  position: absolute;
+  inset: 0.22in;
+  border: 1px solid rgba(192, 154, 82, 0.22);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cornerMark {
+  position: absolute;
+  width: 0.34in;
+  height: 0.34in;
+  border-color: var(--gold-soft);
+  border-style: solid;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.cornerTL {
+  top: 0.16in;
+  left: 0.16in;
+  border-width: 1px 0 0 1px;
+}
+
+.cornerTR {
+  top: 0.16in;
+  right: 0.16in;
+  border-width: 1px 1px 0 0;
+}
+
+.cornerBL {
+  bottom: 0.16in;
+  left: 0.16in;
+  border-width: 0 0 1px 1px;
+}
+
+.cornerBR {
+  bottom: 0.16in;
+  right: 0.16in;
+  border-width: 0 1px 1px 0;
+}
+
+.face {
+  position: relative;
+  z-index: 3;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  /* Essential text ≥ 0.25″ from trim */
+  padding: var(--safe) 0.38in 0.3in;
+}
+
+/* ─── Front typography (physical pt) ─── */
+
+.brandBlock {
+  text-align: center;
+}
+
+.brand {
+  margin: 0;
+  font-size: 14pt;
+  font-weight: 500;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: var(--gold);
+  line-height: 1.15;
+}
+
+.brandTag {
+  margin: 0.18rem 0 0;
+  font-size: 9pt;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--champagne);
+  line-height: 1.2;
+}
+
+.titleBlock {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.06in 0 0.04in;
+  min-height: 0;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  font-weight: 400;
+  font-size: 34pt;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--ivory);
+}
+
+/* Long headlines (e.g. Exceptional Performance) — still ≥ 28pt */
+.titleLong {
+  font-size: 28pt;
+  letter-spacing: -0.015em;
+  max-width: 6.1in;
+}
+
+.subtitle {
+  margin: 0.28rem 0 0;
+  font-size: 10pt;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  line-height: 1.25;
+}
+
+.ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  max-width: 8.5rem;
+  margin: 0.42rem auto 0;
+}
+
+.ornament::before,
+.ornament::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-soft));
+}
+
+.ornament::after {
+  background: linear-gradient(90deg, var(--gold-soft), transparent);
+}
+
+.ornamentDiamond {
+  width: 0.22rem;
+  height: 0.22rem;
+  border: 1px solid var(--gold-soft);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+.supporting {
+  margin: 0.45rem 0 0;
+  max-width: 5.6in;
+  font-family: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  font-size: 12pt;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--ivory-warm);
+}
+
+.occasionCopy {
+  margin: 0.35rem 0 0;
+  max-width: 5.4in;
+  font-size: 9.5pt;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  color: var(--champagne);
+}
+
+.metaRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem 1rem;
+  margin-top: 0.12in;
+  padding-top: 0.22in;
+  border-top: 1px solid var(--rule);
+}
+
+.metaBlock {
+  min-width: 0;
+}
+
+.metaBlockEnd {
+  text-align: right;
+}
+
+.metaLabel {
+  margin: 0;
+  font-size: 9pt;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold);
+  line-height: 1.2;
+}
+
+.metaValueScript {
+  margin: 0.18rem 0 0;
+  font-family: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  font-size: 14pt;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--ivory);
+}
+
+.metaSub {
+  margin: 0.12rem 0 0;
+  font-size: 9pt;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--champagne);
+  line-height: 1.25;
+}
+
+.entitlement {
+  margin-top: 0.18in;
+  text-align: center;
+}
+
+.entitlementLine {
+  margin: 0;
+  font-size: 10pt;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  line-height: 1.45;
+}
+
+.certNumber {
+  margin: 0.16in 0 0;
+  text-align: center;
+  font-size: 9pt;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--champagne-mute);
+  line-height: 1.2;
+}
+
+.certNumber strong {
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--champagne-soft);
+}
+
+/* ─── Back typography (physical pt) ─── */
+
+.backFace {
+  padding: var(--safe) 0.34in 0.28in;
+}
+
+.backBrand {
+  margin: 0 0 0.2in;
+  text-align: center;
+  font-size: 11pt;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold);
+  line-height: 1.15;
+}
+
+.backZones {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr 1fr;
+  gap: 0.22in;
+  flex: 1;
+  min-height: 0;
+  align-items: start;
+}
+
+.zone {
+  min-width: 0;
+}
+
+.zoneCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 0.1in;
+  border-left: 1px solid var(--rule);
+  border-right: 1px solid var(--rule);
+}
+
+.zoneHeading {
+  margin: 0;
+  font-size: 10pt;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  line-height: 1.2;
+}
+
+.stepList {
+  margin: 0.4rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stepList li {
+  display: grid;
+  grid-template-columns: 1.15rem 1fr;
+  gap: 0.28rem;
+  margin: 0 0 0.42rem;
+  font-size: 9.5pt;
+  line-height: 1.35;
+  color: var(--champagne);
+}
+
+.stepNum {
+  font-size: 8.5pt;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+  padding-top: 0.08rem;
+}
+
+.guestList {
+  margin: 0.4rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guestList li {
+  margin: 0 0 0.38rem;
+  font-size: 9.5pt;
+  line-height: 1.35;
+  color: var(--champagne);
+}
+
+/* Future QR binding — keep ≥ ~1.15in for scan reliability */
+.qrPlaceholder {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.22in;
+  height: 1.22in;
+  margin-top: 0.4rem;
+  border: 1px solid var(--gold-line);
+  background: rgba(12, 11, 9, 0.65);
+}
+
+.qrMark {
+  width: 0.78in;
+  height: 0.78in;
+  border: 1px dashed rgba(192, 154, 82, 0.42);
+  background:
+    linear-gradient(
+      90deg,
+      transparent 46%,
+      rgba(192, 154, 82, 0.14) 46%,
+      rgba(192, 154, 82, 0.14) 54%,
+      transparent 54%
+    ),
+    linear-gradient(
+      0deg,
+      transparent 46%,
+      rgba(192, 154, 82, 0.14) 46%,
+      rgba(192, 154, 82, 0.14) 54%,
+      transparent 54%
+    );
+}
+
+.asideNumber {
+  margin: 0.38rem 0 0;
+  font-size: 9pt;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--champagne-mute);
+  line-height: 1.2;
+}
+
+.asideNumber strong {
+  display: block;
+  margin-top: 0.15rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--champagne);
+}
+
+.asideUrl {
+  margin: 0.28rem 0 0;
+  font-size: 9pt;
+  letter-spacing: 0.02em;
+  color: var(--champagne-soft);
+  word-break: break-all;
+  line-height: 1.25;
+}
+
+.backFooter {
+  display: grid;
+  grid-template-columns: 0.95fr 1.35fr;
+  gap: 0.32in;
+  margin-top: auto;
+  padding-top: 0.18in;
+  border-top: 1px solid var(--rule);
+}
+
+.footerLabel {
+  margin: 0;
+  font-size: 9pt;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+  line-height: 1.2;
+}
+
+.footerContact {
+  margin: 0.2rem 0 0;
+  font-size: 9pt;
+  letter-spacing: 0.02em;
+  line-height: 1.35;
+  color: var(--champagne);
+}
+
+.termsBlock {
+  min-width: 0;
+}
+
+.termsList {
+  margin: 0.2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.termsList li {
+  margin: 0 0 0.18rem;
+  font-size: 8pt;
+  line-height: 1.3;
+  color: rgba(200, 185, 157, 0.5);
+}
+
+/* Narrow screens: keep physical inch card, allow horizontal scroll */
+@media (max-width: 759px) {
+  .previewStage {
+    align-items: flex-start;
+    overflow-x: auto;
+    padding-inline: 0.75rem;
+  }
+
+  .metaBlockEnd {
+    text-align: left;
+  }
+}
+
+/* ─── Print ─── */
+
+@media print {
+  @page {
+    size: 7in 5in landscape;
+    margin: 0;
+  }
+
+  .preview {
+    background: #fff;
+  }
+
+  .previewChrome,
+  .faceLabel {
+    display: none !important;
+  }
+
+  .previewStage {
+    gap: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .sheet {
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .sheet:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .certificate {
+    width: 7in;
+    height: 5in;
+    box-shadow: none;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
