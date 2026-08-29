@@ -12,10 +12,7 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic'
 
 const SEND_INSTRUCTIONS = [
-  'Open Print / Save PDF.',
-  'Choose Print.',
-  'Select Save as PDF.',
-  'Keep scale at 100% / Actual Size.',
+  'Print / Save PDF opens the print-ready sell sheet and launches your browser print dialog. Choose Save as PDF or your printer and keep scale at 100% / Actual Size.',
   'Send the PDF along with the corresponding Partner Concierge landing-page link.',
 ] as const
 

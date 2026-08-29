@@ -46,11 +46,11 @@ export default function SalesMaterialCard({ material }: Props) {
           Preview Sell Sheet
         </a>
         <a
-          href={material.sellSheetPath}
+          href={`${material.sellSheetPath}?print=1`}
           target="_blank"
           rel="noopener noreferrer"
           className={`${styles.button} ${styles.buttonQuiet}`}
-          title="Open the print-ready sell sheet, then use your browser Print dialog and choose Save as PDF at 100% scale."
+          title="Opens the print-ready sell sheet and launches your browser print dialog. Choose Save as PDF or your printer at 100% / Actual Size."
         >
           Print / Save PDF
         </a>
