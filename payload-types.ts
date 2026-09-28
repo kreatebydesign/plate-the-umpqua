@@ -439,6 +439,10 @@ export interface Inquiry {
         | 'realtor'
         | 'wine-country'
         | 'referral'
+        | 'private-chef'
+        | 'private-dining'
+        | 'private-events'
+        | 'catering'
       )
     | null;
   eventTitle: string;

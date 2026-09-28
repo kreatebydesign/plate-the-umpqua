@@ -37,6 +37,10 @@ export const LEAD_SOURCE_LABELS: Record<string, string> = {
   realtor: 'Realtor',
   'wine-country': 'Wine Country',
   referral: 'Referral',
+  'private-chef': 'Private Chef',
+  'private-dining': 'Private Dining',
+  'private-events': 'Private Events',
+  catering: 'Catering',
 }
 
 /** Active / upcoming event statuses (exclude completed archive) */

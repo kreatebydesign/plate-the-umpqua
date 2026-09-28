@@ -95,7 +95,15 @@ export default function TheValleyPage() {
             </p>
 
             <p>
-              Plate The Umpqua is built around that atmosphere — private gatherings that feel elevated without losing the calm, natural feeling of Southern Oregon itself.
+              Plate The Umpqua is built around that atmosphere —{" "}
+              <Link href="/private-dining" className="text-[#c4a465] transition hover:text-[#efe6d4]">
+                private dining
+              </Link>
+              ,{" "}
+              <Link href="/private-events" className="text-[#c4a465] transition hover:text-[#efe6d4]">
+                private events
+              </Link>
+              , and wine country hospitality that feel elevated without losing the calm, natural feeling of Southern Oregon itself.
             </p>
           </div>
         </motion.div>
@@ -207,7 +215,15 @@ export default function TheValleyPage() {
           </h2>
 
           <p className="mx-auto mt-7 max-w-xl text-sm leading-7 text-[#e9decb]/84 md:text-base">
-            Private dinners, estate gatherings, wine country hospitality, and concierge experiences across Roseburg and Southern Oregon.
+            Private dinners, estate gatherings, wine country hospitality, and concierge experiences across Roseburg and Southern Oregon. Hire a{" "}
+            <Link href="/private-chef" className="text-[#c4a465] transition hover:text-[#efe6d4]">
+              private chef
+            </Link>{" "}
+            for the table, or explore{" "}
+            <Link href="/experiences" className="text-[#c4a465] transition hover:text-[#efe6d4]">
+              experience formats
+            </Link>
+            .
           </p>
 
           <Link

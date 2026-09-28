@@ -22,6 +22,10 @@ const LEAD_SOURCE_LABELS: Record<LeadSource, string> = {
   realtor: 'Realtor',
   'wine-country': 'Wine Country',
   referral: 'Referral',
+  'private-chef': 'Private Chef',
+  'private-dining': 'Private Dining',
+  'private-events': 'Private Events',
+  catering: 'Catering',
 }
 
 const MAX_BODY_BYTES = 32_000

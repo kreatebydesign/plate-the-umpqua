@@ -104,6 +104,26 @@ export const Inquiries: CollectionConfig = {
           label: 'Referral',
           value: 'referral',
         },
+
+        {
+          label: 'Private Chef',
+          value: 'private-chef',
+        },
+
+        {
+          label: 'Private Dining',
+          value: 'private-dining',
+        },
+
+        {
+          label: 'Private Events',
+          value: 'private-events',
+        },
+
+        {
+          label: 'Catering',
+          value: 'catering',
+        },
       ],
     },
 

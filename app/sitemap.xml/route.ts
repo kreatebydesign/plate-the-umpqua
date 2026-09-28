@@ -1,4 +1,5 @@
 import { PARTNER_INDUSTRIES } from '@/lib/site/partnerConciergeIndustries'
+import { SERVICE_PAGES } from '@/lib/site/servicePages'
 import { SITE_ORIGIN } from '@/lib/site/siteUrl'
 
 export const dynamic = 'force-dynamic'
@@ -13,6 +14,11 @@ type SitemapEntry = {
 export async function GET() {
   const urls: SitemapEntry[] = [
     { loc: SITE_ORIGIN, changefreq: 'weekly', priority: '1' },
+    ...SERVICE_PAGES.map((page) => ({
+      loc: `${SITE_ORIGIN}${page.href}`,
+      changefreq: 'weekly' as const,
+      priority: '0.96',
+    })),
     { loc: `${SITE_ORIGIN}/experiences`, changefreq: 'weekly', priority: '0.95' },
     { loc: `${SITE_ORIGIN}/packages`, changefreq: 'weekly', priority: '0.92' },
     { loc: `${SITE_ORIGIN}/concierge`, changefreq: 'weekly', priority: '0.9' },

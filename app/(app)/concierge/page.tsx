@@ -124,7 +124,15 @@ export default function ConciergePage() {
               <Link href="/partner-concierge/real-estate" className="text-[#c4a465] transition hover:text-[#efe6d4]">
                 realtor closing gifts
               </Link>{" "}
-              to estate dinners and executive client evenings, the experience is designed to feel effortless while still carrying emotional weight.
+              to estate dinners and executive client evenings, the experience is designed to feel effortless while still carrying emotional weight. Direct guest paths include{" "}
+              <Link href="/private-dining" className="text-[#c4a465] transition hover:text-[#efe6d4]">
+                private dining
+              </Link>{" "}
+              and{" "}
+              <Link href="/private-events" className="text-[#c4a465] transition hover:text-[#efe6d4]">
+                private events
+              </Link>
+              .
             </p>
 
             <Link

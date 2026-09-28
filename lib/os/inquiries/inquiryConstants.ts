@@ -95,6 +95,10 @@ export const INQUIRY_LEAD_SOURCE_VALUES = [
   'realtor',
   'wine-country',
   'referral',
+  'private-chef',
+  'private-dining',
+  'private-events',
+  'catering',
 ] as const
 
 export type InquiryPipelineFilter =

@@ -267,7 +267,19 @@ export default function PackagesPage() {
           </h2>
 
           <p className="mx-auto mt-7 max-w-xl text-sm leading-7 text-[#e9decb]/80 md:text-base">
-            Priority is given to private homes, winery gatherings, estates, and concierge partners across Roseburg and the Umpqua Valley.
+            Priority is given to private homes, winery gatherings, estates, and concierge partners across Roseburg and the Umpqua Valley. Looking for a service path? Start with{" "}
+            <Link href="/private-chef" className="text-[#c4a465] transition hover:text-[#efe6d4]">
+              private chef
+            </Link>
+            ,{" "}
+            <Link href="/private-dining" className="text-[#c4a465] transition hover:text-[#efe6d4]">
+              private dining
+            </Link>
+            , or{" "}
+            <Link href="/catering" className="text-[#c4a465] transition hover:text-[#efe6d4]">
+              elevated private catering
+            </Link>
+            .
           </p>
 
           <Link

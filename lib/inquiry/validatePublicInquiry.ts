@@ -7,6 +7,10 @@ export const LEAD_SOURCES = [
   'realtor',
   'wine-country',
   'referral',
+  'private-chef',
+  'private-dining',
+  'private-events',
+  'catering',
 ] as const
 
 export type LeadSource = (typeof LEAD_SOURCES)[number]

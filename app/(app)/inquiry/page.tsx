@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Cormorant_Garamond, Work_Sans } from "next/font/google";
 import { PACKAGE_VALUES } from "@/lib/inquiry/validatePublicInquiry";
 import { PREPAID_PARTNER_PACKAGES } from "@/lib/site/partnerConciergePricing";
+import { trackInquirySubmit } from "@/lib/analytics/inquiryEvents";
 
 const work = Work_Sans({
   subsets: ["latin"],
@@ -38,6 +39,10 @@ const VALID_SOURCES = new Set([
   "realtor",
   "wine-country",
   "referral",
+  "private-chef",
+  "private-dining",
+  "private-events",
+  "catering",
 ]);
 
 const VALID_PACKAGE_PREFILLS = new Set<string>(PACKAGE_VALUES);
@@ -65,6 +70,10 @@ const SOURCE_LABELS: Record<string, string> = {
   realtor: "Realtor",
   "wine-country": "Wine Country",
   referral: "Referral",
+  "private-chef": "Private Chef",
+  "private-dining": "Private Dining",
+  "private-events": "Private Events",
+  catering: "Catering",
 };
 
 function normalizeSource(value: string | null) {
@@ -152,6 +161,14 @@ function InquiryForm() {
       if (!res.ok || !data?.success) {
         throw new Error(data?.message || "Submission failed.");
       }
+
+      trackInquirySubmit({
+        source,
+        package_interest:
+          typeof payload.packageInterest === "string"
+            ? payload.packageInterest
+            : undefined,
+      });
 
       setSuccess(true);
       form.reset();

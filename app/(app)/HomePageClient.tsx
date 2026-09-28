@@ -56,7 +56,7 @@ export default function HomePageClient({ memories }: Props) {
           className="relative z-10 mx-auto max-w-5xl"
         >
           <p className="text-[9px] uppercase tracking-[0.34em] text-[#c4a465] sm:text-[10px] sm:tracking-[0.45em]">
-            Private Hospitality • Roseburg, Oregon
+            Private Chef Hospitality • Roseburg, Oregon
           </p>
 
           <h1
@@ -67,7 +67,7 @@ export default function HomePageClient({ memories }: Props) {
           </h1>
 
           <p className="mx-auto mt-7 max-w-2xl text-sm leading-7 text-[#e9decb]/88 sm:text-base md:text-lg md:leading-8">
-            Chef-led private dining, estate dinners, concierge hospitality, and cinematic evenings rooted in the Umpqua Valley.
+            Hire Chef Martin for private chef dining, private events, estate gatherings, and wine country hospitality across Roseburg and the Umpqua Valley.
           </p>
 
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -79,10 +79,10 @@ export default function HomePageClient({ memories }: Props) {
             </Link>
 
             <Link
-              href="/experiences"
+              href="/private-chef"
               className="w-full max-w-xs px-7 py-4 text-center text-[11px] uppercase tracking-[0.23em] text-[#efe6d4]/82 transition hover:text-[#c4a465] sm:w-auto sm:max-w-none sm:px-8 sm:text-xs"
             >
-              Explore Experiences
+              Private Chef
             </Link>
           </div>
         </motion.div>
@@ -105,7 +105,7 @@ export default function HomePageClient({ memories }: Props) {
               className="mt-5 text-[clamp(2.7rem,12vw,4rem)] leading-[0.96] tracking-[-0.04em] md:text-6xl md:leading-tight"
               style={{ fontFamily: "var(--font-cormorant)" }}
             >
-              Not catering. Not a restaurant. A private hospitality layer.
+              Not a restaurant reservation. A private chef you can hire.
             </h2>
           </div>
 
@@ -119,13 +119,25 @@ export default function HomePageClient({ memories }: Props) {
             </p>
 
             <p>
-              For professionals who gift client appreciation experiences, explore{" "}
+              Explore{" "}
+              <Link href="/private-dining" className="text-[#c4a465] transition hover:text-[#efe6d4]">
+                private dining
+              </Link>
+              ,{" "}
+              <Link href="/private-events" className="text-[#c4a465] transition hover:text-[#efe6d4]">
+                private events
+              </Link>
+              , and{" "}
+              <Link href="/catering" className="text-[#c4a465] transition hover:text-[#efe6d4]">
+                elevated private catering
+              </Link>
+              — or, for professionals who gift client appreciation experiences,{" "}
               <Link href="/partner-concierge" className="text-[#c4a465] transition hover:text-[#efe6d4]">
                 Partner Concierge
               </Link>{" "}
-              — including{" "}
+              and{" "}
               <Link href="/partner-concierge/real-estate" className="text-[#c4a465] transition hover:text-[#efe6d4]">
-                private dining gifts for Realtors
+                Realtor private dining gifts
               </Link>
               .
             </p>
@@ -136,6 +148,64 @@ export default function HomePageClient({ memories }: Props) {
             >
               View Packages
             </Link>
+          </div>
+        </motion.div>
+      </section>
+
+      <section className="relative border-t border-[#c4a465]/14 bg-[#14120e] px-5 py-20 md:px-6 md:py-28">
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="mx-auto max-w-6xl"
+        >
+          <p className="text-[10px] uppercase tracking-[0.34em] text-[#c4a465] md:tracking-[0.38em]">
+            Ways To Work With Martin
+          </p>
+          <h2
+            className="mt-5 max-w-3xl text-[clamp(2.5rem,11vw,3.75rem)] leading-[0.98] tracking-[-0.04em]"
+            style={{ fontFamily: "var(--font-cormorant)" }}
+          >
+            Private chef. Private dining. Private events. Elevated catering.
+          </h2>
+          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                href: "/private-chef",
+                label: "Private Chef",
+                copy: "Hire Chef Martin for chef-led evenings in homes, vineyards, and estates.",
+              },
+              {
+                href: "/private-dining",
+                label: "Private Dining",
+                copy: "Intimate dinners shaped around your guests, room, and occasion.",
+              },
+              {
+                href: "/private-events",
+                label: "Private Events",
+                copy: "Celebrations, wedding weekends, and gatherings with considered hospitality.",
+              },
+              {
+                href: "/catering",
+                label: "Private Catering",
+                copy: "Elevated private catering for Roseburg gatherings — not buffet logistics.",
+              },
+            ].map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="group border-t border-[#c4a465]/28 pt-5 transition"
+              >
+                <p
+                  className="text-2xl tracking-[-0.03em] transition group-hover:text-[#c4a465]"
+                  style={{ fontFamily: "var(--font-cormorant)" }}
+                >
+                  {item.label}
+                </p>
+                <p className="mt-3 text-sm leading-7 text-[#e9decb]/72">{item.copy}</p>
+              </Link>
+            ))}
           </div>
         </motion.div>
       </section>
@@ -222,6 +292,13 @@ export default function HomePageClient({ memories }: Props) {
           <p className="mt-7 max-w-xl text-sm leading-7 text-[#e9decb]/82 md:text-base md:leading-8">
             Intimate chef-led experiences designed for homes, celebrations, wine country evenings, and unforgettable gatherings with the people who matter most.
           </p>
+
+          <Link
+            href="/private-dining"
+            className="mt-8 inline-block text-[11px] uppercase tracking-[0.24em] text-[#c4a465] transition hover:text-[#efe6d4] md:text-xs"
+          >
+            Explore Private Dining
+          </Link>
         </motion.div>
       </section>
 

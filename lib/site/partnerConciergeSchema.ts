@@ -3,7 +3,8 @@ import { PREPAID_PARTNER_PACKAGES } from '@/lib/site/partnerConciergePricing'
 import { absoluteSiteUrl, SITE_ORIGIN } from '@/lib/site/siteUrl'
 
 const PROVIDER = {
-  '@type': 'FoodEstablishment' as const,
+  '@type': 'LocalBusiness' as const,
+  '@id': `${SITE_ORIGIN}/#business`,
   name: 'Plate The Umpqua',
   url: SITE_ORIGIN,
 }

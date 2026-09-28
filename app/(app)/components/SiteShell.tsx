@@ -7,11 +7,19 @@ import { AnimatePresence, motion } from "framer-motion";
 
 const navItems = [
   { label: "Experiences", href: "/experiences" },
+  { label: "Private Chef", href: "/private-chef" },
   { label: "Packages", href: "/packages" },
   { label: "Partners", href: "/partner-concierge" },
   { label: "Concierge", href: "/concierge" },
   { label: "The Valley", href: "/the-valley" },
   { label: "Inquiry", href: "/inquiry" },
+];
+
+const serviceLinks = [
+  { label: "Private Chef", href: "/private-chef" },
+  { label: "Private Dining", href: "/private-dining" },
+  { label: "Private Events", href: "/private-events" },
+  { label: "Catering", href: "/catering" },
 ];
 
 export default function SiteShell({
@@ -33,13 +41,14 @@ export default function SiteShell({
             Plate The Umpqua
           </Link>
 
-          <nav className="hidden items-center gap-7 md:flex">
+          <nav className="hidden items-center gap-5 lg:gap-7 md:flex">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-[11px] uppercase tracking-[0.22em] transition ${
-                  pathname === item.href
+                className={`text-[10px] uppercase tracking-[0.2em] transition lg:text-[11px] lg:tracking-[0.22em] ${
+                  pathname === item.href ||
+                  (item.href !== "/" && pathname.startsWith(`${item.href}/`))
                     ? "text-[#c4a465]"
                     : "text-[#efe6d4]/68 hover:text-[#c4a465]"
                 }`}
@@ -119,19 +128,40 @@ export default function SiteShell({
             </p>
 
             <p className="mt-5 max-w-xl text-sm leading-7 text-[#e9decb]/70">
-              Private dining, estate dinners, realtor concierge hospitality,
-              and wine country experiences rooted in Roseburg and the Umpqua Valley.
+              Private chef dining, private events, elevated catering, realtor
+              concierge hospitality, and wine country experiences rooted in
+              Roseburg and the Umpqua Valley.
             </p>
           </div>
 
-          <div className="grid gap-7 text-sm text-[#e9decb]/70 sm:grid-cols-2">
+          <div className="grid gap-7 text-sm text-[#e9decb]/70 sm:grid-cols-3">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.25em] text-[#c4a465]">
+                Services
+              </p>
+
+              <div className="mt-4 grid gap-3">
+                {serviceLinks.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="transition hover:text-[#c4a465]"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
             <div>
               <p className="text-[10px] uppercase tracking-[0.25em] text-[#c4a465]">
                 Explore
               </p>
 
               <div className="mt-4 grid gap-3">
-                {navItems.map((item) => (
+                {navItems
+                  .filter((item) => item.href !== "/private-chef")
+                  .map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}

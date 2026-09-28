@@ -1,41 +1,24 @@
 import type { Metadata, Viewport } from "next";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import SiteShell from "./components/SiteShell";
+import { siteBusinessSchema } from "@/lib/site/servicePageSchema";
 import { SITE_ORIGIN } from "@/lib/site/siteUrl";
 import "./globals.css";
 
-const businessSchema = {
-  "@context": "https://schema.org",
-  "@type": "FoodEstablishment",
-  name: "Plate The Umpqua",
-  url: SITE_ORIGIN,
-  description:
-    "Chef-led private dining, estate dinners, realtor concierge hospitality, and wine country experiences rooted in Roseburg and the Umpqua Valley.",
-  areaServed: ["Roseburg, Oregon", "Umpqua Valley", "Southern Oregon"],
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: "Roseburg",
-    addressRegion: "OR",
-    addressCountry: "US",
-  },
-  servesCuisine: [
-    "Private Dining",
-    "Seasonal Hospitality",
-    "Wine Country Dining",
-  ],
-  priceRange: "$$$",
-};
+const siteDescription =
+  "Chef-led private dining, private events, elevated catering, and wine country hospitality rooted in Roseburg and the Umpqua Valley.";
+
+const businessSchema = siteBusinessSchema(siteDescription);
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_ORIGIN),
 
   title: {
-    default: "Plate The Umpqua | Private Hospitality in Roseburg, Oregon",
+    default: "Plate The Umpqua | Private Chef Hospitality in Roseburg, Oregon",
     template: "%s | Plate The Umpqua",
   },
 
-  description:
-    "Chef-led private dining, estate dinners, realtor concierge hospitality, and wine country experiences rooted in Roseburg and the Umpqua Valley.",
+  description: siteDescription,
 
   keywords: [
     "Plate The Umpqua",
@@ -53,6 +36,8 @@ export const metadata: Metadata = {
     "retreat hospitality Oregon",
     "executive hospitality Southern Oregon",
     "private events Roseburg Oregon",
+    "catering Roseburg Oregon",
+    "private catering Roseburg",
   ],
 
   authors: [{ name: "Plate The Umpqua" }],
@@ -64,9 +49,9 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title: "Plate The Umpqua | Private Hospitality in Roseburg, Oregon",
+    title: "Plate The Umpqua | Private Chef Hospitality in Roseburg, Oregon",
     description:
-      "Private hospitality, chef-led dinners, estate gatherings, and concierge table experiences across Roseburg, the Umpqua Valley, and Southern Oregon.",
+      "Private chef dining, private events, estate gatherings, and wine country hospitality across Roseburg, the Umpqua Valley, and Southern Oregon.",
     url: SITE_ORIGIN,
     siteName: "Plate The Umpqua",
     locale: "en_US",
@@ -83,14 +68,10 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "Plate The Umpqua | Private Hospitality in Roseburg, Oregon",
+    title: "Plate The Umpqua | Private Chef Hospitality in Roseburg, Oregon",
     description:
-      "Chef-led private dining, estate dinners, and elevated hospitality experiences rooted in Roseburg and the Umpqua Valley.",
+      "Chef-led private dining, private events, and elevated hospitality experiences rooted in Roseburg and the Umpqua Valley.",
     images: ["/og-image.jpg"],
-  },
-
-  alternates: {
-    canonical: SITE_ORIGIN,
   },
 
   robots: {
